@@ -1,0 +1,5 @@
+fdk>=0.1.45
+oci
+datetime
+pandas
+requests
