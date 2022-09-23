@@ -1,7 +1,15 @@
 # OCI Streaming Pipeline
 This document provides instructions for deployment and configuration of a cloud-native streaming and anaylsis pipeline using Oracle Cloud Infrastructure.
 
+## Table of Contents
+
+## Introduction
+
+### Objective
+
 ### Prerequisites
+
+### Included Resources
 
 ## Terraform Stack Deployment
 Follow these steps to deploy the streaming pipeline Terraform Stack on OCI. Before beginning, ensure that you have satisfied the prerequisites listed above.
