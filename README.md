@@ -4,7 +4,7 @@ This document provides instructions for deployment and configuration of a cloud-
 ## Table of Contents
 
 ## Introduction
--background and introduction about why this repository exists and who it is for-
+-background and introduction about why this repository exists and who it is for-  
 -architecture diagram-
 
 ### Objective
@@ -21,7 +21,7 @@ This repository leverages Oracle Cloud Infrasturcture's array of services to dep
 * Oracle Object Storage
 * Oracle Service Connector Hub
 * Oracle Streaming
-* Oracle Virtual Cloud Network, Subnet
+* Oracle Virtual Cloud Network & Subnet
 
 ## Terraform Stack Deployment
 Follow these steps to deploy the streaming pipeline Terraform Stack on OCI. Before beginning, ensure that you have satisfied the prerequisites listed above.
