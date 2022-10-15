@@ -5,7 +5,7 @@ This document provides instructions for deployment and configuration of a cloud-
 
 ## Introduction
 Data streaming is a powerful tool capable of accelerating business processes and facilitating real-time decision making across a wide variety of industries and use cases. There are many ways to implement streaming technology, and each solution offers different benefits and drawbacks. The approach documented below is a cloud-native, low-code approach to streaming, covering the complete data lifecycle from ingestion to analysis. This will enable organizations to implement a complete streaming pipeline quickly without the need for a highly specialized team of developers.
-<img src="/images/system_architecture.png" alt="System Architecture" style="display: block; margin-right: auto; margin-left: auto; width: 90%"/>
+<img src="/images/system_architecture.png" alt="System Architecture" width="90%" style="display: block; margin-right: auto; margin-left: auto;"/>
 
 ### Objective
 This repository leverages Oracle Cloud Infrasturcture's array of services to deploy a low-code end-to-end streaming pipeline.  The included Terraform Stack handles resource deployment, and additional configuration steps are documented below.  The resulting architecture is a cloud-native streaming pipeline, capable of data ingestion, processing, strorage, and analysis. 
