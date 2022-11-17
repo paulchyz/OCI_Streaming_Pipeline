@@ -14,10 +14,6 @@ This repository leverages Oracle Cloud Infrasturcture's array of services to dep
 
 ![System Architecture](/images/system_architecture.png)
 
-### Prerequisites
-
-* An Oracle Cloud Infrastructure tenancy or trial.
-
 ### Included Resources
 
 * **Oracle Compute Intance**
@@ -36,6 +32,10 @@ This repository leverages Oracle Cloud Infrasturcture's array of services to dep
   * Oracle Analytics Cloud is the final stage of the pipeline, enabling the creation of data visualizations that end users can use to analyze the data stream.
 * **Oracle Virtual Cloud Network (VCN) & Subnet**
   * The Oracle Virtual Cloud Network and Subnet make up the network that contains the pipeline's Oracle Cloud Infrastructure resources.
+
+### Prerequisites
+
+* An Oracle Cloud Infrastructure tenancy or trial.
 
 ## Terraform Stack Deployment
 
