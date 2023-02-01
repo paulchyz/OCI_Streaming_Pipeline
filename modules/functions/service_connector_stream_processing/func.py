@@ -12,8 +12,8 @@ import requests
 
 def handler(ctx, data: io.BytesIO=None):
     try:
-        processed_bucket = "streaming_bucket_processed"
         cfg = ctx.Config()
+        processed_bucket = cfg['streaming-bucket-processed']
         ordsbaseurl = cfg['ords-base-url']
         schema = cfg['db-schema']
         dbuser = cfg['db-user']
