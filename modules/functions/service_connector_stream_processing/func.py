@@ -9,9 +9,11 @@ import datetime
 import pandas as pd
 import oci.object_storage
 import requests
+import os
 
 def handler(ctx, data: io.BytesIO=None):
     try:
+        collectionurl_suffix = os.environ['STREAMING_STREAMDATA']
         cfg = ctx.Config()
         processed_bucket = cfg['streaming-bucket-processed']
         ordsbaseurl = cfg['ords-base-url']
@@ -76,7 +78,7 @@ def load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects):
 def soda_insert(ordsbaseurl, schema, dbuser, dbpwd, obj):
     auth=(dbuser, dbpwd)
     sodaurl = ordsbaseurl + schema + '/soda/latest/'
-    collectionurl = sodaurl + "streamdata"
+    collectionurl = sodaurl + collectionurl_suffix
     headers = {'Content-Type': 'application/json'}
     r = requests.post(collectionurl, auth=auth, headers=headers, data=json.dumps(obj))
     r_json = {}
