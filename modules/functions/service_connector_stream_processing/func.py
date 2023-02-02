@@ -9,12 +9,11 @@ import datetime
 import pandas as pd
 import oci.object_storage
 import requests
-import os
 
 def handler(ctx, data: io.BytesIO=None):
     try:
-        json_collection_name = os.environ['STREAMING_JSON_COLLECTION_NAME']
         cfg = ctx.Config()
+        json_collection_name = cfg['json-collection-name']
         processed_bucket = cfg['streaming-bucket-processed']
         ordsbaseurl = cfg['ords-base-url']
         schema = cfg['db-schema']
