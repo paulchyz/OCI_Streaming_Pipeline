@@ -7,11 +7,11 @@ import time
 import datetime
 import random
 from base64 import b64encode
+import os
 
-# Create a default config using DEFAULT profile in default location
-config = oci.config.from_file()
-sid = 'STREAM_ID'
-message_endpoint = 'MESSAGE_ENDPOINT'
+config = oci.config.from_file(file_location=os.environ['STREAMING_OCI_CONFIG_FILE_LOCATION'])
+sid = os.environ['STREAMING_STREAM_OCID']
+message_endpoint = os.environ['STREAMING_MESSAGE_ENDPOINT']
 
 amp_odds = .01
 freq_odds = .01

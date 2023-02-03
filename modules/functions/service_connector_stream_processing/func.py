@@ -12,8 +12,9 @@ import requests
 
 def handler(ctx, data: io.BytesIO=None):
     try:
-        processed_bucket = "streaming_bucket_processed"
         cfg = ctx.Config()
+        json_collection_name = cfg['json-collection-name']
+        processed_bucket = cfg['streaming-bucket-processed']
         ordsbaseurl = cfg['ords-base-url']
         schema = cfg['db-schema']
         dbuser = cfg['db-user']
@@ -76,7 +77,7 @@ def load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects):
 def soda_insert(ordsbaseurl, schema, dbuser, dbpwd, obj):
     auth=(dbuser, dbpwd)
     sodaurl = ordsbaseurl + schema + '/soda/latest/'
-    collectionurl = sodaurl + "streamdata"
+    collectionurl = sodaurl + json_collection_name
     headers = {'Content-Type': 'application/json'}
     r = requests.post(collectionurl, auth=auth, headers=headers, data=json.dumps(obj))
     r_json = {}
