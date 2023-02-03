@@ -103,6 +103,7 @@ The infrastructure resources that comprise this customized arrangement are presc
 6. In the `Parent Compartment` field, select the compartment where you wish for the OCI resources to be deployed from the Resource Manager Stack object. For this lab, one of the deployed resources will be a new compartment, which will contain the other resources. For users with a new tenancy, this will be the root compartment.
 7. In the `Region` field, select the region where you wish to deploy your resources. For users with a new tenancy, this will be the value that corresponds to your home region. This should be shown in the upper right-hand side of the page, and appear in a format similar to `US East (Ashburn)`. Make a note of the string you select for this value, called the `region identifier`, which we will refer to later in this lab.
 6. For this lab, we will deploy a subset of resources that can deployed using the Terraform code. In the `Select Resources` tile, ensure that only the checkboxes that correspond to the below indicated services are selected to deploy the corresponding services:
+
 	- `Deploy Autonomous Data Warehouse (ADW)`
 	- `Deploy Object Storage`
 	- `Deploy Streaming`
@@ -123,6 +124,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 3. A Function is logically "contained within" an Application, so you will create an Application object. Click `Create application`, and enter values for the corresponding parameters:
+
 	- `Name` : `streaming_app`
 	- `VCN` : <i>Ensure that the compartment is set to the deployed compartment. Then, select the deployed VCN.</i>
 	- `subnets` : <i>Ensure that the compartment is set to the deployed compartment. Then, select the deployed subnet.</i>
@@ -237,7 +239,6 @@ fn list apps
 	```
 	fn -v deploy --app streaming_app
 	```
-	\
 	<b>Congratulations! You've successfully deployed your Function!</b>
 
 ### Deploy Service Connector
@@ -315,6 +316,7 @@ In this section, you will supply environment variables to be made available to y
 	`db-user` : `ADMIN`\
 	`dbpwd-cipher` : `Welcome!2345`
 	\
+	\
 	<b>Congratulations! You've successfully configured your Function with the environment variables needed to run the data stream!</b>
 
 ### Configure ADW for Stream Processing
@@ -367,7 +369,6 @@ In this section, you will supply environment variables to be made available to y
 	```
 	EXEC DBMS_CLOUD_ADMIN.ENABLE_RESOURCE_PRINCIPAL();
 	```
-	\
 	<b>Congratulations! You've successfully configured your ADW for stream processing!</b>
 
 ### Initiate Data Stream
