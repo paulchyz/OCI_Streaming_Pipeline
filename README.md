@@ -198,36 +198,36 @@ fn init --runtime python streaming_fnc_logic
 cd streaming_fnc_logic
 ```
 17. Copy the contents of [func.py](./modules/functions/service_connector_stream_processing/func.py) using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
+	\
+	\
+	On Cloud Shell, open the copy of `func.py` that you generated using the `fn init` command:
+	```
+	vi func.py
+	```
+	Replace boilerplate logic with custom logic:
 
-On Cloud Shell, open the copy of `func.py` that you generated using the `fn init` command:
-```
-vi func.py
-```
-
-Replace boilerplate logic with custom logic:
-
-- Navigate to the top of the file by typing `gg`.
-- Remove all of the contents in the file by typing `dG`.
-- Activate `insert` mode by typing `i`.
-- Paste the contents that you copied from your clipboard.
-- Press `ESC` to escape `insert` mode.
-- Save your edits and exit the `vi` editor by typing `:wq`.
+	- Navigate to the top of the file by typing `gg`.
+	- Remove all of the contents in the file by typing `dG`.
+	- Activate `insert` mode by typing `i`.
+	- Paste the contents that you copied from your clipboard.
+	- Press `ESC` to escape `insert` mode.
+	- Save your edits and exit the `vi` editor by typing `:wq`.
 
 18. Copy the contents of [requirements.txt](./modules/functions/service_connector_stream_processing/requirements.txt) using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
+	\
+	\
+	On Cloud Shell, open the copy of `requirements.txt` that you generated using the `fn init` command:
+	```
+	vi requirements.txt
+	```
+	Replace boilerplate logic with custom logic:
 
-On Cloud Shell, open the copy of `requirements.txt` that you generated using the `fn init` command:
-```
-vi requirements.txt
-```
-
-Replace boilerplate logic with custom logic:
-
-- Navigate to the top of the file by typing `gg`.
-- Remove all of the contents of the file by typing `dG`.
-- Activate `insert` mode by typing `i`.
-- Paste the contents that you copied from your clipboard.
-- Press `ESC` to escape `insert` mode.
-- Save your edits and exit the `vi` editor by typing `:wq`.
+	- Navigate to the top of the file by typing `gg`.
+	- Remove all of the contents of the file by typing `dG`.
+	- Activate `insert` mode by typing `i`.
+	- Paste the contents that you copied from your clipboard.
+	- Press `ESC` to escape `insert` mode.
+	- Save your edits and exit the `vi` editor by typing `:wq`.
 
 19. Now that you have finished making the necessary edits to your Function logic, deploy your Function to OCIR, and associate it with the application object you created.
 ```
