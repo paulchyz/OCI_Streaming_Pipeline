@@ -190,7 +190,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 13. Minimize Cloud Shell, and click `Auth Tokens` on the left-hand side of the page. Click `Generate Token`, and supply the `Description` field with a friendly description, such as `ocir login for streaming app`. Click `Generate Token`. Copy the generated token, click `Close`, restore Cloud Shell, supply the token as your password, and press `Enter`.
 	\
 	\
-	Note: If you lose the generated token, you may repeat this step to generate a new one.
+	Note that if you lose the generated token, you may repeat this step to generate a new one.
 14. Verify your setup by listing Application objects in the compartment.
 ```
 fn list apps
