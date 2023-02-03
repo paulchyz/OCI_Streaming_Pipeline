@@ -123,7 +123,6 @@ In this pipeline, the Function invocation will carry out the necessary transform
 1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 3. A Function is logically "contained within" an Application, so you will create an Application object. Click `Create application`, and enter values for the corresponding parameters:
-	\
 	- `Name` : `streaming_app`
 	- `VCN` : <i>Ensure that the compartment is set to the deployed compartment. Then, select the deployed VCN.</i>
 	- `subnets` : <i>Ensure that the compartment is set to the deployed compartment. Then, select the deployed subnet.</i>
@@ -153,45 +152,36 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	\
 	\
 	First, prepare a name to use for your Function.
-	\
 	```
 	export STREAMING_FUNCTION_NAME=streaming_fnc
 	```
 8. These commands will generate the value for the `region key` that corresponds to the `region identifier`, and the region in which you are configuring your Function.
-	\
 	```
 	export STREAMING_CONTEXT_REGION_IDENTIFIER=$(fn inspect context | grep api-url | grep -Po '(?<=functions.).*(?=.oci)')
 	export STREAMING_CONTEXT_REGION_KEY=$(oci iam region list | jq -r ".data[] | select(.name == \"$STREAMING_CONTEXT_REGION_IDENTIFIER\").key" | tr '[:upper:]' '[:lower:]')
 	```
-	\
 	Alternatively, the `region key` can be obtained by finding the `region key` that corresponds to the `region identifier` you used when selecting your `context` object from the table shown in this [documentation](https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm#ariaid-title2). Use a lower-case representation of the `region key` when replacing the placeholder value (`your_region_key`) in the command indicated below, and then run the command.
 	\
 	```
 	export STREAMING_CONTEXT_REGION_KEY=your_region_key
 	```
 9. Programatically generate the tenancy name.
-	\
 	```
 	export STREAMING_TENANCY_NAME=$(oci iam tenancy get --tenancy-id $OCI_TENANCY | jq -r .data.name)
 	```
-	\
 	Alternatively, the tenancy name can be obtained by navigating to the user icon on the upper right-hand side of the page, hovering over the dropdown menu, and reading the name next to `Tenancy:`. The value can also be obtained by clicking on this option, and locating the `Name` field on the tenancy page. Replace the placeholder value (`your_tenancy_name`) in the command indicated below, and then run the command.
-	\
 	```
 	export STREAMING_TENANCY_NAME=your_tenancy_name
 	```
 10. Generate the OCIR container image repository for your Function.
-	\
 	```
 	fn update context registry ${STREAMING_CONTEXT_REGION_KEY}.ocir.io/${STREAMING_OS_NS}/${STREAMING_FUNCTION_NAME}
 	```
 11. You will construct a command to sign into OCIR. On your browser tab with Cloud Shell, minimize Cloud Shell using the `_` icon, and navigate to the user icon on the upper right-hand side of the page, hovering over the dropdown menu, click `User settings`. Copy the name of your user in large text at the top of the page, including the `oracleidentitycloudservice/` prefix if present. Restore Cloud Shell, replace the placeholder value (`your_user_extended_name`) in the command indicated below, and then run the command.
-	\
 	```
 	export STREAMING_USER_EXTENDED_NAME=your_user_extended_name
 	```
 12. When the following command is run, you will be prompted for a password, which will be the result of an Auth Token that you will generate. Run the command, and do not supply a value until later instructions.
-	\
 	```
 	docker login -u "${STREAMING_TENANCY_NAME}/${STREAMING_USER_EXTENDED_NAME}" ${STREAMING_CONTEXT_REGION_KEY}.ocir.io
 	```
@@ -204,12 +194,10 @@ In this pipeline, the Function invocation will carry out the necessary transform
 fn list apps
 ```
 15. Generate boilerplate code for your Function. You will customize this code with logic provided later in this lab.
-	\
 	```
 	fn init --runtime python streaming_fnc_logic
 	```
 16. Switch into the generated directory
-	\
 	```
 	cd streaming_fnc_logic
 	```
@@ -246,7 +234,6 @@ fn list apps
 	- Save your edits and exit the `vi` editor by typing `:wq`.
 
 19. Now that you have finished making the necessary edits to your Function logic, deploy your Function to OCIR, and associate it with the application object you created.
-	\
 	```
 	fn -v deploy --app streaming_app
 	```
@@ -286,7 +273,6 @@ In this section, you will create a JSON Collection in the Autonomous Data Wareho
 3. Click on the hyperlinked Application object you created.
 4. Click `Database actions`. Note that you may need to allow pop-ups in your browser if launching the new page fails.
 5. Enter your username and password for your ADW instance. For this lab, the default values are as follows:
-	\
 	\
 	`Username`: `ADMIN`\
 	`Password`: `Streaming!2345`
