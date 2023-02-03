@@ -89,12 +89,12 @@ In this section, you will deploy a customized arrangement of Oracle Cloud Infras
 The infrastructure resources that comprise this customized arrangement are prescribed as Terraform code, which is an approach to <i>infrastructure as code</i> (IaC). OCI supports team-oriented, UI-enabled infrastructure deployment and management using Terraform logic, through a service called Resource Manager. You will create a Resource Manager Stack object, which will act as the platform from which you can deploy and manage the infrastructure resources that underpin the data streaming and conversion process.
 
 1. Click the `Deploy to Oracle Cloud` button below, opening the link into a new browser tab.
-\
-\
-In Chrome, Firefox and Safari, you can do this with `CTRL`+`Click` > Select `Open Link in New Tab`.
-\
-\
-[![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://www.oracle.com/cloud/sign-in.html)
+	\
+	\
+	In Chrome, Firefox and Safari, you can do this with `CTRL`+`Click` > Select `Open Link in New Tab`.
+	\
+	\
+	[![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://www.oracle.com/cloud/sign-in.html)
 
 2. Log into your Oracle Cloud Infrastructure (OCI) tenancy with your user credentials. You will then be redirected to the `Stack Information` section of Resource Manager.
 3. In the `Stack Information` section, select the checkbox to confirm that you accept the [Oracle Terms of Use](https://cloudmarketplace.oracle.com/marketplace/content?contentId=50511634&render=inline).
@@ -112,9 +112,9 @@ In Chrome, Firefox and Safari, you can do this with `CTRL`+`Click` > Select `Ope
 9. Once the selected resources have been provisioned, click `Stack Resources` to open a page that shows details about the resources that were provisioned.
 10. Make a note of the name of the compartment you deployed. You can find the name of the compartment under the `Name` column, where the value under `Type` appears as `oci_identity_compartment`.
 11. Keep this browser tab open, as we will refer to this page later in this lab. Duplicate the current browser tab, and proceed using the new browser tab.
-\
-\
-<b>Congratulations! You've successfully deployed a custom stack of OCI resources using Resource Manager!</b>
+	\
+	\
+	<b>Congratulations! You've successfully deployed a custom stack of OCI resources using Resource Manager!</b>
 
 ### Configure Function
 In this section, you will configure an instance of the serverless OCI Functions service, called a Function. The Function will act as a prescription for custom logic to be installed and executed on a machine that gets dynamically provisioned when the designated Function endpoint is invoked. This dynamic allocation of infrastructure is what makes the OCI Functions service a serverless platform. The custom logic is sourced from a container image repository located within the Oracle Cloud Infrastructure Registry (OCIR).
@@ -131,56 +131,59 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	Then, click `Create`.
 4. Click on the `Developer tools` icon on the upper right-hand side of the page, and then click `Cloud Shell`. This will open a command-line interface (CLI) environment from which we will programatically configure and deploy a serverless instance of OCI Functions, called a Function. The subsequent steps will walk you through how to configure and deploy your Function using the Cloud Shell CLI.
 5. Select the `context` object, which is named according to the region in which you are operating. Use the `region identifier` value you selected when configuring your Terraform stack.
-
-Note that in the example provided below, `us-ashburn-1` is the value provided as the `region identifier` used to represent the `US East (Ashburn)` region.
-```
-fn use context us-ashburn-1
-```
-Note that you can list the values for `region identifier` available to your Cloud Shell environment using the following command:
-```
-fn list context
-```
+	\
+	\
+	Note that in the example provided below, `us-ashburn-1` is the value provided as the `region identifier` used to represent the `US East (Ashburn)` region.
+	```
+	fn use context us-ashburn-1
+	```
+	Note that you can list the values for `region identifier` available to your Cloud Shell environment using the following command:
+	```
+	fn list context
+	```
 6. Update the `context` with the <i>O</i>racle <i>C</i>loud <i>id</i>entifier (OCID) of the compartment where we deployed our stack. You can find the compartment OCID on the browser tab from your Terraform deployment, where stack information is available. Navigate to this browser tab, and click `Show` next to the listing of type `oci_identity_compartment`. Copy the string that corresponds to `id` (not `compartment_id`), <b>not</b> including the quotation marks. Use this value to replace `YOUR_COMPARTMENT_OCID` in the command indicated below.
-```
-fn update context oracle.compartment-id YOUR_COMPARTMENT_OCID
-```
+	```
+	fn update context oracle.compartment-id YOUR_COMPARTMENT_OCID
+	```
 7. Over the next few steps, you will generate the values you will use to generate an Oracle Coud Infrastructure Registry (OCIR) container image repository. This repository is where your Function code will be hosted, available to serverless Function machines as they are dynamically allocated.
-
-Although programatic methods of obtaining these values are offered for rapid setup, front-end methods are offered as alternatives for some of these values.
-
-First, prepare a name to use for your Function.
-```
-export STREAMING_FUNCTION_NAME=streaming_fnc
-```
+	\
+	\
+	Although programatic methods of obtaining these values are offered for rapid setup, front-end methods are offered as alternatives for some of these values.
+	\
+	\
+	First, prepare a name to use for your Function.
+	```
+	export STREAMING_FUNCTION_NAME=streaming_fnc
+	```
 8. These commands will generate the value for the `region key` that corresponds to the `region identifier`, and the region in which you are configuring your Function.
-```
-export STREAMING_CONTEXT_REGION_IDENTIFIER=$(fn inspect context | grep api-url | grep -Po '(?<=functions.).*(?=.oci)')
-export STREAMING_CONTEXT_REGION_KEY=$(oci iam region list | jq -r ".data[] | select(.name == \"$STREAMING_CONTEXT_REGION_IDENTIFIER\").key" | tr '[:upper:]' '[:lower:]')
-```
+	```
+	export STREAMING_CONTEXT_REGION_IDENTIFIER=$(fn inspect context | grep api-url | grep -Po '(?<=functions.).*(?=.oci)')
+	export STREAMING_CONTEXT_REGION_KEY=$(oci iam region list | jq -r ".data[] | select(.name == \"$STREAMING_CONTEXT_REGION_IDENTIFIER\").key" | tr '[:upper:]' '[:lower:]')
+	```
 Alternatively, the `region key` can be obtained by finding the `region key` that corresponds to the `region identifier` you used when selecting your `context` object from the table shown in this [documentation](https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm#ariaid-title2). Use a lower-case representation of the `region key` when replacing the placeholder value (`your_region_key`) in the command indicated below, and then run the command.
-```
-export STREAMING_CONTEXT_REGION_KEY=your_region_key
-```
+	```
+	export STREAMING_CONTEXT_REGION_KEY=your_region_key
+	```
 9. Programatically generate the tenancy name.
-```
-export STREAMING_TENANCY_NAME=$(oci iam tenancy get --tenancy-id $OCI_TENANCY | jq -r .data.name)
-```
+	```
+	export STREAMING_TENANCY_NAME=$(oci iam tenancy get --tenancy-id $OCI_TENANCY | jq -r .data.name)
+	```
 Alternatively, the tenancy name can be obtained by navigating to the user icon on the upper right-hand side of the page, hovering over the dropdown menu, and reading the name next to `Tenancy:`. The value can also be obtained by clicking on this option, and locating the `Name` field on the tenancy page. Replace the placeholder value (`your_tenancy_name`) in the command indicated below, and then run the command.
-```
-export STREAMING_TENANCY_NAME=your_tenancy_name
-```
+	```
+	export STREAMING_TENANCY_NAME=your_tenancy_name
+	```
 10. Generate the OCIR container image repository for your Function.
-```
-fn update context registry ${STREAMING_CONTEXT_REGION_KEY}.ocir.io/${STREAMING_OS_NS}/${STREAMING_FUNCTION_NAME}
-```
+	```
+	fn update context registry ${STREAMING_CONTEXT_REGION_KEY}.ocir.io/${STREAMING_OS_NS}/${STREAMING_FUNCTION_NAME}
+	```
 11. You will construct a command to sign into OCIR. On your browser tab with Cloud Shell, minimize Cloud Shell using the `_` icon, and navigate to the user icon on the upper right-hand side of the page, hovering over the dropdown menu, click `User settings`. Copy the name of your user in large text at the top of the page, including the `oracleidentitycloudservice/` prefix if present. Restore Cloud Shell, replace the placeholder value (`your_user_extended_name`) in the command indicated below, and then run the command.
-```
-export STREAMING_USER_EXTENDED_NAME=your_user_extended_name
-```
+	```
+	export STREAMING_USER_EXTENDED_NAME=your_user_extended_name
+	```
 12. When the following command is run, you will be prompted for a password, which will be the result of an Auth Token that you will generate. Run the command, and do not supply a value until later instructions.
-```
-docker login -u "${STREAMING_TENANCY_NAME}/${STREAMING_USER_EXTENDED_NAME}" ${STREAMING_CONTEXT_REGION_KEY}.ocir.io
-```
+	```
+	docker login -u "${STREAMING_TENANCY_NAME}/${STREAMING_USER_EXTENDED_NAME}" ${STREAMING_CONTEXT_REGION_KEY}.ocir.io
+	```
 13. Minimize Cloud Shell, and click `Auth Tokens` on the left-hand side of the page. Click `Generate Token`, and supply the `Description` field with a friendly description, such as `ocir login for streaming app`. Click `Generate Token`. Copy the generated token, click `Close`, restore Cloud Shell, supply the token as your password, and press `Enter`.
 	\
 	\
@@ -230,11 +233,10 @@ cd streaming_fnc_logic
 	- Save your edits and exit the `vi` editor by typing `:wq`.
 
 19. Now that you have finished making the necessary edits to your Function logic, deploy your Function to OCIR, and associate it with the application object you created.
-```
-fn -v deploy --app streaming_app
-```
-
-<b>Congratulations! You've successfully deployed your Function!</b>
+	```
+	fn -v deploy --app streaming_app
+	```
+	<b>Congratulations! You've successfully deployed your Function!</b>
 
 ### Deploy Service Connector
 In this section, you will deploy a Service Connector instance, using the <i>O</i>racle <i>C</i>loud <i>id</i>entifier (OCID) of your Function and the same Resource Manager Stack you created [earlier in this lab](#deploy-infrastructure-using-resource-manager).
