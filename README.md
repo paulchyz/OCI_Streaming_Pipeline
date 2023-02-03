@@ -102,18 +102,19 @@ In Chrome, Firefox and Safari, you can do this with `CTRL`+`Click` > Select `Ope
 5. Click `Next` to proceed to the `Configure Variables` section.
 6. In the `Parent Compartment` field, select the compartment where you wish for the OCI resources to be deployed from the Resource Manager Stack object. For this lab, one of the deployed resources will be a new compartment, which will contain the other resources. For users with a new tenancy, this will be the root compartment.
 7. In the `Region` field, select the region where you wish to deploy your resources. For users with a new tenancy, this will be the value that corresponds to your home region. This should be shown in the upper right-hand side of the page, and appear in a format similar to `US East (Ashburn)`. Make a note of the string you select for this value, called the `region identifier`, which we will refer to later in this lab.
-6. For this lab, we will deploy a subset of resources that can deployed using the Terraform code. In the `Select Resources` tile, ensure that only these checkboxes are selected to deploy the corresponding services:
-- Deploy Autonomous Data Warehouse (ADW)
-- Deploy Object Storage
-- Deploy Streaming
-- Deploy Virtual Cloud Network (VCN)
+6. For this lab, we will deploy a subset of resources that can deployed using the Terraform code. In the `Select Resources` tile, ensure that only the checkboxes that correspond to the below indicated services are selected to deploy the corresponding services:
+	- `Deploy Autonomous Data Warehouse (ADW)`
+	- `Deploy Object Storage`
+	- `Deploy Streaming`
+	- `Deploy Virtual Cloud Network (VCN)`
 7. When you are finished editing your variables in the `Configure Variables` section, click `Next` to proceed to the `Review` section.
 8. Select the checkbox for `Run Apply`, and click `Create`. You can monitor the deployment by monitoring the `Logs` window.
 9. Once the selected resources have been provisioned, click `Stack Resources` to open a page that shows details about the resources that were provisioned.
 10. Make a note of the name of the compartment you deployed. You can find the name of the compartment under the `Name` column, where the value under `Type` appears as `oci_identity_compartment`.
 11. Keep this browser tab open, as we will refer to this page later in this lab. Duplicate the current browser tab, and proceed using the new browser tab.
 \
-Congratulations! You've successfully deployed a custom stack of OCI resources using Resource Manager!
+\
+<b>Congratulations! You've successfully deployed a custom stack of OCI resources using Resource Manager!</b>
 
 ### Configure Function
 In this section, you will configure an instance of the serverless OCI Functions service, called a Function. The Function will act as a prescription for custom logic to be installed and executed on a machine that gets dynamically provisioned when the designated Function endpoint is invoked. This dynamic allocation of infrastructure is what makes the OCI Functions service a serverless platform. The custom logic is sourced from a container image repository located within the Oracle Cloud Infrastructure Registry (OCIR).
@@ -122,10 +123,12 @@ In this pipeline, the Function invocation will carry out the necessary transform
 1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 3. A Function is logically "contained within" an Application, so you will create an Application object. Click `Create application`, and enter values for the corresponding parameters:
-- `Name`: `streaming_app`
-- `VCN`: Ensure that the compartment is set to the deployed compartment. Then, select the deployed VCN.
-- `subnets`: Ensure that the compartment is set to the deployed compartment. Then, select the deployed subnet.
-Then, click `Create`.
+	- `Name` : `streaming_app`
+	- `VCN` : <i>Ensure that the compartment is set to the deployed compartment. Then, select the deployed VCN.</i>
+	- `subnets` : <i>Ensure that the compartment is set to the deployed compartment. Then, select the deployed subnet.</i>
+	\
+	\
+	Then, click `Create`.
 4. Click on the `Developer tools` icon on the upper right-hand side of the page, and then click `Cloud Shell`. This will open a command-line interface (CLI) environment from which we will programatically configure and deploy a serverless instance of OCI Functions, called a Function. The subsequent steps will walk you through how to configure and deploy your Function using the Cloud Shell CLI.
 5. Select the `context` object, which is named according to the region in which you are operating. Use the `region identifier` value you selected when configuring your Terraform stack.
 
@@ -179,21 +182,22 @@ export STREAMING_USER_EXTENDED_NAME=your_user_extended_name
 docker login -u "${STREAMING_TENANCY_NAME}/${STREAMING_USER_EXTENDED_NAME}" ${STREAMING_CONTEXT_REGION_KEY}.ocir.io
 ```
 13. Minimize Cloud Shell, and click `Auth Tokens` on the left-hand side of the page. Click `Generate Token`, and supply the `Description` field with a friendly description, such as `ocir login for streaming app`. Click `Generate Token`. Copy the generated token, click `Close`, restore Cloud Shell, supply the token as your password, and press `Enter`.
-
-Note: If you lose the generated token, you may repeat this step to generate a new one.
-10. Verify your setup by listing Application objects in the compartment.
+	\
+	\
+	Note: If you lose the generated token, you may repeat this step to generate a new one.
+14. Verify your setup by listing Application objects in the compartment.
 ```
 fn list apps
 ```
-14. Generate boilerplate code for your Function. You will customize this code with logic provided later in this lab.
+15. Generate boilerplate code for your Function. You will customize this code with logic provided later in this lab.
 ```
 fn init --runtime python streaming_fnc_logic
 ```
-15. Switch into the generated directory
+16. Switch into the generated directory
 ```
 cd streaming_fnc_logic
 ```
-16. Copy the contents of [func.py](./modules/functions/service_connector_stream_processing/func.py) using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
+17. Copy the contents of [func.py](./modules/functions/service_connector_stream_processing/func.py) using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 
 On Cloud Shell, open the copy of `func.py` that you generated using the `fn init` command:
 ```
@@ -209,7 +213,7 @@ Replace boilerplate logic with custom logic:
 - Press `ESC` to escape `insert` mode.
 - Save your edits and exit the `vi` editor by typing `:wq`.
 
-17. Copy the contents of [requirements.txt](./modules/functions/service_connector_stream_processing/requirements.txt) using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
+18. Copy the contents of [requirements.txt](./modules/functions/service_connector_stream_processing/requirements.txt) using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 
 On Cloud Shell, open the copy of `requirements.txt` that you generated using the `fn init` command:
 ```
@@ -225,12 +229,12 @@ Replace boilerplate logic with custom logic:
 - Press `ESC` to escape `insert` mode.
 - Save your edits and exit the `vi` editor by typing `:wq`.
 
-18. Now that you have finished making the necessary edits to your Function logic, deploy your Function to OCIR, and associate it with the application object you created.
+19. Now that you have finished making the necessary edits to your Function logic, deploy your Function to OCIR, and associate it with the application object you created.
 ```
 fn -v deploy --app streaming_app
 ```
 
-Congratulations! You've successfully deployed your Function!
+<b>Congratulations! You've successfully deployed your Function!</b>
 
 ### Deploy Service Connector
 In this section, you will deploy a Service Connector instance, using the <i>O</i>racle <i>C</i>loud <i>id</i>entifier (OCID) of your Function and the same Resource Manager Stack you created [earlier in this lab](#deploy-infrastructure-using-resource-manager).
@@ -253,8 +257,9 @@ In this section, you will deploy a Service Connector instance, using the <i>O</i
 14. Select the checkbox for `Run Apply`, and click `Create`. You can monitor the deployment by monitoring the `Logs` window.
 15. Once the selected resources have been provisioned, click `Stack Resources` to open a page that shows details about the resources that were provisioned.
 16. Keep this browser tab open, as we will refer to this page later in this lab. Duplicate the current browser tab, and proceed using the new browser tab.
-\
-Congratulations! You've successfully added Service Connector to your existing deployment using Resource Manager!
+	\
+	\
+	<b>Congratulations! You've successfully added Service Connector to your existing deployment using Resource Manager!</b>
 
 ### Create JSON Collection in ADW
 In this section, you will create a JSON Collection in the Autonomous Data Warehouse (ADW) instance from your deployment. The JSON Collection object will be used in the process of parsing the keys and values in the JSON objects from the data stream as features and datapoints, respectively.
@@ -305,7 +310,7 @@ In this section, you will supply environment variables to be made available to y
 	`db-user` : `ADMIN`\
 	`dbpwd-cipher` : `Welcome!2345`
 
-	Congratulations! You've successfully configured your Function with the environment variables needed to run the data stream!
+	<b>Congratulations! You've successfully configured your Function with the environment variables needed to run the data stream!</b>
 
 ### Configure ADW for Stream Processing
 1. Navigate to the Database Actions interface for your ADW instance as [previously done](#create-json-collection-in-adw).
@@ -357,8 +362,7 @@ In this section, you will supply environment variables to be made available to y
 	```
 	EXEC DBMS_CLOUD_ADMIN.ENABLE_RESOURCE_PRINCIPAL();
 	```
-	\
-	Congratulations! You've successfully configured your ADW for stream processing!
+	<b>Congratulations! You've successfully configured your ADW for stream processing!</b>
 
 ### Initiate Data Stream
 In this section, you will launch the data stream from Cloud Shell to simulate the transmission of manufacturing data to your Streaming instance's messaging endpoint in OCI.
@@ -378,19 +382,16 @@ In this section, you will launch the data stream from Cloud Shell to simulate th
 	- Press `ESC` to escape `insert` mode.
 	- Save your edits and exit the `vi` editor by typing `:wq`.
 3. Set new environment variables that will be used by the `stream.py` script by executing the following commands.
-	\
 	```
 	export STREAMING_OCI_CONFIG_FILE_LOCATION=/etc/oci/config
 	export STREAMING_STREAM_OCID=YOUR_STREAM_OCID
 	export STREAMING_MESSAGE_ENDPOINT=YOUR_MESSAGE_ENDPOINT
 	```
-	\
-	The first command will be used to supply the location of your OCI API credentials in your Cloud Shell environment.
-	The second command will be used to identify your Streaming instance.
-	The third command will be used to identify the messaging endpoint of your Streaming instance.
+	The first command will be used to supply the location of your OCI API credentials in your Cloud Shell environment.\
+	The second command will be used to identify your Streaming instance.\
+	The third command will be used to identify the messaging endpoint of your Streaming instance.\
 	\
 	Note that if you wish to review the values set for environment variables in this lab, you can execute the following command.
-	\
 	```
 	env | grep ^STREAMING_
 	```
