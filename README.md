@@ -9,13 +9,12 @@ This document provides instructions for deployment and configuration of a cloud-
 - [Prerequisites](#prerequisites)
 - [Which OCI resources will you provision?](#which-oci-resources-will-you-provision)
 - [Lab Steps](#lab-steps)
-- [Deploy Infrastructure using Resource Manager](#deploy-infrastructure-using-resource-manager)
-- [Configure Function](#configure-function)
-- [Deploy Service Connector](#deploy-service-connector)
-- [Create JSON Collection in ADW](#create-json-collection-in-adw)
-- [Configure Function Parameters](#configure-function-parameters)
-- [Configure ADW for Stream Processing](#configure-adw-for-stream-processing)
-- [Initiate Data Stream](#initiate-data-stream)
+	- [Deploy Infrastructure using Resource Manager](#deploy-infrastructure-using-resource-manager)
+	- [Configure Function](#configure-function)
+	- [Deploy Service Connector](#deploy-service-connector)
+	- [Configure ADW for Stream Processing](#configure-adw-for-stream-processing)
+	- [Configure Function Parameters](#configure-function-parameters)
+	- [Initiate Data Stream](#initiate-data-stream)
 
 ### Introduction
 Data streaming is a powerful tool capable of accelerating business processes and facilitating real-time decision-making across a wide variety of industries and use cases. There are many ways to implement streaming technology, and each solution offers different benefits and drawbacks. The approach documented below is a cloud-native, low-code approach to streaming, covering the complete data lifecycle from ingestion to analysis. This will enable organizations to implement a complete streaming pipeline quickly without the need to spend valuable time and energy procuring, configuring and managing IT infrastructure.
@@ -94,7 +93,7 @@ The infrastructure resources that comprise this customized arrangement are presc
 	In Chrome, Firefox and Safari, you can do this with `CTRL`+`Click` > Select `Open Link in New Tab`.
 	\
 	\
-	[![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://www.oracle.com/cloud/sign-in.html)
+	[![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/paulchyz/OCI_Streaming_Pipeline/raw/master/modules/terraform/oci-lakehouse-streaming.zip)
 
 2. Log into your Oracle Cloud Infrastructure (OCI) tenancy with your user credentials. You will then be redirected to the `Stack Information` section of Resource Manager.
 3. In the `Stack Information` section, select the checkbox to confirm that you accept the [Oracle Terms of Use](https://cloudmarketplace.oracle.com/marketplace/content?contentId=50511634&render=inline).
@@ -143,7 +142,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	```
 	fn list context
 	```
-6. Update the `context` with the <i>O</i>racle <i>C</i>loud <i>id</i>entifier (OCID) of the compartment where we deployed our stack. You can find the compartment OCID on the browser tab from your Terraform deployment, where stack information is available. Navigate to this browser tab, and click `Show` next to the listing of type `oci_identity_compartment`. Copy the string that corresponds to `id` (not `compartment_id`), <b>not</b> including the quotation marks. Use this value to replace `YOUR_COMPARTMENT_OCID` in the command indicated below.
+6. Update the `context` with the <i>O</i>racle <i>C</i>loud <i>id</i>entifier (OCID) of the compartment where we deployed our stack. You can find the compartment OCID on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click `Show` next to the listing of type `oci_identity_compartment`. Copy the string that corresponds to `id` (not `compartment_id`), <b>not</b> including the quotation marks. Use this value to replace `YOUR_COMPARTMENT_OCID` in the command indicated below.
 	```
 	fn update context oracle.compartment-id YOUR_COMPARTMENT_OCID
 	```
@@ -163,7 +162,6 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	export STREAMING_CONTEXT_REGION_KEY=$(oci iam region list | jq -r ".data[] | select(.name == \"$STREAMING_CONTEXT_REGION_IDENTIFIER\").key" | tr '[:upper:]' '[:lower:]')
 	```
 	Alternatively, the `region key` can be obtained by finding the `region key` that corresponds to the `region identifier` you used when selecting your `context` object from the table shown in this [documentation](https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm#ariaid-title2). Use a lower-case representation of the `region key` when replacing the placeholder value (`your_region_key`) in the command indicated below, and then run the command.
-	\
 	```
 	export STREAMING_CONTEXT_REGION_KEY=your_region_key
 	```
@@ -235,7 +233,7 @@ fn list apps
 	- Press `ESC` to escape `insert` mode.
 	- Save your edits and exit the `vi` editor by typing `:wq`.
 
-19. Now that you have finished making the necessary edits to your Function logic, deploy your Function to OCIR, and associate it with the application object you created.
+19. Now that you have finished making the necessary edits to your Function logic, deploy your Function to OCIR, and associate it with the Application object you created.
 	```
 	fn -v deploy --app streaming_app
 	```
@@ -266,8 +264,12 @@ In this section, you will deploy a Service Connector instance, using the <i>O</i
 	\
 	<b>Congratulations! You've successfully added Service Connector to your existing deployment using Resource Manager!</b>
 
-### Create JSON Collection in ADW
-In this section, you will create a JSON Collection in the Autonomous Data Warehouse (ADW) instance from your deployment. The JSON Collection object will be used in the process of parsing the keys and values in the JSON objects from the data stream as features and datapoints, respectively.
+### Configure ADW for Stream Processing
+In this section, you will set up the following items in your Autonomous Data Warehouse (ADW) instance:
+- <b>JSON Collection</b>: This object will store data points from a data stream in JSON format.
+- <b>Table</b>: This object will represent the JSON keys of the data points in the data stream as fields (column headers), and their respective values as records (row entries).
+- <b>Stored Procedure</b>: This object will contain the logic used to insert the new entries of stream data sourced from the JSON Collection.
+- <b>Scheduler</b>: This object will execute the Stored Procedure on a minutely basis.
 
 1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
@@ -281,7 +283,56 @@ In this section, you will create a JSON Collection in the Autonomous Data Wareho
 7. Click `Create Collection`.
 8. Enter `streamdata` into the `Collection Name` field. Use lower-case letters for this name, because the endpoint address for the JSON Collection will incorporate this provided name, and letter case will be a distinguishing property of the endpoint address.
 9. Click `Create`.
-
+10. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`.
+11. Click on the tile labeled `SQL`. Feel free to close the pop-up that warns that you are logged in as `ADMIN` user by clicking `X`. Also, feel free to skip the tutorial that is automatically launched. The tutorial can be skipped by clicking `X` on the pop-ups, and revisited by clicking on the binoculars icon on the upper right-hand side of the page.
+12. Copy and paste the following PL/SQL code snippet into the editor. Once this code snippet has been executed, you will have created a table with the columns that you will later populate with stream data.
+	```
+	-- Create STREAMDATA_TABLE
+	create table STREAMDATA_TABLE
+	(
+	    STREAM VARCHAR2(40),
+	    KEY TIMESTAMP,
+	    PARTITION NUMBER,
+	    OFFSET NUMBER,
+	    TIMESTAMP NUMBER,
+	    EQUIPMENT_ID NUMBER,
+	    VIBRATION_AMPLITUDE NUMBER,
+	    VIBRATION_FREQUENCY NUMBER,
+	    TEMPERATURE NUMBER,
+	    HUMIDITY NUMBER
+	);
+	```
+	\
+	Click on the `Run Script` icon at the top of the editor to execute this code snippet as a script. The `Run Script` icon resembles a sheet of paper behind a green play button.
+13. Delete the PL/SQL code from your editor, and replace it with the following code. Once this code snippet has been executed, you will have created a stored procedure, which will be used to insert new entries of stream data from the JSON Collection into the table you previously created.
+	```
+	-- Stored procedure to insert new JSON data into table
+	CREATE PROCEDURE UPDATE_STREAMDATA_TABLE 
+	AS 
+	BEGIN 
+	   INSERT INTO ADMIN.STREAMDATA_TABLE SELECT stream, TO_TIMESTAMP(key, 'YYYY-MM-DD HH24:MI:SS.FF'), partition, offset, timestamp, equipment_id, vibration_amplitude, vibration_frequency, temperature, humidity FROM STREAMDATA, JSON_TABLE(JSON_DOCUMENT, '$' COLUMNS(stream, key, partition, offset, timestamp, equipment_id, vibration_amplitude, vibration_frequency, temperature, humidity)) WHERE TO_TIMESTAMP(key, 'YYYY-MM-DD HH24:MI:SS.FF') NOT IN (SELECT KEY FROM ADMIN.STREAMDATA_TABLE);
+	END UPDATE_STREAMDATA_TABLE;
+	```
+	\
+	Click on the `Run Script` icon at the top of the editor to execute this code snippet as a script.
+14. Delete the PL/SQL code from your editor, and replace it with the following code. Once this code snippet has been executed, you will have created a <i>D</i>ata<i>b</i>ase <i>M</i>anagement <i>S</i>ystem (DBMS) Scheduler, which will trigger the stored procedure you previously created, on a minutely basis.
+	```
+	-- DBMS scheduled job to execute stored procedure at a regular interval
+	BEGIN
+	  DBMS_SCHEDULER.CREATE_JOB (
+	   job_name           =>  'collection_to_table_job',
+	   job_type           =>  'STORED_PROCEDURE',
+	   job_action         =>  'ADMIN.UPDATE_STREAMDATA_TABLE',
+	   start_date         =>  SYSTIMESTAMP,
+	   repeat_interval    =>  'FREQ=MINUTELY; INTERVAL=1',
+	   enabled            =>  TRUE);
+	END;
+	```
+15. Delete the PL/SQL code from your editor, and replace it with the following code. Once this code snippet has been executed, you will have enabled your ADW instance to act as a resource principal, so that API calls can be made from the ADW instance to interact with the other resources in your OCI environment, as per your IAM Policy Statement configuration. For this lab, the ADW instance will be accessing your Object Storage Bucket that will store processed data.
+	```
+	EXEC DBMS_CLOUD_ADMIN.ENABLE_RESOURCE_PRINCIPAL();
+	```
+	<b>Congratulations! You've successfully configured your ADW for stream processing!</b>
 
 ### Configure Function Parameters
 In this section, you will supply environment variables to be made available to your Function machines while they execute their associated logic. These environment variables will supply the necessary values for your streaming pipeline to integrate with some of the resources in our deployment, work end-to-end. These environment variables must be set using `Key`:`Value` pairs, where each pair represents the name of an environment variable, and its associated value, respectively.
@@ -311,71 +362,22 @@ In this section, you will supply environment variables to be made available to y
 13. Add the `Key`:`Value` pairs indicated below. The `Value` values are to be set as defaults used for this lab.
 	\
 	\
-	`json-collection-name` : `streamdata`\
+	`json-collection-name` : `STREAMDATA`\
 	`db-schema` : `ADMIN`\
 	`db-user` : `ADMIN`\
-	`dbpwd-cipher` : `Welcome!2345`
+	`dbpwd-cipher` : `Streaming!2345`
 	\
 	\
 	<b>Congratulations! You've successfully configured your Function with the environment variables needed to run the data stream!</b>
 
-### Configure ADW for Stream Processing
-1. Navigate to the Database Actions interface for your ADW instance as [previously done](#create-json-collection-in-adw).
-2. Click on the tile labeled `SQL`. Feel free to close the pop-up that warns that you are logged in as `ADMIN` user by clicking `X`. Also, feel free to skip the tutorial that is automatically launched. The tutorial can be skipped by clicking `X` on the pop-ups, and revisited by clicking on the binoculars icon on the upper right-hand side of the page.
-3. Copy and paste the following PL/SQL code snippet into the editor. Once this code snippet has been executed, you will have created a table with the columns that you will later populate with stream data.
-	```
-	-- Create STREAMDATA_TABLE
-	create table STREAMDATA_TABLE
-	(
-	    STREAM VARCHAR2(40),
-	    KEY TIMESTAMP,
-	    PARTITION NUMBER,
-	    OFFSET NUMBER,
-	    TIMESTAMP NUMBER,
-	    EQUIPMENT_ID NUMBER,
-	    VIBRATION_AMPLITUDE NUMBER,
-	    VIBRATION_FREQUENCY NUMBER,
-	    TEMPERATURE NUMBER,
-	    HUMIDITY NUMBER
-	);
-	```
-	\
-	Click on the `Run Script` icon at the top of the editor to execute this code snippet as a script. The `Run Script` icon resembles a sheet of paper behind a green play button.
-4. Delete the PL/SQL code from your editor, and replace it with the following code. Once this code snippet has been executed, you will have created a stored procedure, which will be used to copy the parsed datapoints from the JSON Collection into the table you previously created.
-	```
-	-- Stored procedure to insert new JSON data into table
-	CREATE PROCEDURE UPDATE_STREAMDATA_TABLE 
-	AS 
-	BEGIN 
-	   INSERT INTO ADMIN.STREAMDATA_TABLE SELECT stream, TO_TIMESTAMP(key, 'YYYY-MM-DD HH24:MI:SS.FF'), partition, offset, timestamp, equipment_id, vibration_amplitude, vibration_frequency, temperature, humidity FROM STREAMDATA, JSON_TABLE(JSON_DOCUMENT, '$' COLUMNS(stream, key, partition, offset, timestamp, equipment_id, vibration_amplitude, vibration_frequency, temperature, humidity)) WHERE TO_TIMESTAMP(key, 'YYYY-MM-DD HH24:MI:SS.FF') NOT IN (SELECT KEY FROM ADMIN.STREAMDATA_TABLE);
-	END UPDATE_STREAMDATA_TABLE;
-	```
-	\
-	Click on the `Run Script` icon at the top of the editor to execute this code snippet as a script.
-5. Delete the PL/SQL code from your editor, and replace it with the following code. Once this code snippet has been executed, you will have created a <i>D</i>ata<i>b</i>ase <i>M</i>anagement <i>S</i>ystem (DBMS) Scheduler, which will trigger the stored procedure you previously created, once every 5 minutes.
-	```
-	-- DBMS scheduled job to execute stored procedure at a regular interval
-	BEGIN
-	  DBMS_SCHEDULER.CREATE_JOB (
-	   job_name           =>  'collection_to_table_job',
-	   job_type           =>  'STORED_PROCEDURE',
-	   job_action         =>  'ADMIN.UPDATE_STREAMDATA_TABLE',
-	   start_date         =>  SYSTIMESTAMP,
-	   repeat_interval    =>  'FREQ=MINUTELY; INTERVAL=5',
-	   enabled            =>  TRUE);
-	END;
-	```
-6. Delete the PL/SQL code from your editor, and replace it with the following code. Once this code snippet has been executed, you will have enabled your ADW instance to act as a resource principal, so that API calls can be made from the ADW instance to interact with the other resources in your OCI environment, as per your IAM Policy Statement configuration. For this lab, the ADW instance will be accessing your Object Storage Bucket that will store processed data.
-	```
-	EXEC DBMS_CLOUD_ADMIN.ENABLE_RESOURCE_PRINCIPAL();
-	```
-	<b>Congratulations! You've successfully configured your ADW for stream processing!</b>
-
 ### Initiate Data Stream
-In this section, you will launch the data stream from Cloud Shell to simulate the transmission of manufacturing data to your Streaming instance's messaging endpoint in OCI.
+In this section, you will launch the data stream from Cloud Shell to simulate the transmission of manufacturing data to your Stream instance's messaging endpoint in OCI.
 
-1. Click on the `Developer tools` icon on the upper right-hand side of the page, and then click `Cloud Shell`.
-2. Copy the contents of [stream.py](./modules/compute/datastream/stream.py) using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
+1. Navigate to the hamburger menu at the top left of the webpage, and type `streaming` into the search field. Click the listing that appears on the page that contains the words `Streaming` and `Messaging`.
+2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
+3. Click on the hyperlinked Streaming object you created from your Resource Manager deployment.
+4. Click on the `Developer tools` icon on the upper right-hand side of the page, and then click `Cloud Shell`.
+5. Copy the contents of [stream.py](./modules/compute/datastream/stream.py) using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
 	On Cloud Shell, open a new file named `stream.py`.
 	```
@@ -388,21 +390,27 @@ In this section, you will launch the data stream from Cloud Shell to simulate th
 	- Paste the contents that you copied from your clipboard.
 	- Press `ESC` to escape `insert` mode.
 	- Save your edits and exit the `vi` editor by typing `:wq`.
-3. Set new environment variables that will be used by the `stream.py` script by executing the following commands.
+6. Copy and paste, but do not yet execute, the following command into Cloud Shell. On the page showing details about your Streaming instance. Copy the Streaming OCID by pressing Copy next to `OCID:` to your clipboard. Then, replace the placeholder value (`YOUR_STREAM_OCID`) by pasting the contents of your clipboard into its place.
+	```
+	export STREAMING_STREAM_OCID=YOUR_STREAM_OCID
+	```
+	This command will be used by the script that will trigger the data stream to identify your Streaming instance.
+7. Copy and paste, but do not yet execute, the following command into Cloud Shell. On the page showing details about your Streaming instance. Copy the Messages Endpoint by pressing Copy next to `Messages Endpoint:` to your clipboard. Then, replace the placeholder value (`YOUR_MESSAGE_ENDPOINT`) by pasting the contents of your clipboard into its place.
+	```
+	export STREAMING_STREAM_OCID=YOUR_MESSAGE_ENDPOINT
+	```
+	This command will be used by the script that will trigger the data stream to identify the Messages Endpoint your Streaming instance.\
+8. Execute the following command into Cloud Shell.
 	```
 	export STREAMING_OCI_CONFIG_FILE_LOCATION=/etc/oci/config
-	export STREAMING_STREAM_OCID=YOUR_STREAM_OCID
-	export STREAMING_MESSAGE_ENDPOINT=YOUR_MESSAGE_ENDPOINT
 	```
-	The first command will be used to supply the location of your OCI API credentials in your Cloud Shell environment.\
-	The second command will be used to identify your Streaming instance.\
-	The third command will be used to identify the messaging endpoint of your Streaming instance.\
+	This command will be used by the script that will trigger the data stream to identify the location of your OCI API credentials in your Cloud Shell environment.\
 	\
 	Note that if you wish to review the values set for environment variables in this lab, you can execute the following command.
 	```
 	env | grep ^STREAMING_
 	```
-4. Initiate the data stream.
+9. Initiate the data stream.
 	```
 	python stream.py
 	```
