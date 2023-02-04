@@ -337,7 +337,7 @@ In this section, you will set up the following items in your Autonomous Data War
 ### Configure Function Parameters
 In this section, you will supply environment variables to be made available to your Function machines while they execute their associated logic. These environment variables will supply the necessary values for your streaming pipeline to integrate with some of the resources in our deployment, work end-to-end. These environment variables must be set using `Key`:`Value` pairs, where each pair represents the name of an environment variable, and its associated value, respectively.
 
-1. Navigate to the Database Actions interface for your ADW instance as [previously done](#create-json-collection-in-adw).
+1. Navigate to the Database Actions interface for your ADW instance as [previously done](#configure-adw-for-stream-processing).
 2. Click on the hamburger menu in the upper left-hand side of the page, and click `RESTful Services ad SODA` under `Related Services`.
 3. Click `Copy` to copy the base URL of the Oracle REST Data Services (ORDS) HTTPS interface to your clipboard.
 4. In another browser tab with your main OCI Console open, navigate to the hamburger menu at the top left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
