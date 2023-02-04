@@ -399,7 +399,7 @@ In this section, you will launch the data stream from Cloud Shell to simulate th
 	```
 	export STREAMING_MESSAGES_ENDPOINT=YOUR_MESSAGES_ENDPOINT
 	```
-	This command will be used by the script that will trigger the data stream to identify the Messages Endpoint your Streaming instance.\
+	This command will be used by the script that will trigger the data stream to identify the Messages Endpoint your Streaming instance.
 8. Execute the following command into Cloud Shell.
 	```
 	export STREAMING_OCI_CONFIG_FILE_LOCATION=/etc/oci/config
