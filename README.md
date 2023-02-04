@@ -395,9 +395,9 @@ In this section, you will launch the data stream from Cloud Shell to simulate th
 	export STREAMING_STREAM_OCID=YOUR_STREAM_OCID
 	```
 	This command will be used by the script that will trigger the data stream to identify your Streaming instance.
-7. Copy and paste, but do not yet execute, the following command into Cloud Shell. On the page showing details about your Streaming instance. Copy the Messages Endpoint by pressing Copy next to `Messages Endpoint:` to your clipboard. Then, replace the placeholder value (`YOUR_MESSAGE_ENDPOINT`) by pasting the contents of your clipboard into its place.
+7. Copy and paste, but do not yet execute, the following command into Cloud Shell. On the page showing details about your Streaming instance. Copy the Messages Endpoint by pressing Copy next to `Messages Endpoint:` to your clipboard. Then, replace the placeholder value (`YOUR_MESSAGES_ENDPOINT`) by pasting the contents of your clipboard into its place.
 	```
-	export STREAMING_STREAM_OCID=YOUR_MESSAGE_ENDPOINT
+	export STREAMING_MESSAGES_ENDPOINT=YOUR_MESSAGES_ENDPOINT
 	```
 	This command will be used by the script that will trigger the data stream to identify the Messages Endpoint your Streaming instance.\
 8. Execute the following command into Cloud Shell.
