@@ -371,7 +371,7 @@ In this section, you will supply environment variables to be made available to y
 	<b>Congratulations! You've successfully configured your Function with the environment variables needed to run the data stream!</b>
 
 ### Initiate Data Stream
-In this section, you will launch the data stream from Cloud Shell to simulate the transmission of manufacturing data to your Stream instance's messaging endpoint in OCI.
+In this section, you will launch the data stream from Cloud Shell to simulate the transmission of manufacturing data to your Streaming instance's Messages Endpoint in OCI.
 
 1. Navigate to the hamburger menu at the top left of the webpage, and type `streaming` into the search field. Click the listing that appears on the page that contains the words `Streaming` and `Messaging`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
