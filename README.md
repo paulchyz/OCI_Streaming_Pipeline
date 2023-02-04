@@ -281,7 +281,7 @@ In this section, you will set up the following items in your Autonomous Data War
 	`Password`: `Streaming!2345`
 6. You have reached the `Database Actions` interface for your ADW instance. Click on the tile labeled `JSON`. Feel free to skip the tutorial that is automatically launched. The tutorial can be skipped by clicking `X` on the pop-ups, and revisited by clicking on the binoculars icon on the upper right-hand side of the page.
 7. Click `Create Collection`.
-8. Enter `streamdata` into the `Collection Name` field. Use lower-case letters for this name, because the endpoint address for the JSON Collection will incorporate this provided name, and letter case will be a distinguishing property of the endpoint address.
+8. Enter `STREAMDATA` into the `Collection Name` field. Use upper-case letters for this name, because the endpoint address for the JSON Collection will incorporate this provided name, and letter case will be a distinguishing property of the endpoint address.
 9. Click `Create`.
 10. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`.
 11. Click on the tile labeled `SQL`. Feel free to close the pop-up that warns that you are logged in as `ADMIN` user by clicking `X`. Also, feel free to skip the tutorial that is automatically launched. The tutorial can be skipped by clicking `X` on the pop-ups, and revisited by clicking on the binoculars icon on the upper right-hand side of the page.
