@@ -283,7 +283,7 @@ In this section, you will set up the following items in your Autonomous Data War
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 3. Click on the hyperlinked Application object you created.
 4. Click `Database actions`. Note that you may need to allow pop-ups in your browser if launching the new page fails.
-5. Enter your username and password for your ADW instance. For this lab, the default values are as follows:
+5. Enter your username and password for your ADW instance. For this lab, the default values are as indicated below. If you specified a custom password for your ADW instance, replace the default value with the custom value.
 	\
 	`Username`: `ADMIN`\
 	`Password`: `Streaming!2345`
@@ -335,10 +335,6 @@ In this section, you will set up the following items in your Autonomous Data War
 	   repeat_interval    =>  'FREQ=MINUTELY; INTERVAL=1',
 	   enabled            =>  TRUE);
 	END;
-	```
-15. Delete the PL/SQL code from your editor, and replace it with the following code. Once this code snippet has been executed, you will have enabled your ADW instance to act as a resource principal, so that API calls can be made from the ADW instance to interact with the other resources in your OCI environment, as per your IAM Policy Statement configuration. For this lab, the ADW instance will be accessing your Object Storage Bucket that will store processed data.
-	```
-	EXEC DBMS_CLOUD_ADMIN.ENABLE_RESOURCE_PRINCIPAL();
 	```
 	<b>Congratulations! You've successfully configured your ADW for stream processing!</b>
 
