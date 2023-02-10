@@ -96,32 +96,46 @@ The infrastructure resources that comprise this customized arrangement are presc
 	[![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/paulchyz/OCI_Streaming_Pipeline/raw/master/modules/terraform/oci-lakehouse-streaming.zip)
 
 2. Log into your Oracle Cloud Infrastructure (OCI) tenancy with your user credentials. You will then be redirected to the `Stack Information` section of Resource Manager.
-3. In the `Stack Information` section, select the checkbox to confirm that you accept the [Oracle Terms of Use](https://cloudmarketplace.oracle.com/marketplace/content?contentId=50511634&render=inline).
-4. In the `Create in compartment` field, select a compartment from the dropdown menu where you wish to create the Resource Manager Stack object. If your tenancy environment is new, this compartment will be your root-level compartment. In OCI, the compartment serves as a logical container of resources. Resources are scoped to a compartment from an Identity and Access Management (IAM) perspective, and are said to be "contained within" a compartment. A selection of users or resources within Oracle may be granted access to specified resources within a compartment using IAM Policy Statements, which can be written by a tenancy administrator.
+3. In the `Stack Information` section, select the checkbox to confirm that you accept the [Oracle Terms of Use](https://cloudmarketplace.oracle.com/marketplace/content?contentId=50511634&render=inline). You can leave the `Working Directory` and `Custom Providers` options unchanged, and you can update the `Name` and `Description` according to your preference.
+4. In the `Create in compartment` field, select a compartment from the dropdown menu where you wish to create the Resource Manager Stack object. If your tenancy environment is new, this compartment will be your root-level compartment. Leave the `Terraform Version` set to the default value, and add `Tags` if desired.
+
+<details style="margin-left:33px;">
+<summary>More info about compartments</summary>
+<p></p>
+<pre>
+In OCI, the compartment serves as a logical container of resources. Resources are scoped to a compartment from an Identity and Access Management (IAM) perspective, and are said to be "contained within" a compartment. A selection of users or resources within Oracle may be granted access to specified resources within a compartment using IAM Policy Statements, which can be written by a tenancy administrator.
+</pre>
+</details>
+
 5. Click `Next` to proceed to the `Configure Variables` section.
-6. In the `Parent Compartment` field, select the compartment where you wish for the OCI resources to be deployed from the Resource Manager Stack object. For this lab, one of the deployed resources will be a new compartment, which will contain the other resources. For users with a new tenancy, this will be the root compartment.
-7. In the `Region` field, select the region where you wish to deploy your resources. For users with a new tenancy, this will be the value that corresponds to your home region. This should be shown in the upper right-hand side of the page, and appear in a format similar to `US East (Ashburn)`. Make a note of the string you select for this value, called the `region identifier`, which we will refer to later in this lab.
-6. For this lab, we will deploy a subset of resources that can deployed using the Terraform code. In the `Select Resources` tile, ensure that only the checkboxes that correspond to the below indicated services are selected to deploy the corresponding services:
+6. In the `Name Your Resources` field, enter a string that will be included with all the resources deployed by the Stack.
+7. In the `Parent Compartment` field, select the compartment where you wish for the OCI resources to be deployed from the Resource Manager Stack object. For this lab, one of the deployed resources will be a new compartment, which will contain the other resources. For users with a new tenancy, this will be the root compartment.
+8. In the `Region` field, select the region where you wish to deploy your resources. For users with a new tenancy, this will be the value that corresponds to your home region. This should be shown in the upper right-hand side of the page, and appear in a format similar to `US East (Ashburn)`. Make a note of the string you select for this value, called the `region identifier`, which we will refer to later in this lab.
+9. Update the `Name of New Compartment (Prefix)`, `Description for New Compartment`, `IAM Policy Name (Prefix)`, and `IAM Policy Description` if desired, and keep `Enable Delete for Compartment` and `Deploy IAM Policy` selected.
+10. For this lab, we will deploy a subset of resources that can deployed using the Terraform code. In the `Select Resources` tile, ensure that only the checkboxes that correspond to the below indicated services are selected to deploy the corresponding services:
 
 	- `Deploy Autonomous Data Warehouse (ADW)`
 	- `Deploy Object Storage`
 	- `Deploy Streaming`
 	- `Deploy Virtual Cloud Network (VCN)`
-7. When you are finished editing your variables in the `Configure Variables` section, click `Next` to proceed to the `Review` section.
-8. Select the checkbox for `Run Apply`, and click `Create`. You can monitor the deployment by monitoring the `Logs` window.
-9. Once the selected resources have been provisioned, click `Stack Resources` to open a page that shows details about the resources that were provisioned.
-10. Make a note of the name of the compartment you deployed. You can find the name of the compartment under the `Name` column, where the value under `Type` appears as `oci_identity_compartment`.
-11. Keep this browser tab open, as we will refer to this page later in this lab. Duplicate the current browser tab, and proceed using the new browser tab.
+11. <i>Optional</i>: In the `ADW Admin Password` field, change the password to one you would like to use to access Autonomous Data Warehouse. Remember this password for use later on.
+12. The remaining details on the `Configure Variables` page can be left as their default values or updated to fit your needs.
+13. When you are finished editing your variables in the `Configure Variables` section, click `Next` to proceed to the `Review` section.
+14. Select the checkbox for `Run Apply`, and click `Create`. You can monitor the deployment by monitoring the `Logs` window.
+15. Once the selected resources have been provisioned, click `Stack Resources` to open a page that shows details about the resources that were provisioned.
+16. Make a note of the name of the compartment you deployed. You can find the name of the compartment under the `Name` column, where the value under `Type` appears as `oci_identity_compartment`.
+17. Keep this browser tab open, as we will refer to this page later in this lab. Duplicate the current browser tab, and proceed using the new browser tab.
 	\
 	\
 	<b>Congratulations! You've successfully deployed a custom stack of OCI resources using Resource Manager!</b>
 
 ### Configure Function
-In this section, you will configure an instance of the serverless OCI Functions service, called a Function. The Function will act as a prescription for custom logic to be installed and executed on a machine that gets dynamically provisioned when the designated Function endpoint is invoked. This dynamic allocation of infrastructure is what makes the OCI Functions service a serverless platform. The custom logic is sourced from a container image repository located within the Oracle Cloud Infrastructure Registry (OCIR).
-\
-In this pipeline, the Function invocation will carry out the necessary transformations to the data structures present in the datastream, so that the data is made accessible as structured data from within your Autonomous Data Warehouse (ADW) instance.
+In this section, you will configure an instance of the serverless OCI Functions service, called a Function. The Function will act as a prescription for custom logic to be installed and executed on a machine that gets dynamically provisioned when the designated Function endpoint is invoked. This dynamic allocation of infrastructure is what makes the OCI Functions service a serverless platform. The custom logic is sourced from a container image repository located within the Oracle Cloud Infrastructure Registry (OCIR).  
+	\
+In this pipeline, the Function invocation will carry out the necessary transformations to the data present in the datastream, so that the data is accessible in Object Storage and the Autonomous Data Warehouse (ADW) instance.
+
 1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
-2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
+2. Click on the dropdown under `Compartment` on the left side of the page, and select the compartment that was deployed from the Resource Manager Stack.
 3. A Function is logically "contained within" an Application, so you will create an Application object. Click `Create application`, and enter values for the corresponding parameters:
 
 	- `Name` : `streaming_app`
@@ -134,7 +148,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 5. Select the `context` object, which is named according to the region in which you are operating. Use the `region identifier` value you selected when configuring your Terraform stack.
 	\
 	\
-	Note that in the example provided below, `us-ashburn-1` is the value provided as the `region identifier` used to represent the `US East (Ashburn)` region.
+	Note that in the example provided below, `us-ashburn-1` is the value provided as the `region identifier` used to represent the `US East (Ashburn)` region. Replace this with the correct value based on your selection when you deployed the Stack.
 	```
 	fn use context us-ashburn-1
 	```
@@ -142,7 +156,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	```
 	fn list context
 	```
-6. Update the `context` with the <i>O</i>racle <i>C</i>loud <i>id</i>entifier (OCID) of the compartment where we deployed our stack. You can find the compartment OCID on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click `Show` next to the listing of type `oci_identity_compartment`. Copy the string that corresponds to `id` (not `compartment_id`), <b>not</b> including the quotation marks. Use this value to replace `YOUR_COMPARTMENT_OCID` in the command indicated below.
+6. Update the `context` with the <i>O</i>racle <i>C</i>loud <i>Id</i>entifier (OCID) of the compartment where we deployed our stack. You can find the compartment OCID on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click `Show` next to the listing of type `oci_identity_compartment`. Copy the string that corresponds to `id` (not `compartment_id`), <b>NOT</b> including the quotation marks. Use this value to replace `YOUR_COMPARTMENT_OCID` in the command indicated below.
 	```
 	fn update context oracle.compartment-id YOUR_COMPARTMENT_OCID
 	```
@@ -191,7 +205,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	Note that if you lose the generated token, you may repeat this step to generate a new one.
 14. Verify your setup by listing Application objects in the compartment.
 ```
-fn list apps
+	fn list apps
 ```
 15. Generate boilerplate code for your Function. You will customize this code with logic provided later in this lab.
 	```
@@ -201,7 +215,7 @@ fn list apps
 	```
 	cd streaming_fnc_logic
 	```
-17. Copy the contents of [func.py](./modules/functions/service_connector_stream_processing/func.py) using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
+17. Copy the contents of [func.py](./modules/functions/service_connector_stream_processing/func.py) from this repository using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
 	\
 	On Cloud Shell, open the copy of `func.py` that you generated using the `fn init` command:
@@ -217,7 +231,7 @@ fn list apps
 	- Press `ESC` to escape `insert` mode.
 	- Save your edits and exit the `vi` editor by typing `:wq`.
 
-18. Copy the contents of [requirements.txt](./modules/functions/service_connector_stream_processing/requirements.txt) using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
+18. Copy the contents of [requirements.txt](./modules/functions/service_connector_stream_processing/requirements.txt) from this repository using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
 	\
 	On Cloud Shell, open the copy of `requirements.txt` that you generated using the `fn init` command:
@@ -240,7 +254,7 @@ fn list apps
 	<b>Congratulations! You've successfully deployed your Function!</b>
 
 ### Deploy Service Connector
-In this section, you will deploy a Service Connector instance, using the <i>O</i>racle <i>C</i>loud <i>id</i>entifier (OCID) of your Function and the same Resource Manager Stack you created [earlier in this lab](#deploy-infrastructure-using-resource-manager).
+In this section, you will deploy a Service Connector instance, using the <i>O</i>racle <i>C</i>loud <i>Id</i>entifier (OCID) of your Function and the same Resource Manager Stack you created [earlier in this lab](#deploy-infrastructure-using-resource-manager).
 
 1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
@@ -268,8 +282,8 @@ In this section, you will deploy a Service Connector instance, using the <i>O</i
 In this section, you will set up the following items in your Autonomous Data Warehouse (ADW) instance:
 - <b>JSON Collection</b>: This object will store data points from a data stream in JSON format.
 - <b>Table</b>: This object will represent the JSON keys of the data points in the data stream as fields (column headers), and their respective values as records (row entries).
-- <b>Stored Procedure</b>: This object will contain the logic used to insert the new entries of stream data sourced from the JSON Collection.
-- <b>Scheduler</b>: This object will execute the Stored Procedure on a minutely basis.
+- <b>Stored Procedure</b>: This object will contain the logic used to query the JSON collection for new stream data and insert the new data into the Table.
+- <b>Scheduler</b>: This object will execute the Stored Procedure on a minutely basis. (The frequency of the execution is customizable)
 
 1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
@@ -281,7 +295,7 @@ In this section, you will set up the following items in your Autonomous Data War
 	`Password`: `Streaming!2345`
 6. You have reached the `Database Actions` interface for your ADW instance. Click on the tile labeled `JSON`. Feel free to skip the tutorial that is automatically launched. The tutorial can be skipped by clicking `X` on the pop-ups, and revisited by clicking on the binoculars icon on the upper right-hand side of the page.
 7. Click `Create Collection`.
-8. Enter `STREAMDATA` into the `Collection Name` field. Use upper-case letters for this name, because the endpoint address for the JSON Collection will incorporate this provided name, and letter case will be a distinguishing property of the endpoint address.
+8. Enter `STREAMDATA` into the `Collection Name` field. Use upper-case letters for this name, because the endpoint address for the JSON Collection will incorporate this provided name, and it is case-sensitive.
 9. Click `Create`.
 10. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`.
 11. Click on the tile labeled `SQL`. Feel free to close the pop-up that warns that you are logged in as `ADMIN` user by clicking `X`. Also, feel free to skip the tutorial that is automatically launched. The tutorial can be skipped by clicking `X` on the pop-ups, and revisited by clicking on the binoculars icon on the upper right-hand side of the page.
@@ -352,14 +366,14 @@ In this section, you will supply environment variables to be made available to y
 	Click `+` to add the pair to the Function configuration.
 9. Next, you will retrieve the name of your Object Storage Bucket that will store processed data. Duplicate your current browser tab. Navigate to the hamburger menu at the top left of the webpage, and type `buckets` into the search field. Click the listing that appears on the page that contains the word `Buckets`.
 10. Your viewing scope should already be set according to the compartment that was deployed from the Resource Manager Stack. If this is not the case, select that compartment from the dropdown under `Compartment`.
-11. Identify the listed Bucket object whose name does not include the string `raw`, and copy the name of this listing to your clipboard.
+11. Identify the listed Bucket object whose name does <b>NOT</b> include the string `raw`, and copy the name of this listing to your clipboard.
 12. Return to the browser tab showing the Function page, and add the `Key`:`Value` pair indicated below into their respective text fields:
 	\
 	\
 	`streaming-bucket-processed` : <i>Paste the name of the Object Storage Bucket for processed data</i>\
 	\
 	Click `+` to add the pair to the Function configuration.
-13. Add the `Key`:`Value` pairs indicated below. The `Value` values are to be set as defaults used for this lab.
+13. Add the `Key`:`Value` pairs indicated below. The `Value` values are to be set as defaults used for this lab. <i>Note: STREAMDATA is case-sensitive.</i>
 	\
 	\
 	`json-collection-name` : `STREAMDATA`\
@@ -377,7 +391,7 @@ In this section, you will launch the data stream from Cloud Shell to simulate th
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 3. Click on the hyperlinked Streaming object you created from your Resource Manager deployment.
 4. Click on the `Developer tools` icon on the upper right-hand side of the page, and then click `Cloud Shell`.
-5. Copy the contents of [stream.py](./modules/compute/datastream/stream.py) using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
+5. Copy the contents of [stream.py](./modules/compute/datastream/stream.py) from this repository using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
 	On Cloud Shell, open a new file named `stream.py`.
 	```
@@ -390,12 +404,12 @@ In this section, you will launch the data stream from Cloud Shell to simulate th
 	- Paste the contents that you copied from your clipboard.
 	- Press `ESC` to escape `insert` mode.
 	- Save your edits and exit the `vi` editor by typing `:wq`.
-6. Copy and paste, but do not yet execute, the following command into Cloud Shell. On the page showing details about your Streaming instance. Copy the Streaming OCID by pressing Copy next to `OCID:` to your clipboard. Then, replace the placeholder value (`YOUR_STREAM_OCID`) by pasting the contents of your clipboard into its place.
+6. Copy and paste, but do not yet execute, the following command into Cloud Shell. On the page showing details about your Streaming instance. Copy the Streaming OCID by pressing Copy next to `OCID:` to your clipboard. Replace the placeholder value (`YOUR_STREAM_OCID`) by pasting the contents of your clipboard into its place, then execute the command.
 	```
 	export STREAMING_STREAM_OCID=YOUR_STREAM_OCID
 	```
 	This command will be used by the script that will trigger the data stream to identify your Streaming instance.
-7. Copy and paste, but do not yet execute, the following command into Cloud Shell. On the page showing details about your Streaming instance. Copy the Messages Endpoint by pressing Copy next to `Messages Endpoint:` to your clipboard. Then, replace the placeholder value (`YOUR_MESSAGES_ENDPOINT`) by pasting the contents of your clipboard into its place.
+7. Copy and paste, but do not yet execute, the following command into Cloud Shell. On the page showing details about your Streaming instance. Copy the Messages Endpoint by pressing Copy next to `Messages Endpoint:` to your clipboard. Replace the placeholder value (`YOUR_MESSAGES_ENDPOINT`) by pasting the contents of your clipboard into its place, then execute the command.
 	```
 	export STREAMING_MESSAGES_ENDPOINT=YOUR_MESSAGES_ENDPOINT
 	```
