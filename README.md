@@ -99,13 +99,7 @@ The infrastructure resources that comprise this customized arrangement are presc
 3. In the `Stack Information` section, select the checkbox to confirm that you accept the [Oracle Terms of Use](https://cloudmarketplace.oracle.com/marketplace/content?contentId=50511634&render=inline). You can leave the `Working Directory` and `Custom Providers` options unchanged, and you can update the `Name` and `Description` according to your preference.
 4. In the `Create in compartment` field, select a compartment from the dropdown menu where you wish to create the Resource Manager Stack object. If your tenancy environment is new, this compartment will be your root-level compartment. Leave the `Terraform Version` set to the default value, and add `Tags` if desired.
 
-<details style="margin-left:33px;">
-<summary>More info about compartments</summary>
-<p></p>
-<pre>
-In OCI, the compartment serves as a logical container of resources. Resources are scoped to a compartment from an Identity and Access Management (IAM) perspective, and are said to be "contained within" a compartment. A selection of users or resources within Oracle may be granted access to specified resources within a compartment using IAM Policy Statements, which can be written by a tenancy administrator.
-</pre>
-</details>
+- <i>About Compartments: In OCI, the compartment serves as a logical container of resources. Resources are scoped to a compartment from an Identity and Access Management (IAM) perspective, and are said to be "contained within" a compartment. A selection of users or resources within Oracle may be granted access to specified resources within a compartment using IAM Policy Statements, which can be written by a tenancy administrator.</i>
 
 5. Click `Next` to proceed to the `Configure Variables` section.
 6. In the `Name Your Resources` field, enter a string that will be included with all the resources deployed by the Stack.
@@ -204,9 +198,9 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	\
 	Note that if you lose the generated token, you may repeat this step to generate a new one.
 14. Verify your setup by listing Application objects in the compartment.
-```
+	```
 	fn list apps
-```
+	```
 15. Generate boilerplate code for your Function. You will customize this code with logic provided later in this lab.
 	```
 	fn init --runtime python streaming_fnc_logic
