@@ -1,5 +1,4 @@
 # Oracle Cloud Infrastructure Streaming Pipeline Function
-# Created by Paul Chyz on 1/25/2022
 
 import io
 import json
@@ -21,7 +20,7 @@ def handler(ctx, data: io.BytesIO=None):
         dbpwd = cfg['dbpwd-cipher']
         client, namespace = config_object_store()
         src_objects = json.loads(data.getvalue().decode('utf-8'))
-        output = execute_etl(client, namespace, processed_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd)
+        output = execute_etl(client, namespace, processed_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name)
         
     except (Exception, ValueError) as ex:
         logging.getLogger().info('error: ' + str(ex))
@@ -33,12 +32,12 @@ def config_object_store():
     namespace = client.get_namespace().data
     return client, namespace
 
-def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd):
+def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name):
     decoded_objects = decode_objects(src_objects)
     csv_data = to_csv(decoded_objects)
     obj_name = 'csv_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.csv'
     resp = put_object(client, namespace, dst_bucket, obj_name, csv_data)
-    load_resp = load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects)
+    load_resp = load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name)
     return decoded_objects
 
 def decode_objects(src_objects):
@@ -65,16 +64,16 @@ def put_object(client, namespace, dst_bucket, obj_name, data):
         return {"Error Response": str(ex)}
     return output
 
-def load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects):
+def load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name):
     for obj in decoded_objects:
-        insert_status = soda_insert(ordsbaseurl, schema, dbuser, dbpwd, obj)
+        insert_status = soda_insert(ordsbaseurl, schema, dbuser, dbpwd, obj, json_collection_name)
         if "id" in insert_status["items"][0]:
             print("INFO - Successfully inserted document ID " + insert_status["items"][0]["id"], flush=True)
         else:
             raise SystemExit("Error while inserting: " + insert_status)
     return insert_status
 
-def soda_insert(ordsbaseurl, schema, dbuser, dbpwd, obj):
+def soda_insert(ordsbaseurl, schema, dbuser, dbpwd, obj, json_collection_name):
     auth=(dbuser, dbpwd)
     sodaurl = ordsbaseurl + schema + '/soda/latest/'
     collectionurl = sodaurl + json_collection_name
