@@ -495,12 +495,12 @@ In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to v
 14. Click `Save`. The connection will validate, and then save. If the connection fails, double check your username and password for the database. <i>Note: The password is the database password, not the wallet password.</i>
 15. Click `Create` in the top right corner of the OAC home page, then click `Dataset`. Select the database connection you just created.
 16. Expand the `Schemas` list, then the `ADMIN` schema on the left side of the page. Drag and drop `STREAMDATA_TABLE` into the main canvas area to add it to the dataset. This will load a preview of the data.
-17. Convert `PARTITION`, `OFFSET`, `TIMESTAMP`, AND `EQUIPMENT_ID` to attributes. To do this, click on the pound sign next to each column's name and select `Attribute`.
+17. Convert `PARTITION`, `OFFSET`, `TIMESTAMP`, and `EQUIPMENT_ID` to attributes. To do this, click on the pound sign next to each column's name and select `Attribute`.
 18. Click the `Save` icon in the top right corner of the page, provide a name for the dataset, and click `OK`.
 19. Click the `Back` arrow in the top left corner of the page to return to the OAC home page.
 20. Click `Create` in the top right corner of the OAC home page, then click `Workbook`. Select the dataset you just created, then click `Add to Workbook`. For now, close the Auto Insights window on the right side of the page.
 21. Hold `command` if on a Mac or `control` if on a PC, then select `KEY` and `VIBRATION_AMPLITUDE` from the data pane on the left side of the page. Drag and drop these data elements onto the canvas. This will create a line chart.
-22. Select `VIBRATION_FREQUENCY`, `TEMPERATURE`, AND `HUMIDITY` from the data pane, and drag and drop these data elements in the `Values (Y-Axis)` section of the visualization pane just to the right of the data pane. Be sure not to drop the data elements on top of `VIBRATION_AMPLITUDE`, as that will add the new elements in place of the existing data, rather than in addition to the existing data.
+22. Select `VIBRATION_FREQUENCY`, `TEMPERATURE`, and `HUMIDITY` from the data pane, and drag and drop these data elements in the `Values (Y-Axis)` section of the visualization pane just to the right of the data pane. Be sure not to drop the data elements on top of `VIBRATION_AMPLITUDE`, as that will add the new elements in place of the existing data, rather than in addition to the existing data.
 23. Right click on the Canvas tab on the bottom of the page labeled `Canvas 1` and select `Canvas Properties`.
 24. Click on `Disabled` next to `Auto Refresh Data` to switch it to `Enabled`. Click `Sec` to switch to `Min`, and change the value from 30 to 1. Click `OK`. This will refresh the canvas every minute.
 25. Click the `Refresh Data` button in the top right toolbar. It looks like a white play button with an arrow circling around it. This will start the auto refresh process.
