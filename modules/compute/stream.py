@@ -11,7 +11,7 @@ import os
 
 config = oci.config.from_file(file_location=os.environ['STREAMING_OCI_CONFIG_FILE_LOCATION'])
 sid = os.environ['STREAMING_STREAM_OCID']
-message_endpoint = os.environ['STREAMING_MESSAGE_ENDPOINT']
+message_endpoint = os.environ['STREAMING_MESSAGES_ENDPOINT']
 
 amp_odds = .01
 freq_odds = .01
