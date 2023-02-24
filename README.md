@@ -506,8 +506,9 @@ In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to v
 25. Click the `Refresh Data` button in the top right toolbar. It looks like a white play button with an arrow circling around it. This will start the auto refresh process.
 26. Click the `Save` icon in the top right corner of the page. Provide a name for the workbook and click `Save`.
 27. Click the `Preview` button in the top right toolbar to view the dashboard as an end user. It looks like an outline of a play button. Click the `Refresh Data` button in the toolbar to start the auto refresh process in this view.
-\
-\
+
+![OAC Workbook](/images/oac_workbook.png)
+
 <b>Congratulations! You are now visualizing the output of your completed streaming pipeline!</b>
 
 ### Stop the Data Stream
