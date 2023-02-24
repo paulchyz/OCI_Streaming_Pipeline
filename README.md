@@ -129,7 +129,7 @@ The infrastructure resources that comprise this customized arrangement are presc
 ### Configure Function
 In this section, you will configure an instance of the serverless OCI Functions service, called a Function. The Function will act as a prescription for custom logic to be installed and executed on a machine that gets dynamically provisioned when the designated Function endpoint is invoked. This dynamic allocation of infrastructure is what makes the OCI Functions service a serverless platform. The custom logic is sourced from a container image repository located within the Oracle Cloud Infrastructure Registry (OCIR).  
 	\
-In this pipeline, the Function invocation will carry out the necessary transformations to the data present in the datastream, so that the data is accessible in Object Storage and the Autonomous Data Warehouse (ADW) instance.
+In this pipeline, the Function invocation will carry out the necessary transformations to the data present in the data stream, so that the data is accessible in Object Storage and the Autonomous Data Warehouse (ADW) instance.
 
 1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
 2. Click on the dropdown under `Compartment` on the left side of the page, and select the compartment that was deployed from the Resource Manager Stack.
@@ -228,7 +228,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	- Press `ESC` to escape `insert` mode.
 	- Save your edits and exit the `vi` editor by typing `:wq`.
 
-18. Copy the contents of [requirements.txt](./modules/functions/service_connector_stream_processing/requirements.txt) from this repository using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
+18. Copy the contents of [requirements.txt](./modules/functions/requirements.txt) from this repository using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
 	\
 	On Cloud Shell, open the copy of `requirements.txt` that you generated using the `fn init` command:
