@@ -14,7 +14,10 @@ This document provides instructions for deployment and configuration of a cloud-
 	- [Deploy Service Connector](#deploy-service-connector)
 	- [Configure ADW for Stream Processing](#configure-adw-for-stream-processing)
 	- [Configure Function Parameters](#configure-function-parameters)
-	- [Initiate Data Stream](#initiate-data-stream)
+	- [Configure Data Stream](#configure-data-stream)
+	- [Run The Stream Pipeline](#run-the-stream-pipeline)
+	- [Configure Oracle Analytics Cloud](#configure-oracle-analytics-cloud)
+	- [Stop the Data Stream](#stop_the_data_stream)
 
 ### Introduction
 Data streaming is a powerful tool capable of accelerating business processes and facilitating real-time decision-making across a wide variety of industries and use cases. There are many ways to implement streaming technology, and each solution offers different benefits and drawbacks. The approach documented below is a cloud-native, low-code approach to streaming, covering the complete data lifecycle from ingestion to analysis. This will enable organizations to implement a complete streaming pipeline quickly without the need to spend valuable time and energy procuring, configuring and managing IT infrastructure.
@@ -183,7 +186,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	```
 10. Generate the OCIR container image repository for your Function.
 	```
-	fn update context registry ${STREAMING_CONTEXT_REGION_KEY}.ocir.io/${STREAMING_OS_NS}/${STREAMING_FUNCTION_NAME}
+	fn update context registry ${STREAMING_CONTEXT_REGION_KEY}.ocir.io/${STREAMING_TENANCY_NAME}/${STREAMING_FUNCTION_NAME}
 	```
 11. You will construct a command to sign into OCIR. On your browser tab with Cloud Shell, minimize Cloud Shell using the `_` icon, and navigate to the user icon on the upper right-hand side of the page, hovering over the dropdown menu, click `User settings`. Copy the name of your user in large text at the top of the page, including the `oracleidentitycloudservice/` prefix if present. Restore Cloud Shell, replace the placeholder value (`your_user_extended_name`) in the command indicated below, and then run the command.
 	```
@@ -203,11 +206,11 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	```
 15. Generate boilerplate code for your Function. You will customize this code with logic provided later in this lab.
 	```
-	fn init --runtime python streaming_fnc_logic
+	fn init --runtime python streaming_fnc
 	```
 16. Switch into the generated directory
 	```
-	cd streaming_fnc_logic
+	cd streaming_fnc
 	```
 17. Copy the contents of [func.py](./modules/functions/service_connector_stream_processing/func.py) from this repository using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
@@ -265,7 +268,7 @@ In this section, you will deploy a Service Connector instance, using the <i>O</i
 13. Click `Next` to proceed to the `Review` section.
 	\
 	Note that with this selection of resources, the only change that will be made to the existing deployment will be an additional Service Connector instance. The remainder of the deployment will remain unchanged.
-14. Select the checkbox for `Run Apply`, and click `Create`. You can monitor the deployment by monitoring the `Logs` window.
+14. Select the checkbox for `Run Apply`, and click `Save Changes`. You can monitor the deployment by monitoring the `Logs` window.
 15. Once the selected resources have been provisioned, click `Stack Resources` to open a page that shows details about the resources that were provisioned.
 16. Keep this browser tab open, as we will refer to this page later in this lab. Duplicate the current browser tab, and proceed using the new browser tab.
 	\
@@ -281,7 +284,7 @@ In this section, you will set up the following items in your Autonomous Data War
 
 1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
-3. Click on the hyperlinked Application object you created.
+3. Click on the hyperlinked Database object you created.
 4. Click `Database actions`. Note that you may need to allow pop-ups in your browser if launching the new page fails.
 5. Enter your username and password for your ADW instance. For this lab, the default values are as indicated below. If you specified a custom password for your ADW instance, replace the default value with the custom value.
 	\
@@ -291,9 +294,8 @@ In this section, you will set up the following items in your Autonomous Data War
 7. Click `Create Collection`.
 8. Enter `STREAMDATA` into the `Collection Name` field. Use upper-case letters for this name, because the endpoint address for the JSON Collection will incorporate this provided name, and it is case-sensitive.
 9. Click `Create`.
-10. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`.
-11. Click on the tile labeled `SQL`. Feel free to close the pop-up that warns that you are logged in as `ADMIN` user by clicking `X`. Also, feel free to skip the tutorial that is automatically launched. The tutorial can be skipped by clicking `X` on the pop-ups, and revisited by clicking on the binoculars icon on the upper right-hand side of the page.
-12. Copy and paste the following PL/SQL code snippet into the editor. Once this code snippet has been executed, you will have created a table with the columns that you will later populate with stream data.
+10. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`. Feel free to close the pop-up that warns that you are logged in as `ADMIN` user by clicking `X`. Also, feel free to skip the tutorial that is automatically launched. The tutorial can be skipped by clicking `X` on the pop-ups, and revisited by clicking on the binoculars icon on the upper right-hand side of the page.
+11. Copy and paste the following PL/SQL code snippet into the editor. Once this code snippet has been executed, you will have created a table with the columns that you will later populate with stream data.
 	```
 	-- Create STREAMDATA_TABLE
 	create table STREAMDATA_TABLE
@@ -312,7 +314,7 @@ In this section, you will set up the following items in your Autonomous Data War
 	```
 	\
 	Click on the `Run Script` icon at the top of the editor to execute this code snippet as a script. The `Run Script` icon resembles a sheet of paper behind a green play button.
-13. Delete the PL/SQL code from your editor, and replace it with the following code. Once this code snippet has been executed, you will have created a stored procedure, which will be used to insert new entries of stream data from the JSON Collection into the table you previously created.
+12. Delete the PL/SQL code from your editor, and replace it with the following code. Once this code snippet has been executed, you will have created a stored procedure, which will be used to insert new entries of stream data from the JSON Collection into the table you previously created.
 	```
 	-- Stored procedure to insert new JSON data into table
 	CREATE PROCEDURE UPDATE_STREAMDATA_TABLE 
@@ -323,7 +325,7 @@ In this section, you will set up the following items in your Autonomous Data War
 	```
 	\
 	Click on the `Run Script` icon at the top of the editor to execute this code snippet as a script.
-14. Delete the PL/SQL code from your editor, and replace it with the following code. Once this code snippet has been executed, you will have created a <i>D</i>ata<i>b</i>ase <i>M</i>anagement <i>S</i>ystem (DBMS) Scheduler, which will trigger the stored procedure you previously created, on a minutely basis.
+13. Delete the PL/SQL code from your editor, and replace it with the following code. Once this code snippet has been executed, you will have created a <i>D</i>ata<i>b</i>ase <i>M</i>anagement <i>S</i>ystem (DBMS) Scheduler, which will trigger the stored procedure you previously created, on a minutely basis.
 	```
 	-- DBMS scheduled job to execute stored procedure at a regular interval
 	BEGIN
@@ -363,19 +365,19 @@ In this section, you will supply environment variables to be made available to y
 	`streaming-bucket-processed` : <i>Paste the name of the Object Storage Bucket for processed data</i>\
 	\
 	Click `+` to add the pair to the Function configuration.
-13. Add the `Key`:`Value` pairs indicated below. The `Value` values are to be set as defaults used for this lab. <i>Note: STREAMDATA is case-sensitive.</i>
+13. Add the `Key`:`Value` pairs indicated below. The `Value` values are to be set as defaults used for this lab. If you specified a custom password for your ADW instance, replace the default value with the custom value. <b><i>Important: `json-collection-name` is case-sensitive. `db-schema` and `db-user` must be lowercase.</i></b>
 	\
 	\
 	`json-collection-name` : `STREAMDATA`\
-	`db-schema` : `ADMIN`\
-	`db-user` : `ADMIN`\
+	`db-schema` : `admin`\
+	`db-user` : `admin`\
 	`dbpwd-cipher` : `Streaming!2345`
 	\
 	\
 	<b>Congratulations! You've successfully configured your Function with the environment variables needed to run the data stream!</b>
 
-### Initiate Data Stream
-In this section, you will launch the data stream from Cloud Shell to simulate the transmission of manufacturing data to your Streaming instance's Messages Endpoint in OCI.
+### Configure Data Stream
+In this section, you will configure the data stream from Cloud Shell to simulate the transmission of manufacturing data to your Streaming instance's Messages Endpoint in OCI.
 
 1. Navigate to the hamburger menu at the top left of the webpage, and type `streaming` into the search field. Click the listing that appears on the page that contains the words `Streaming` and `Messaging`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
@@ -414,7 +416,98 @@ In this section, you will launch the data stream from Cloud Shell to simulate th
 	```
 	env | grep ^STREAMING_
 	```
-9. Initiate the data stream.
+	<b>Congratulations! You've successfully configured your Cloud Shell and are ready to run the data stream!</b>
+
+### Run The Stream Pipeline
+In this section, you will run the data stream from Cloud Shell to simulate streaming manufacturing data, then you will view the output from each step of the pipeline.
+
+1. If you do not have a Cloud Shell session prepared from [the previous section](#configure-data-stream), open the Cloud Shell and follow steps 6-8 to configure the necessary environment variables.
+2. If necessary, change directories to `streaming_fnc`.
+	```
+	cd streaming_fnc_logic
+	```
+3. Initiate the data stream.
 	```
 	python stream.py
 	```
+4. You should see output in the Cloud Shell displaying data points that are being sent into the stream. For example:
+	```
+	SENT: [{"equipment_id": 1234, "vibration_amplitude": 275.0, "vibration_frequency": 1066.0, "temperature": 54.9, "humidity": 30.27}]
+	SENT: [{"equipment_id": 1234, "vibration_amplitude": 270.75, "vibration_frequency": 963.0, "temperature": 59.28, "humidity": 30.09}]
+	SENT: [{"equipment_id": 1234, "vibration_amplitude": 246.75, "vibration_frequency": 919.0, "temperature": 61.32, "humidity": 29.4}]
+	```
+5. Navigate to your Stream on the `Streaming` page on OCI: 
+	Click on the hamburger menu at the top left of the webpage, and type `streaming` into the search field. Click the listing that appears on the page that contains the words `Streaming` and `Messaging`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Streaming object you created from your Resource Manager deployment.
+6. Click `Load Messages`.  This will show the data points that have been ingested by the Streaming service.
+7. Navigate to your `Service Connector` on OCI: 
+	Click on the hamburger menu at the top left of the webpage, and type `service connector` into the search field. Click the listing that appears on the page that contains the words `Service Connector Hub` and `Messaging`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Service Connector object you created from your Resource Manager deployment.
+8. Click `Metrics` from the Resources list on the left side of the Service Connector page. This page provides detailed metrics about the Service Connector's data ingestion, Function task, and Object Storage target. About 1 minute after starting the data stream, you should see data populating under categories like `Bytes read from source`, `Bytes written to task`, and `Bytes written to target`. The source is the Streaming service, the task is the Function, and the target is Object Storage.
+9. Navigate to `Object Storage` on OCI: 
+	Click on the hamburger menu at the top left of the webpage, and type `buckets` into the search field. Click the listing that appears on the page that contains the words `Buckets`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked bucket object that <b>does not</b> contain the word `raw`.
+10. If you do not see data in this bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the bucket until you see populated data. This data is processed into CSV format and has been inserted into this bucket by the Function triggered from the Service Connector.
+11. In the navigation ribbon on the top of the page, click `Object Storage` to return to the list of buckets. Then click on the hyperlinked bucket object that <b>does</b> contain the word `raw`.
+12. If you do not see data in this bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the bucket until you see populated data. This data is the unporcessed data that was transmitted to the Streaming service and has been inserted into this bucket by the Service Connector.
+13. Navigate to your Autonomous Data Warehouse: 
+	Click on the hamburger menu at the top left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Database object you created from your Resource Manager deployment.
+14. Click `Database actions`. Note that you may need to allow pop-ups in your browser if launching the new page fails.
+15. Enter your username and password for your ADW instance. For this lab, the default values are as indicated below. If you specified a custom password for your ADW instance, replace the default value with the custom value.
+	\
+	`Username`: `ADMIN`\
+	`Password`: `Streaming!2345`
+16. Click on the tile labeled `JSON`. In the query editor, leave the query as `{}` and click the green `Run Query` button to run the query. This will return all JSON elements in the JSON database. There is one JSON element for each data point that was tramsitted into the stream.
+17. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`.
+18. Copy and paste the following PL/SQL query into the editor. This query returns the JSON data from STREAMDATA. The data points are contained within the `BLOB` element in each row.
+	```
+	-- Select all metadadata in JSON collection.  JSON payload data is within "BLOB"
+	SELECT * FROM STREAMDATA;
+	```
+	\
+	Highlight the PL/SQL statement, then click on the round green `Run Statement` icon at the top of the editor to execute this statement.
+19. Copy and paste the following PL/SQL query into the editor. This query returns the data in STREAMDATA_TABLE. This data has been converted to table format by the Stored Procedure we configured earlier in this lab. Converting to table format allows the data to be easily queried for things like data visualization.
+	```
+	-- Select all data in STREAMDATA_TABLE
+	SELECT * FROM STREAMDATA_TABLE ORDER BY KEY DESC;
+	```
+	\
+	Highlight the PL/SQL statement, then click on the round green `Run Statement` icon at the top of the editor to execute this statement.
+	<b>Congratulations! You've successfully run and viewed the output of the data stream!</b>
+
+### Configure Oracle Analytics Cloud
+In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to visualize the data stream.
+
+1. Click on the hamburger menu at the top left of the webpage, and type `analytics` into the search field. Click the listing that appears on the page that contains the words `Analytics Cloud` and `Analytics`.
+2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
+3. Click `Create Instance`.
+4. Provide a name for the Analytics instance. All other values can be left as default.
+5. Click `Create`.
+6. While the OAC instance is provisioning, navigate back to the `Autonomous Data Warehouse` page on OCI: 
+	Click on the hamburger menu at the top left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Database object you created from your Resource Manager deployment.
+7. Click `Database Connection`, then click `Download Wallet`. Enter a password for the wallet, then click `Download`. This wallet will download to your computer and will be required to connect OAC to ADW. Click `Close` on the `Database Connection` window.
+8. Navigate back to OAC: 
+	Click on the hamburger menu at the top left of the webpage, and type `analytics` into the search field. Click the listing that appears on the page that contains the words `Analytics Cloud` and `Analytics`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked OAC object you created.
+9. If the OAC instance does not have a status of `Active`, wait for it to finish provisioning.
+10. Once the instance is active, click `Analytics Home Page` to open Oracle Analytics Cloud.
+11. Click `Create` in the top right corner of the OAC home page, then click `Connection`. Select `Oracle Autonomous Data Warehouse`.
+12. Enter a name for the connection, then drag and drop the downloaded wallet file into the `Client Credentials` box.
+13. The `Username` and `Password` sections are referencing the ADW instance, so enter `admin` for the username, and `Streaming!2345` for the password. If you set your own database password then use the password you set.
+14. Click `Save`. The connection will validate, and then save. If the connection fails, double check your username and password for the database. <i>Note: The password is the database password, not the wallet password.</i>
+15. Click `Create` in the top right corner of the OAC home page, then click `Dataset`. Select the database connection you just created.
+16. Expand the `Schemas` list, then the `ADMIN` schema on the left side of the page. Drag and drop `STREAMDATA_TABLE` into the main canvas area to add it to the dataset. This will load a preview of the data.
+17. Convert `PARTITION`, `OFFSET`, `TIMESTAMP`, AND `EQUIPMENT_ID` to attributes. To do this, click on the pound sign next to each column's name and select `Attribute`.
+18. Click the `Save` icon in the top right corner of the page, provide a name for the dataset, and click `OK`.
+19. Click the `Back` arrow in the top left corner of the page to return to the OAC home page.
+20. Click `Create` in the top right corner of the OAC home page, then click `Workbook`. Select the dataset you just created, then click `Add to Workbook`. For now, close the Auto Insights window on the right side of the page.
+21. Hold `command` if on a Mac or `control` if on a PC, then select `KEY` and `VIBRATION_AMPLITUDE` from the data pane on the left side of the page. Drag and drop these data elements onto the canvas. This will create a line chart.
+22. Select `VIBRATION_FREQUENCY`, `TEMPERATURE`, AND `HUMIDITY` from the data pane, and drag and drop these data elements in the `Values (Y-Axis)` section of the visualization pane just to the right of the data pane. Be sure not to drop the data elements on top of `VIBRATION_AMPLITUDE`, as that will add the new elements in place of the existing data, rather than in addition to the existing data.
+23. Right click on the Canvas tab on the bottom of the page labeled `Canvas 1` and select `Canvas Properties`.
+24. Click on `Disabled` next to `Auto Refresh Data` to switch it to `Enabled`. Click `Sec` to switch to `Min`, and change the value from 30 to 1. Click `OK`. This will refresh the canvas every minute.
+25. Click the `Refresh Data` button in the top right toolbar. It looks like a white play button with an arrow circling around it. This will start the auto refresh process.
+26. Click the `Save` icon in the top right corner of the page. Provide a name for the workbook and click `Save`.
+27. Click the `Preview` button in the top right toolbar to view the dashboard as an end user. It looks like an outline of a play button. Click the `Refresh Data` button in the toolbar to start the auto refresh process in this view.
+<b>Congratulations! You are now visualizing the output of your completed streaming pipeline!</b>
+
+### Stop the Data Stream
+
+To stop the data stream, navigate to the page with the Cloud Shell running `stream.py`, click within the Cloud Shell window, and press `ctrl` + `c` to stop the script.
+
+<b>Thank you, and congratulations on completing this workshop!</b>
