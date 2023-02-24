@@ -470,6 +470,8 @@ In this section, you will run the data stream from Cloud Shell to simulate strea
 	```
 	\
 	Highlight the PL/SQL statement, then click on the round green `Run Statement` icon at the top of the editor to execute this statement.
+	\
+	\
 	<b>Congratulations! You've successfully run and viewed the output of the data stream!</b>
 
 ### Configure Oracle Analytics Cloud
@@ -504,10 +506,12 @@ In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to v
 25. Click the `Refresh Data` button in the top right toolbar. It looks like a white play button with an arrow circling around it. This will start the auto refresh process.
 26. Click the `Save` icon in the top right corner of the page. Provide a name for the workbook and click `Save`.
 27. Click the `Preview` button in the top right toolbar to view the dashboard as an end user. It looks like an outline of a play button. Click the `Refresh Data` button in the toolbar to start the auto refresh process in this view.
+\
+\
 <b>Congratulations! You are now visualizing the output of your completed streaming pipeline!</b>
 
 ### Stop the Data Stream
 
 To stop the data stream, navigate to the page with the Cloud Shell running `stream.py`, click within the Cloud Shell window, and press `ctrl` + `c` to stop the script.
-
+\
 <b>Thank you, and congratulations on completing this workshop!</b>
