@@ -17,7 +17,7 @@ This document provides instructions for deployment and configuration of a cloud-
 	- [Configure Data Stream](#configure-data-stream)
 	- [Run The Stream Pipeline](#run-the-stream-pipeline)
 	- [Configure Oracle Analytics Cloud](#configure-oracle-analytics-cloud)
-	- [Stop the Data Stream](#stop_the_data_stream)
+	- [Stop the Data Stream](#stop-the-data-stream)
 
 ### Introduction
 Data streaming is a powerful tool capable of accelerating business processes and facilitating real-time decision-making across a wide variety of industries and use cases. There are many ways to implement streaming technology, and each solution offers different benefits and drawbacks. The approach documented below is a cloud-native, low-code approach to streaming, covering the complete data lifecycle from ingestion to analysis. This will enable organizations to implement a complete streaming pipeline quickly without the need to spend valuable time and energy procuring, configuring and managing IT infrastructure.
