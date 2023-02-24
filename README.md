@@ -512,6 +512,7 @@ In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to v
 
 ### Stop the Data Stream
 
-To stop the data stream, navigate to the page with the Cloud Shell running `stream.py`, click within the Cloud Shell window, and press `ctrl` + `c` to stop the script.
+To stop the data stream, navigate to the page with the Cloud Shell running `stream.py`, click within the Cloud Shell window, and press `ctrl` + `c` to stop the script. 
+\
 \
 <b>Thank you, and congratulations on completing this workshop!</b>
