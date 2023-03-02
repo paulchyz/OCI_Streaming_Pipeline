@@ -424,7 +424,7 @@ In this section, you will run the data stream from Cloud Shell to simulate strea
 1. If you do not have a Cloud Shell session prepared from [the previous section](#configure-data-stream), open the Cloud Shell and follow steps 6-8 to configure the necessary environment variables.
 2. If necessary, change directories to `streaming_fnc`.
 	```
-	cd streaming_fnc_logic
+	cd streaming_fnc
 	```
 3. Initiate the data stream.
 	```
