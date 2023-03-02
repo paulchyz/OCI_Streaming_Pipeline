@@ -254,7 +254,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 In this section, you will deploy a Service Connector instance, using the <i>O</i>racle <i>C</i>loud <i>Id</i>entifier (OCID) of your Function and the same Resource Manager Stack you created [earlier in this lab](#deploy-infrastructure-using-resource-manager).
 
 1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
-2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
+2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. The new compartment will end with a four-character alphanumeric string that will be unique to your deployment.
 3. Click on the hyperlinked Application object you created, called `streaming_app`.
 4. Click on the hyperlinked Function object you created, called `streaming_fnc`.
 5. Copy the Function OCID, which can be found next to `OCID:`. You will supply this value in a later step when you edit your Resource Manager Stack.
