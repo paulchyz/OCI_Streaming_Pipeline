@@ -296,9 +296,7 @@ In this section, you will deploy a Service Connector instance, using the <i>O</i
 ### Configure ADW for Stream Processing
 In this section, you will set up the following items in your Autonomous Data Warehouse (ADW) instance:
 - <b>JSON Collection</b>: This object will store data points from a data stream in JSON format.
-- <b>Table</b>: This object will represent the JSON keys of the data points in the data stream as fields (column headers), and their respective values as records (row entries).
-- <b>Stored Procedure</b>: This object will contain the logic used to query the JSON collection for new stream data and insert the new data into the Table.
-- <b>Scheduler</b>: This object will execute the Stored Procedure on a minutely basis. (The frequency of the execution is customizable)
+- <b>View</b>: This object will contain a virtual table that enables querying of the JSON data as if it were a relational table.
 
 1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
