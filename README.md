@@ -403,16 +403,22 @@ In this section, you will configure the data stream from Cloud Shell to simulate
 	\
 	\
 	By appending the `export` command to your `~/.bashrc` file, this variable will be automatically assigned for each Cloud Shell session.
-7. Copy and paste, but do not yet execute, the following command into Cloud Shell. On the page showing details about your Streaming instance. Copy the Messages Endpoint by clicking `Copy` next to `Messages Endpoint:` to your clipboard. Replace the placeholder value (`YOUR_MESSAGES_ENDPOINT`) by pasting the contents of your clipboard into its place, then execute the command.
+7. Copy and paste, but do not yet execute, the following command into Cloud Shell. On the page showing details about your Streaming instance. Copy the string that corresponds to `Messages Endpoint` to your clipboard. Replace the placeholder value (`YOUR_MESSAGES_ENDPOINT`) by pasting the contents of your clipboard into its place, then execute the command.
 	```
 	echo "export STREAMING_MESSAGES_ENDPOINT=YOUR_MESSAGES_ENDPOINT" >> ~/.bashrc; source ~/.bashrc
 	```
 	This environment variable will be used by the script that will trigger the data stream to identify the Messages Endpoint your Streaming instance.
-8. Execute the following command into Cloud Shell. By appending the `export` command to your `~/.bashrc` file, this variable will be automatically assigned for each Cloud Shell session.
+	\
+	\
+	By appending the `export` command to your `~/.bashrc` file, this variable will be automatically assigned for each Cloud Shell session.
+8. Execute the following command into Cloud Shell.
 	```
 	echo "export STREAMING_OCI_CONFIG_FILE_LOCATION=/etc/oci/config" >> ~/.bashrc; source ~/.bashrc
 	```
-	This environment variable will be used by the script that will trigger the data stream to identify the location of your OCI API credentials in your Cloud Shell environment. By appending the `export` command to your `~/.bashrc` file, this variable will be automatically assigned for each Cloud Shell session.\
+	This environment variable will be used by the script that will trigger the data stream to identify the location of your OCI API credentials in your Cloud Shell environment.
+	\
+	\
+	By appending the `export` command to your `~/.bashrc` file, this variable will be automatically assigned for each Cloud Shell session.\
 	\
 	Note that if you wish to review the values set for environment variables in this lab, you can execute the following command.
 	```
