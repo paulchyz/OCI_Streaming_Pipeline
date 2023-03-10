@@ -162,7 +162,9 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	Although programatic methods of obtaining these values are offered for rapid setup, front-end methods are offered as alternatives for some of these values.
 	\
 	\
-	First, prepare a name to use for your Function. If you want to add a unique identifier (such as the random string from the Terraform resources) to the end of the function name `streaming_fnc`, do so in this step and be sure to include that identifier in any future steps that refer to `streaming_fnc`.
+	First, prepare a name to use for your Function. If you want to add a unique identifier (such as the unique string from your Terraform deployment) to the end of the function name `streaming_fnc`, do so in this step and be sure to include that identifier in any future steps that refer to `streaming_fnc`.
+		\
+	<i>You can find the unique string from your Terraform deployment on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click Outputs on the left-hand side of the page. Copy the string under the Value column that corresponds to random_string under the Key column.</i>
 	```
 	export STREAMING_FUNCTION_NAME=streaming_fnc
 	```
