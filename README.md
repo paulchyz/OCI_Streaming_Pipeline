@@ -118,7 +118,7 @@ The infrastructure resources that comprise this customized arrangement are presc
 12. The remaining details on the `Configure Variables` page can be left as their default values or updated to fit your needs.
 13. When you are finished editing your variables in the `Configure Variables` section, click `Next` to proceed to the `Review` section.
 14. Select the checkbox for `Run Apply`, and click `Create`. You can monitor the deployment by monitoring the `Logs` window.
-15. Once the selected resources have been provisioned, click `Stack Resources` to open a page that shows details about the resources that were provisioned.
+15. Once the selected resources have been provisioned, click `Job Resources` to open a page that shows details about the resources that were provisioned.
 16. Make a note of the name of the compartment you deployed. You can find the name of the compartment under the `Name` column, where the value under `Type` appears as `oci_identity_compartment`.
 17. Keep this browser tab open, as we will refer to this page later in this lab. Duplicate the current browser tab, and proceed using the new browser tab.
 	\
