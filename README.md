@@ -384,9 +384,9 @@ In this section, you will configure the data stream from Cloud Shell to simulate
 4. Click on the `Developer tools` icon on the upper right-hand side of the page, and then click `Cloud Shell`.
 5. Copy the contents of [stream.py](./modules/compute/stream.py) from this repository to your clipboard. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
-	On Cloud Shell, open a new file named `stream.py`.
+	On Cloud Shell, navigate to the home directory, and then open a new file named `stream.py`.
 	```
-	vi stream.py
+	cd;vi stream.py
 	```
 
 	Populate the file with the desired logic:
@@ -394,7 +394,7 @@ In this section, you will configure the data stream from Cloud Shell to simulate
 	- Activate `insert` mode by typing `i`.
 	- Paste the contents that you copied from your clipboard.
 	- Press `ESC` to escape `insert` mode.
-	- Save your edits and exit the `vi` editor by typing `:wq`.
+	- Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
 6. Copy and paste, but do not yet execute, the following command into Cloud Shell. On the page showing details about your Streaming instance. Copy the Streaming OCID by pressing Copy next to `OCID:` to your clipboard. Replace the placeholder value (`YOUR_STREAM_OCID`) by pasting the contents of your clipboard into its place, then execute the command.
 	```
 	echo "export STREAMING_STREAM_OCID=YOUR_STREAM_OCID" >> ~/.bashrc; source ~/.bashrc
