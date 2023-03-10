@@ -214,7 +214,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	```
 	cd streaming_fnc
 	```
-17. Copy the contents of [func.py](./modules/functions/func.py) from this repository using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
+17. Copy the contents of [func.py](./modules/functions/func.py) from this repository to your clipboard. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
 	\
 	On Cloud Shell, open the copy of `func.py` that you generated using the `fn init` command:
