@@ -230,7 +230,23 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	- Press `ESC` to escape `insert` mode.
 	- Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
 
-18. Copy the contents of [requirements.txt](./modules/functions/requirements.txt) from this repository to your clipboard. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
+18. Copy the contents of [func.yaml](./modules/functions/func.yaml) from this repository to your clipboard. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
+	\
+	\
+	On Cloud Shell, open the copy of `func.py` that you generated using the `fn init` command:
+	```
+	vi func.yaml
+	```
+	Replace boilerplate logic with custom logic:
+
+	- Navigate to the top of the file by typing `gg`.
+	- Remove all of the contents in the file by typing `dG`.
+	- Activate `insert` mode by typing `i`.
+	- Paste the contents that you copied from your clipboard.
+	- Press `ESC` to escape `insert` mode.
+	- Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
+
+19. Copy the contents of [requirements.txt](./modules/functions/requirements.txt) from this repository to your clipboard. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
 	\
 	On Cloud Shell, open the copy of `requirements.txt` that you generated using the `fn init` command:
@@ -246,7 +262,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	- Press `ESC` to escape `insert` mode.
 	- Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
 
-19. Now that you have finished making the necessary edits to your Function logic, deploy your Function to OCIR, and associate it with the Application object you created.
+20. Now that you have finished making the necessary edits to your Function logic, deploy your Function to OCIR, and associate it with the Application object you created.
 	```
 	fn -v deploy --app streaming_app
 	```
