@@ -228,7 +228,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	- Activate `insert` mode by typing `i`.
 	- Paste the contents that you copied from your clipboard.
 	- Press `ESC` to escape `insert` mode.
-	- Save your edits and exit the `vi` editor by typing `:wq`.
+	- Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
 
 18. Copy the contents of [requirements.txt](./modules/functions/requirements.txt) from this repository using the `Copy raw contents` button, which appears as two overlapping squares. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
