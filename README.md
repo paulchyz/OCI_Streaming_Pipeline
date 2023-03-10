@@ -430,48 +430,44 @@ In this section, you will configure the data stream from Cloud Shell to simulate
 In this section, you will run the data stream from Cloud Shell to simulate streaming manufacturing data, then you will view the output from each step of the pipeline.
 
 1. If you do not have a Cloud Shell session prepared from [the previous section](#configure-data-stream), open the Cloud Shell and follow steps 6-8 to configure the necessary environment variables.
-2. If necessary, change directories to `streaming_fnc`.
+2. Navigate to your home directory and initiate the data stream.
 	```
-	cd streaming_fnc
+	cd;python stream.py
 	```
-3. Initiate the data stream.
-	```
-	python stream.py
-	```
-4. You should see output in the Cloud Shell displaying data points that are being sent into the stream. For example:
+3. You should see output in the Cloud Shell displaying data points that are being sent into the stream. For example:
 	```
 	SENT: [{"equipment_id": 1234, "vibration_amplitude": 275.0, "vibration_frequency": 1066.0, "temperature": 54.9, "humidity": 30.27}]
 	SENT: [{"equipment_id": 1234, "vibration_amplitude": 270.75, "vibration_frequency": 963.0, "temperature": 59.28, "humidity": 30.09}]
 	SENT: [{"equipment_id": 1234, "vibration_amplitude": 246.75, "vibration_frequency": 919.0, "temperature": 61.32, "humidity": 29.4}]
 	```
-5. Navigate to your Stream on the `Streaming` page on OCI: 
+4. Navigate to your Stream on the `Streaming` page on OCI: 
 	Click on the hamburger menu at the top left of the webpage, and type `streaming` into the search field. Click the listing that appears on the page that contains the words `Streaming` and `Messaging`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Streaming object you created from your Resource Manager deployment.
-6. Click `Load Messages`.  This will show the data points that have been ingested by the Streaming service.
-7. Navigate to your `Service Connector` on OCI: 
+5. Click `Load Messages`.  This will show the data points that have been ingested by the Streaming service.
+6. Navigate to your `Service Connector` on OCI: 
 	Click on the hamburger menu at the top left of the webpage, and type `service connector` into the search field. Click the listing that appears on the page that contains the words `Service Connector Hub` and `Messaging`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Service Connector object you created from your Resource Manager deployment.
-8. Click `Metrics` from the Resources list on the left side of the Service Connector page. This page provides detailed metrics about the Service Connector's data ingestion, Function task, and Object Storage target. About 1 minute after starting the data stream, you should see data populating under categories like `Bytes read from source`, `Bytes written to task`, and `Bytes written to target`. The source is the Streaming service, the task is the Function, and the target is Object Storage.
-9. Navigate to `Object Storage` on OCI: 
+7. Click `Metrics` from the Resources list on the left side of the Service Connector page. This page provides detailed metrics about the Service Connector's data ingestion, Function task, and Object Storage target. About 1 minute after starting the data stream, you should see data populating under categories like `Bytes read from source`, `Bytes written to task`, and `Bytes written to target`. The source is the Streaming service, the task is the Function, and the target is Object Storage.
+8. Navigate to `Object Storage` on OCI: 
 	Click on the hamburger menu at the top left of the webpage, and type `buckets` into the search field. Click the listing that appears on the page that contains the words `Buckets`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked bucket object that <b>does not</b> contain the word `raw`.
-10. If you do not see data in this bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the bucket until you see populated data. This data is processed into CSV format and has been inserted into this bucket by the Function triggered from the Service Connector.
-11. In the navigation ribbon on the top of the page, click `Object Storage` to return to the list of buckets. Then click on the hyperlinked bucket object that <b>does</b> contain the word `raw`.
-12. If you do not see data in this bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the bucket until you see populated data. This data is the unporcessed data that was transmitted to the Streaming service and has been inserted into this bucket by the Service Connector.
-13. Navigate to your Autonomous Data Warehouse: 
+9. If you do not see data in this bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the bucket until you see populated data. This data is processed into CSV format and has been inserted into this bucket by the Function triggered from the Service Connector.
+10. In the navigation ribbon on the top of the page, click `Object Storage` to return to the list of buckets. Then click on the hyperlinked bucket object that <b>does</b> contain the word `raw`.
+11. If you do not see data in this bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the bucket until you see populated data. This data is the unporcessed data that was transmitted to the Streaming service and has been inserted into this bucket by the Service Connector.
+12. Navigate to your Autonomous Data Warehouse: 
 	Click on the hamburger menu at the top left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Database object you created from your Resource Manager deployment.
-14. Click `Database actions`. Note that you may need to allow pop-ups in your browser if launching the new page fails.
-15. Enter your username and password for your ADW instance. For this lab, the default values are as indicated below. If you specified a custom password for your ADW instance, replace the default value with the custom value.
+13. Click `Database actions`. Note that you may need to allow pop-ups in your browser if launching the new page fails.
+14. Enter your username and password for your ADW instance. For this lab, the default values are as indicated below. If you specified a custom password for your ADW instance, replace the default value with the custom value.
 	\
 	`Username`: `ADMIN`\
 	`Password`: `Streaming!2345`
-16. Click on the tile labeled `JSON`. In the query editor, leave the query as `{}` and click the green `Run Query` button to run the query. This will return all JSON elements in the JSON database. There is one JSON element for each data point that was tramsitted into the stream.
-17. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`.
-18. Copy and paste the following PL/SQL query into the editor. This query returns the JSON data from STREAMDATA. The data points are contained within the `BLOB` element in each row.
+15. Click on the tile labeled `JSON`. In the query editor, leave the query as `{}` and click the green `Run Query` button to run the query. This will return all JSON elements in the JSON database. There is one JSON element for each data point that was tramsitted into the stream.
+16. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`.
+17. Copy and paste the following PL/SQL query into the editor. This query returns the JSON data from STREAMDATA. The data points are contained within the `BLOB` element in each row.
 	```
 	-- Select all metadadata in JSON collection.  JSON payload data is within "BLOB"
 	SELECT * FROM STREAMDATA;
 	```
 	\
 	Highlight the PL/SQL statement, then click on the round green `Run Statement` icon at the top of the editor to execute this statement.
-19. Copy and paste the following PL/SQL query into the editor. This query returns the data in STREAMDATA_TABLE. This data has been converted to table format by the Stored Procedure we configured earlier in this lab. Converting to table format allows the data to be easily queried for things like data visualization.
+18. Copy and paste the following PL/SQL query into the editor. This query returns the data in STREAMDATA_TABLE. This data has been converted to table format by the Stored Procedure we configured earlier in this lab. Converting to table format allows the data to be easily queried for things like data visualization.
 	```
 	-- Select all data in STREAMDATA_TABLE
 	SELECT * FROM STREAMDATA_TABLE ORDER BY KEY DESC;
