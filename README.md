@@ -119,7 +119,7 @@ The infrastructure resources that comprise this customized arrangement are presc
 13. When you are finished editing your variables in the `Configure Variables` section, click `Next` to proceed to the `Review` section.
 14. Select the checkbox for `Run Apply`, and click `Create`. You can monitor the deployment by monitoring the `Logs` window.
 15. Once the selected resources have been provisioned, click `Job Resources` to open a page that shows details about the resources that were provisioned.
-16. Make a note of the name of the compartment you deployed. You can find the name of the compartment under the `Name` column, where the value under `Type` appears as `oci_identity_compartment`.
+16. Copy the name of the deployed compartment to your clipboard for later use. You can find the name of the compartment under the `Name` column, where the value under `Type` appears as `oci_identity_compartment`.
 17. Keep this browser tab open, as we will refer to this page later in this lab. Duplicate the current browser tab, and proceed using the new browser tab.
 	\
 	\
@@ -131,12 +131,12 @@ In this section, you will configure an instance of the serverless OCI Functions 
 In this pipeline, the Function invocation will carry out the necessary transformations to the data present in the data stream, so that the data is accessible in Object Storage and the Autonomous Data Warehouse (ADW) instance.
 
 1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
-2. Click on the dropdown under `Compartment` on the left side of the page, and select the compartment that was deployed from the Resource Manager Stack.
+2. Click on the dropdown under `Compartment` on the left side of the page. Paste the value from your clipboard, which is the name of the compartment that was deployed from the Resource Manager stack, and then select the same compartment name that appears on the dropdown menu.
 3. A Function is logically "contained within" an Application, so you will create an Application object. Click `Create application`, and enter values for the corresponding parameters:
 
 	- `Name` : `streaming_app`
-	- `VCN` : <i>Ensure that the compartment is set to the deployed compartment. Then, select the deployed VCN.</i>
-	- `subnets` : <i>Ensure that the compartment is set to the deployed compartment. Then, select the deployed subnet.</i>
+	- `VCN` : <i>Ensure that the compartment is set to the deployed compartment. Then, select the deployed VCN, which is named `ST_vcn` unless customized.</i>
+	- `subnets` : <i>Ensure that the compartment is set to the deployed compartment. Then, select the deployed subnet, which is named `Subnet1` unless customized.</i>
 	\
 	\
 	Then, click `Create`.
@@ -152,7 +152,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	```
 	fn list context
 	```
-6. Update the `context` with the <i>O</i>racle <i>C</i>loud <i>Id</i>entifier (OCID) of the compartment where we deployed our stack. You can find the compartment OCID on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click `Show` next to the listing of type `oci_identity_compartment`. Copy the string that corresponds to `id` (not `compartment_id`), <b>NOT</b> including the quotation marks. Use this value to replace `YOUR_COMPARTMENT_OCID` in the command indicated below.
+6. Update the `context` with the <i>O</i>racle <i>C</i>loud <i>Id</i>entifier (OCID) of the compartment where we deployed our stack. You can find the compartment OCID on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click `Outputs` on the left-hand side of the page. Copy the string under the `Value` column that corresponds to `iam_compartment_id` under the `Key` column. Use this value to replace `YOUR_COMPARTMENT_OCID` in the command indicated below.
 	```
 	fn update context oracle.compartment-id YOUR_COMPARTMENT_OCID
 	```
