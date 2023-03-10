@@ -233,7 +233,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 18. Copy the contents of [func.yaml](./modules/functions/func.yaml) from this repository to your clipboard. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
 	\
-	On Cloud Shell, open the copy of `func.py` that you generated using the `fn init` command:
+	On Cloud Shell, open the copy of `func.yaml` that you generated using the `fn init` command:
 	```
 	vi func.yaml
 	```
