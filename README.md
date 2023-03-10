@@ -66,7 +66,6 @@ Securely store any type of data in its native format, with built-in redundancy.
 <summary>Service Connector</summary>
 <p></p>
 <pre>
-Manage and move data between OCI services, and trigger Functions for lightweight, serverless data processing. Also supports management and movement of data between OCI services and third-party services.
 </pre>
 </details>
 <details>
@@ -105,7 +104,7 @@ The infrastructure resources that comprise this customized arrangement are presc
 	<i>About Compartments: In OCI, the compartment serves as a logical container of resources. Resources are scoped to a compartment from an Identity and Access Management (IAM) perspective, and are said to be "contained within" a compartment. A selection of users or resources within Oracle may be granted access to specified resources within a compartment using IAM Policy Statements, which can be written by a tenancy administrator.</i>
 
 5. Click `Next` to proceed to the `Configure Variables` section.
-6. In the `Name Your Resources` field, enter a string that will be included with all the resources deployed by the Stack.
+6. In the `Name Your Resources` field, enter a string that will be included within the names of the resources deployed by the Stack.
 7. In the `Parent Compartment` field, select the compartment where you wish for the OCI resources to be deployed from the Resource Manager Stack object. For this lab, one of the deployed resources will be a new compartment, which will contain the other resources. For users with a new tenancy, this will be the root compartment.
 8. In the `Region` field, select the region where you wish to deploy your resources. For this lab, this will be the value that corresponds to your home region. This should be shown in the upper right-hand side of the page, and appear in a format similar to `US East (Ashburn)`. Make a note of the string you select for this value, called the `region identifier`, which we will refer to later in this lab.
 9. Update the `Name of New Compartment (Prefix)`, `Description for New Compartment`, `IAM Policy Name (Prefix)`, and `IAM Policy Description` if desired, and keep `Enable Delete for Compartment` and `Deploy IAM Policy` selected.
