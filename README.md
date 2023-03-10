@@ -152,7 +152,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	```
 	fn list context
 	```
-6. Update the `context` with the <i>O</i>racle <i>C</i>loud <i>Id</i>entifier (OCID) of the compartment where we deployed our stack. You can find the compartment OCID on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click `Show` next to the listing of type `oci_identity_compartment`. Copy the string that corresponds to `id` (not `compartment_id`), <b>NOT</b> including the quotation marks. Use this value to replace `YOUR_COMPARTMENT_OCID` in the command indicated below.
+6. Update the `context` with the <i>O</i>racle <i>C</i>loud <i>Id</i>entifier (OCID) of the compartment where we deployed our stack. You can find the compartment OCID on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click `Outputs` on the left-hand side of the page. Copy the string under the `Value` column that corresponds to `iam_compartment_id` under the `Key` column. Use this value to replace `YOUR_COMPARTMENT_OCID` in the command indicated below.
 	```
 	fn update context oracle.compartment-id YOUR_COMPARTMENT_OCID
 	```
