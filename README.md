@@ -119,7 +119,7 @@ The infrastructure resources that comprise this customized arrangement are presc
 13. When you are finished editing your variables in the `Configure Variables` section, click `Next` to proceed to the `Review` section.
 14. Select the checkbox for `Run Apply`, and click `Create`. You can monitor the deployment by monitoring the `Logs` window.
 15. Once the selected resources have been provisioned, click `Job Resources` to open a page that shows details about the resources that were provisioned.
-16. Make a note of the name of the compartment you deployed. You can find the name of the compartment under the `Name` column, where the value under `Type` appears as `oci_identity_compartment`.
+16. Copy the name of the deployed compartment to your clipboard for later use. You can find the name of the compartment under the `Name` column, where the value under `Type` appears as `oci_identity_compartment`.
 17. Keep this browser tab open, as we will refer to this page later in this lab. Duplicate the current browser tab, and proceed using the new browser tab.
 	\
 	\
@@ -131,7 +131,7 @@ In this section, you will configure an instance of the serverless OCI Functions 
 In this pipeline, the Function invocation will carry out the necessary transformations to the data present in the data stream, so that the data is accessible in Object Storage and the Autonomous Data Warehouse (ADW) instance.
 
 1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
-2. Click on the dropdown under `Compartment` on the left side of the page, and select the compartment that was deployed from the Resource Manager Stack.
+2. Click on the dropdown under `Compartment` on the left side of the page, paste the compartment name from your clipboard, and then select the compartment that was deployed from the Resource Manager Stack.
 3. A Function is logically "contained within" an Application, so you will create an Application object. Click `Create application`, and enter values for the corresponding parameters:
 
 	- `Name` : `streaming_app`
