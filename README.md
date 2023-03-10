@@ -131,7 +131,7 @@ In this section, you will configure an instance of the serverless OCI Functions 
 In this pipeline, the Function invocation will carry out the necessary transformations to the data present in the data stream, so that the data is accessible in Object Storage and the Autonomous Data Warehouse (ADW) instance.
 
 1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
-2. Click on the dropdown under `Compartment` on the left side of the page, paste the compartment name from your clipboard, and then select the compartment that was deployed from the Resource Manager Stack.
+2. Click on the dropdown under `Compartment` on the left side of the page. Paste the value from your clipboard, which is the name of the compartment that was deployed from the Resource Manager stack, and then select the same compartment name that appears on the dropdown menu.
 3. A Function is logically "contained within" an Application, so you will create an Application object. Click `Create application`, and enter values for the corresponding parameters:
 
 	- `Name` : `streaming_app`
