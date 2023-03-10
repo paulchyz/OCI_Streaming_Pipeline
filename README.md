@@ -135,8 +135,8 @@ In this pipeline, the Function invocation will carry out the necessary transform
 3. A Function is logically "contained within" an Application, so you will create an Application object. Click `Create application`, and enter values for the corresponding parameters:
 
 	- `Name` : `streaming_app`
-	- `VCN` : <i>Ensure that the compartment is set to the deployed compartment. Then, select the deployed VCN.</i>
-	- `subnets` : <i>Ensure that the compartment is set to the deployed compartment. Then, select the deployed subnet.</i>
+	- `VCN` : <i>Ensure that the compartment is set to the deployed compartment. Then, select the deployed VCN, which is named `ST_vcn` unless customized.</i>
+	- `subnets` : <i>Ensure that the compartment is set to the deployed compartment. Then, select the deployed subnet, which is named `Subnet1` unless customized.</i>
 	\
 	\
 	Then, click `Create`.
