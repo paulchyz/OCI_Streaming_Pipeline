@@ -1,5 +1,5 @@
 schema_version: 20180708
-name: streaming_fnc_1
+name: streaming_fnc
 version: 0.0.1
 runtime: python
 build_image: fnproject/python:3.9-dev
