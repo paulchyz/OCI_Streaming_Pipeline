@@ -294,49 +294,30 @@ In this section, you will set up the following items in your Autonomous Data War
 8. Enter `STREAMDATA` into the `Collection Name` field. Use upper-case letters for this name, because the endpoint address for the JSON Collection will incorporate this provided name, and it is case-sensitive.
 9. Click `Create`.
 10. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`. Feel free to close the pop-up that warns that you are logged in as `ADMIN` user by clicking `X`. Also, feel free to skip the tutorial that is automatically launched. The tutorial can be skipped by clicking `X` on the pop-ups, and revisited by clicking on the binoculars icon on the upper right-hand side of the page.
-11. Copy and paste the following PL/SQL code snippet into the editor. Once this code snippet has been executed, you will have created a table with the columns that you will later populate with stream data.
+11. Copy and paste the following PL/SQL code snippet into the editor. Once this code snippet has been executed, you will have created a database view, which uses a stored query to create a virtual table that can be queried to return the JSON collection data in a relational format.
 	```
-	-- Create STREAMDATA_TABLE
-	create table STREAMDATA_TABLE
-	(
-	    STREAM VARCHAR2(40),
-	    KEY TIMESTAMP,
-	    PARTITION NUMBER,
-	    OFFSET NUMBER,
-	    TIMESTAMP NUMBER,
-	    EQUIPMENT_ID NUMBER,
-	    VIBRATION_AMPLITUDE NUMBER,
-	    VIBRATION_FREQUENCY NUMBER,
-	    TEMPERATURE NUMBER,
-	    HUMIDITY NUMBER
-	);
-	```
-	\
-	Click on the `Run Script` icon at the top of the editor to execute this code snippet as a script. The `Run Script` icon resembles a sheet of paper behind a green play button.
-12. Delete the PL/SQL code from your editor, and replace it with the following code. Once this code snippet has been executed, you will have created a stored procedure, which will be used to insert new entries of stream data from the JSON Collection into the table you previously created.
-	```
-	-- Stored procedure to insert new JSON data into table
-	CREATE PROCEDURE UPDATE_STREAMDATA_TABLE 
-	AS 
-	BEGIN 
-	   INSERT INTO ADMIN.STREAMDATA_TABLE SELECT stream, TO_TIMESTAMP(key, 'YYYY-MM-DD HH24:MI:SS.FF'), partition, offset, timestamp, equipment_id, vibration_amplitude, vibration_frequency, temperature, humidity FROM STREAMDATA, JSON_TABLE(JSON_DOCUMENT, '$' COLUMNS(stream, key, partition, offset, timestamp, equipment_id, vibration_amplitude, vibration_frequency, temperature, humidity)) WHERE TO_TIMESTAMP(key, 'YYYY-MM-DD HH24:MI:SS.FF') NOT IN (SELECT KEY FROM ADMIN.STREAMDATA_TABLE);
-	END UPDATE_STREAMDATA_TABLE;
+	-- Create database view to return relational data from JSON collection
+	CREATE OR REPLACE VIEW STREAMDATA_VIEW AS 
+	SELECT stream, TO_TIMESTAMP(key, 'YYYY-MM-DD HH24:MI:SS.FF') key, partition, offset, timestamp, equipment_id, vibration_amplitude, vibration_frequency, temperature, humidity FROM STREAMDATA,
+		JSON_TABLE(STREAMDATA.JSON_DOCUMENT, '$'
+			COLUMNS (
+				STREAM VARCHAR2(40) PATH '$.stream',
+				KEY VARCHAR2(100) PATH '$.key',
+				PARTITION NUMBER PATH '$.partition',
+				OFFSET NUMBER PATH '$.offset',
+				TIMESTAMP NUMBER PATH '$.timestamp',
+				EQUIPMENT_ID NUMBER PATH '$.equipment_id',
+				VIBRATION_AMPLITUDE NUMBER PATH '$.vibration_amplitude',
+				VIBRATION_FREQUENCY NUMBER PATH '$.vibration_frequency',
+				TEMPERATURE NUMBER PATH '$.temperature',
+				HUMIDITY NUMBER PATH '$.humidity'
+			)
+		) ORDER BY KEY DESC;
 	```
 	\
 	Click on the `Run Script` icon at the top of the editor to execute this code snippet as a script.
-13. Delete the PL/SQL code from your editor, and replace it with the following code. Once this code snippet has been executed, you will have created a <i>D</i>ata<i>b</i>ase <i>M</i>anagement <i>S</i>ystem (DBMS) Scheduler, which will trigger the stored procedure you previously created, on a minutely basis.
-	```
-	-- DBMS scheduled job to execute stored procedure at a regular interval
-	BEGIN
-	  DBMS_SCHEDULER.CREATE_JOB (
-	   job_name           =>  'collection_to_table_job',
-	   job_type           =>  'STORED_PROCEDURE',
-	   job_action         =>  'ADMIN.UPDATE_STREAMDATA_TABLE',
-	   start_date         =>  SYSTIMESTAMP,
-	   repeat_interval    =>  'FREQ=MINUTELY; INTERVAL=1',
-	   enabled            =>  TRUE);
-	END;
-	```
+	\
+	\
 	<b>Congratulations! You've successfully configured your ADW for stream processing!</b>
 
 ### Configure Function Parameters
@@ -493,7 +474,7 @@ In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to v
 13. The `Username` and `Password` sections are referencing the ADW instance, so enter `admin` for the username, and `Streaming!2345` for the password. If you set your own database password then use the password you set.
 14. Click `Save`. The connection will validate, and then save. If the connection fails, double check your username and password for the database. <i>Note: The password is the database password, not the wallet password.</i>
 15. Click `Create` in the top right corner of the OAC home page, then click `Dataset`. Select the database connection you just created.
-16. Expand the `Schemas` list, then the `ADMIN` schema on the left side of the page. Drag and drop `STREAMDATA_TABLE` into the main canvas area to add it to the dataset. This will load a preview of the data.
+16. Expand the `Schemas` list, then the `ADMIN` schema on the left side of the page. Drag and drop `STREAMDATA_VIEW` into the main canvas area to add it to the dataset. This will load a preview of the data.
 17. Convert `PARTITION`, `OFFSET`, `TIMESTAMP`, and `EQUIPMENT_ID` to attributes. To do this, click on the pound sign next to each column's name and select `Attribute`.
 18. Click the `Save` icon in the top right corner of the page, provide a name for the dataset, and click `OK`.
 19. Click the `Back` arrow in the top left corner of the page to return to the OAC home page.
