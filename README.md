@@ -279,14 +279,14 @@ In this section, you will deploy a Service Connector instance, using the <i>O</i
 6. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `stacks` into the search field. Click the listing that appears on the page that contains the words `Stacks` and `Resource Manager`.
 7. Click on the dropdown under `Compartment`, and select the compartment where you created your Resource Manager Stack object. If your tenancy environment is new, this will be your root-level compartment.
 8. Click on the hyperlinked Resource Manager Stack object you created for this lab.
-9. Click `Edit` > Click `Edit Stack` > Click `Next`.
+9. Click `Edit` > Click `Edit stack` > Click `Next`.
 10. In the `Region` field, select the same region where you deployed your resources previously.
 11. In the `Select Resources` tile, allow the checkboxes that are already checked to remain selected, and also select the checkbox next to `Deploy Service Connector Hub (SCH)`.
 12. In the `Service Connector Hub (SCH)` tile, paste the Function OCID into the `Function OCID` field.
 13. Click `Next` to proceed to the `Review` section.
 	\
 	Note that with this selection of resources, the only change that will be made to the existing deployment will be an additional Service Connector instance. The remainder of the deployment will remain unchanged.
-14. Select the checkbox for `Run Apply`, and click `Save Changes`. You can monitor the deployment by monitoring the `Logs` window.
+14. Select the checkbox for `Run apply`, and click `Save changes`. You can monitor the deployment by monitoring the `Logs` window.
 15. Once the selected resources have been provisioned, click `Stack Resources` to open a page that shows details about the resources that were provisioned.
 16. Keep this browser tab open, as we will refer to this page later in this lab. Duplicate the current browser tab, and proceed using the new browser tab.
 	\
