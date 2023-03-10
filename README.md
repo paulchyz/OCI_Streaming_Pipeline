@@ -362,7 +362,9 @@ In this section, you will supply environment variables to be made available to y
 	`streaming-bucket-processed` : <i>Paste the name of the Object Storage Bucket for processed data</i>\
 	\
 	Click `+` to add the pair to the Function configuration.
-13. Add the `Key`:`Value` pairs indicated below. The `Value` values are to be set as defaults used for this lab. If you specified a custom password for your ADW instance, replace the default value with the custom value. <b><i>Important: `json-collection-name` is case-sensitive. `db-schema` and `db-user` must be lowercase.</i></b>
+13. Add the `Key`:`Value` pairs indicated below. The `Value` values are to be set as defaults used for this lab. If you specified a custom password for your ADW instance, replace the default value with the custom value.
+	
+	<b>Important: `json-collection-name` is case-sensitive. `db-schema` and `db-user` must be lowercase.</b>
 	\
 	\
 	`json-collection-name` : `STREAMDATA`\
