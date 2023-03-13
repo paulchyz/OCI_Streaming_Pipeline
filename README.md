@@ -140,7 +140,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	\
 	\
 	Then, click `Create`.
-4. Click on the `Developer tools` icon on the upper right-hand side of the page, and then click `Cloud Shell`. This will open a command-line interface (CLI) environment from which we will programatically configure and deploy a serverless instance of OCI Functions, called a Function. The subsequent steps will walk you through how to configure and deploy your Function using the Cloud Shell CLI.
+4. Click on the `Developer tools` icon on the upper right-hand side of the page, and then click `Cloud Shell`. This will open a command-line interface (CLI) environment from which we will programmatically configure and deploy a serverless instance of OCI Functions, called a Function. The subsequent steps will walk you through how to configure and deploy your Function using the Cloud Shell CLI.
 5. Select the `context` object, which is named according to the region in which you are operating. Use the `region identifier` value you selected when configuring your Terraform stack.
 	\
 	\
@@ -156,7 +156,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	```
 	fn update context oracle.compartment-id YOUR_COMPARTMENT_OCID
 	```
-7. Over the next few steps, you will generate the values you will use to generate an Oracle Coud Infrastructure Registry (OCIR) container image repository. This repository is where your Function code will be hosted, available to serverless Function machines as they are dynamically allocated. Although programatic methods of obtaining the values are offered for rapid setup, front-end methods are offered as alternatives for some of the values.
+7. Over the next few steps, you will generate the values you will use to generate an Oracle Coud Infrastructure Registry (OCIR) container image repository. This repository is where your Function code will be hosted, available to serverless Function machines as they are dynamically allocated. Although programmatic methods of obtaining the values are offered for rapid setup, front-end methods are offered as alternatives for some of the values.
 	\
 	\
 	First, prepare a name to use for your Function. Use `streaming_fnc` as a prefix specific to this lab, and as a suffix, add the unique string associated with your deployment in order to provide uniqueness to the name of the Function instance within your OCI user account.
@@ -452,7 +452,7 @@ In this section, you will run the data stream from Cloud Shell to simulate strea
 	Click on the hamburger menu at the top-left of the webpage, and type `buckets` into the search field. Click the listing that appears on the page that contains the words `Buckets`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked bucket object that <b>does not</b> contain the word `raw`.
 9. If you do not see data in this bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the bucket until you see populated data. This data is processed into CSV format and has been inserted into this bucket by the Function triggered from the Service Connector.
 10. In the navigation ribbon on the top of the page, click `Object Storage` to return to the list of buckets. Then click on the hyperlinked bucket object that <b>does</b> contain the word `raw`.
-11. If you do not see data in this bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the bucket until you see populated data. This data is the unporcessed data that was transmitted to the Streaming service and has been inserted into this bucket by the Service Connector.
+11. If you do not see data in this bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the bucket until you see populated data. This data is the unprocessed data that was transmitted to the Streaming service and has been inserted into this bucket by the Service Connector.
 12. Navigate to your Autonomous Data Warehouse (ADW) instance:
 	\
 	Click on the hamburger menu at the top-left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Database object you created from your Resource Manager deployment.
