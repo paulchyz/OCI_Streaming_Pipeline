@@ -156,16 +156,16 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	```
 	fn update context oracle.compartment-id YOUR_COMPARTMENT_OCID
 	```
-7. Over the next few steps, you will generate the values you will use to generate an Oracle Coud Infrastructure Registry (OCIR) container image repository. This repository is where your Function code will be hosted, available to serverless Function machines as they are dynamically allocated.
+7. Over the next few steps, you will generate the values you will use to generate an Oracle Coud Infrastructure Registry (OCIR) container image repository. This repository is where your Function code will be hosted, available to serverless Function machines as they are dynamically allocated. Although programatic methods of obtaining the values are offered for rapid setup, front-end methods are offered as alternatives for some of the values.
 	\
 	\
-	Although programatic methods of obtaining these values are offered for rapid setup, front-end methods are offered as alternatives for some of these values.
+	First, prepare a name to use for your Function. Use `streaming_fnc` as a prefix specific to this lab, and as a suffix, add the unique string associated with your deployment in order to provide uniqueness to the name of the Function instance within your OCI user account.
 	\
 	\
-	First, prepare a name to use for your Function. If you want to add a unique identifier (such as the unique string from your Terraform deployment) to the end of the function name `streaming_fnc`, do so in this step and be sure to include that identifier in any future steps that refer to `streaming_fnc`.
+	You can find the unique string from your Terraform deployment on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click `Outputs` on the left-hand side of the page. Copy the string under the `Value` column that corresponds to `random_string` under the Key column.
 	\
 	\
-	You can find the unique string from your Terraform deployment on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click Outputs on the left-hand side of the page. Copy the string under the Value column that corresponds to random_string under the Key column.
+	Copy and paste, but do not yet execute, the following command into Cloud Shell. Add the string unique to your deployment to the prefix `streaming_fnc`, then run the command.
 	```
 	export STREAMING_FUNCTION_NAME=streaming_fnc
 	```
@@ -206,11 +206,11 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	```
 	fn list apps
 	```
-15. Generate boilerplate code for your Function. You will customize this code with logic provided later in this lab.
+15. Copy and paste, but do not yet execute, the following command into Cloud Shell. Add the string unique to your deployment to the prefix `streaming_fnc`, then run the command. This will generate boilerplate code for your Function. You will customize this code with logic provided later in this lab.
 	```
 	fn init --runtime python streaming_fnc
 	```
-16. Switch into the generated directory
+16. Switch into the generated directory, adding string unique to your deployment to the prefix `streaming_fnc` included in the command below.
 	```
 	cd streaming_fnc
 	```
@@ -467,10 +467,10 @@ In this section, you will run the data stream from Cloud Shell to simulate strea
 	```
 	\
 	Highlight the PL/SQL statement, then click on the round green `Run Statement` icon at the top of the editor to execute this statement.
-18. Copy and paste the following PL/SQL query into the editor. This query returns the data in STREAMDATA_TABLE. This data has been converted to table format by the Stored Procedure we configured earlier in this lab. Converting to table format allows the data to be easily queried for things like data visualization.
+18. Copy and paste the following PL/SQL query into the editor. This query returns the data in STREAMDATA_VIEW. This data has been converted to table format by the Stored Procedure we configured earlier in this lab. Converting to table format allows the data to be easily queried for things like data visualization.
 	```
-	-- Select all data in STREAMDATA_TABLE
-	SELECT * FROM STREAMDATA_TABLE ORDER BY KEY DESC;
+	-- Select all data in STREAMDATA_VIEW
+	SELECT * FROM STREAMDATA_VIEW ORDER BY KEY DESC;
 	```
 	\
 	Highlight the PL/SQL statement, then click on the round green `Run Statement` icon at the top of the editor to execute this statement.
@@ -481,22 +481,25 @@ In this section, you will run the data stream from Cloud Shell to simulate strea
 ### Configure Oracle Analytics Cloud
 In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to visualize the data stream.
 
-1. Click on the hamburger menu at the top left of the webpage, and type `analytics` into the search field. Click the listing that appears on the page that contains the words `Analytics Cloud` and `Analytics`.
+1. Return to a browser tab where you can access the main OCI Console. Click on the hamburger menu at the top left of the webpage, and type `analytics` into the search field. Click the listing that appears on the page that contains the words `Analytics Cloud` and `Analytics`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 3. Click `Create Instance`.
-4. Provide a name for the Analytics instance. All other values can be left as default.
+4. Note that the OAC instance requires a name, and that all other values can be left as default for this lab. Use `streaming_oac` as a prefix specific to this lab, and as a suffix, add the unique string associated with your deployment in order to provide the required uniqueness to the name of the OAC instance within the tenancy.
+	\
+	\
+	You can find the unique string from your Terraform deployment on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click `Outputs` on the left-hand side of the page. Copy the string under the `Value` column that corresponds to `random_string` under the Key column.
 5. Click `Create`.
 6. While the OAC instance is provisioning, navigate back to the `Autonomous Data Warehouse` page on OCI: 
-	Click on the hamburger menu at the top left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Database object you created from your Resource Manager deployment.
-7. Click `Database Connection`, then click `Download Wallet`. Enter a password for the wallet, then click `Download`. This wallet will download to your computer and will be required to connect OAC to ADW. Click `Close` on the `Database Connection` window.
+	Click on the hamburger menu at the top left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked ADW object you created from your Resource Manager deployment.
+7. Click `Database connection`, then click `Download wallet`. Enter a password for the wallet. This password may be of your choosing. For simplicity, you may choose `Streaming!2345`, which is the password provided in this lab for the `admin` user in ADW. Then click `Download`. This wallet will download to your computer and will be required to connect OAC to ADW. Click `Close` on the `Database connection` window.
 8. Navigate back to OAC: 
 	Click on the hamburger menu at the top left of the webpage, and type `analytics` into the search field. Click the listing that appears on the page that contains the words `Analytics Cloud` and `Analytics`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked OAC object you created.
-9. If the OAC instance does not have a status of `Active`, wait for it to finish provisioning.
+9. If the OAC instance does not have a `State` of `Active`, wait for it to finish provisioning.
 10. Once the instance is active, click `Analytics Home Page` to open Oracle Analytics Cloud.
 11. Click `Create` in the top right corner of the OAC home page, then click `Connection`. Select `Oracle Autonomous Data Warehouse`.
-12. Enter a name for the connection, then drag and drop the downloaded wallet file into the `Client Credentials` box.
-13. The `Username` and `Password` sections are referencing the ADW instance, so enter `admin` for the username, and `Streaming!2345` for the password. If you set your own database password then use the password you set.
-14. Click `Save`. The connection will validate, and then save. If the connection fails, double check your username and password for the database. <i>Note: The password is the database password, not the wallet password.</i>
+12. Enter a name for the connection, e.g. `streaming_adw_conn`, then drag and drop the downloaded wallet file into the `Client Credentials` box.
+13. The `Username` and `Password` sections are referencing the ADW instance, so enter `admin` for the username, and `Streaming!2345` for the password, or your own custom password if you chose to set a custom password.
+14. Click `Save`. The connection will validate, and then save. If the connection fails, double check your username and password for the database. <i>Note: The password is the database password, not the wallet password, although the same password is provided for both items in this lab.</i>
 15. Click `Create` in the top right corner of the OAC home page, then click `Dataset`. Select the database connection you just created.
 16. Expand the `Schemas` list, then the `ADMIN` schema on the left side of the page. Drag and drop `STREAMDATA_VIEW` into the main canvas area to add it to the dataset. This will load a preview of the data.
 17. Convert `PARTITION`, `OFFSET`, `TIMESTAMP`, and `EQUIPMENT_ID` to attributes. To do this, click on the pound sign next to each column's name and select `Attribute`.
