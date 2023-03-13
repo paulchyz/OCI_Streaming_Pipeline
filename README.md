@@ -130,8 +130,8 @@ In this section, you will configure an instance of the serverless OCI Functions 
 	\
 In this pipeline, the Function invocation will carry out the necessary transformations to the data present in the data stream, so that the data is accessible in Object Storage and the Autonomous Data Warehouse (ADW) instance.
 
-1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
-2. Click on the dropdown under `Compartment` on the left side of the page. Paste the value from your clipboard, which is the name of the compartment that was deployed from the Resource Manager stack, and then select the same compartment name that appears on the dropdown menu.
+1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
+2. Click on the dropdown under `Compartment` on the left-hand side of the page. Paste the value from your clipboard, which is the name of the compartment that was deployed from the Resource Manager stack, and then select the same compartment name that appears on the dropdown menu.
 3. A Function is logically "contained within" an Application, so you will create an Application object. Click `Create application`, and enter values for the corresponding parameters:
 
 	- `Name` : `streaming_app`
@@ -271,12 +271,12 @@ In this pipeline, the Function invocation will carry out the necessary transform
 ### Deploy Service Connector
 In this section, you will deploy a Service Connector instance, using the <i>O</i>racle <i>C</i>loud <i>Id</i>entifier (OCID) of your Function and the same Resource Manager Stack you created [earlier in this lab](#deploy-infrastructure-using-resource-manager).
 
-1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
+1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. The new compartment will end with the four-character alphanumeric string unique to your deployment.
 3. Click on the hyperlinked Application object you created, called `streaming_app`.
 4. Click on the hyperlinked Function object you created, called `streaming_fnc`.
 5. Copy the Function OCID, which can be found next to `OCID:`. You will supply this value in a later step when you edit your Resource Manager Stack.
-6. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `stacks` into the search field. Click the listing that appears on the page that contains the words `Stacks` and `Resource Manager`.
+6. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `stacks` into the search field. Click the listing that appears on the page that contains the words `Stacks` and `Resource Manager`.
 7. Click on the dropdown under `Compartment`, and select the compartment where you created your Resource Manager Stack object. If your tenancy environment is new, this will be your root-level compartment.
 8. Click on the hyperlinked Resource Manager Stack object you created for this lab.
 9. Click `Edit` > Click `Edit stack` > Click `Next`.
@@ -298,7 +298,7 @@ In this section, you will set up the following items in your Autonomous Data War
 - <b>JSON Collection</b>: This object will store data points from a data stream in JSON format.
 - <b>Database View</b>: This object will contain a virtual table that enables querying of the JSON data as if it were a relational table.
 
-1. In your main OCI Console, navigate to the hamburger menu at the top left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`.
+1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 3. Click on the hyperlinked Database object you created.
 4. Click `Database actions`. Note that you may need to allow pop-ups in your browser if launching the new page fails.
@@ -340,10 +340,10 @@ In this section, you will set up the following items in your Autonomous Data War
 ### Configure Function Parameters
 In this section, you will supply environment variables to be made available to your Function machines while they execute their associated logic. These environment variables will supply the necessary values for your streaming pipeline to integrate with some of the resources in our deployment, work end-to-end. These environment variables must be set using `Key`:`Value` pairs, where each pair represents the name of an environment variable, and its associated value, respectively.
 
-1. Navigate to the Database Actions interface for your ADW instance as [previously done](#configure-adw-for-stream-processing).
+1. Navigate to the Database Actions interface for your Autonomous Data Warehouse (ADW) instance as [previously done](#configure-adw-for-stream-processing).
 2. Click on the hamburger menu in the upper left-hand side of the page, and click `RESTful Services ad SODA` under `Related Services`.
 3. Click `Copy` to copy the base URL of the Oracle REST Data Services (ORDS) HTTPS interface to your clipboard.
-4. In another browser tab with your main OCI Console open, navigate to the hamburger menu at the top left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
+4. In another browser tab with your main OCI Console open, navigate to the hamburger menu at the top-left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
 5. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 6. Click on the hyperlinked Application object you created, called `streaming_app`.
 7. Click on the hyperlinked Function object you created, called `streaming_fnc`.
@@ -353,7 +353,7 @@ In this section, you will supply environment variables to be made available to y
 	`ords-base-url` : <i>Paste the base URL for the ORDS HTTPS interface</i>\
 	\
 	Click `+` to add the pair to the Function configuration.
-9. Next, you will retrieve the name of your Object Storage Bucket that will store processed data. Duplicate your current browser tab. Navigate to the hamburger menu at the top left of the webpage, and type `buckets` into the search field. Click the listing that appears on the page that contains the word `Buckets`.
+9. Next, you will retrieve the name of your Object Storage Bucket that will store processed data. Duplicate your current browser tab. Navigate to the hamburger menu at the top-left of the webpage, and type `buckets` into the search field. Click the listing that appears on the page that contains the word `Buckets`.
 10. Your viewing scope should already be set according to the compartment that was deployed from the Resource Manager Stack. If this is not the case, select that compartment from the dropdown under `Compartment`.
 11. Identify the listed Bucket object whose name does <b>NOT</b> include the string `raw`, and copy the name of this listing to your clipboard.
 12. Return to the browser tab showing the Function page, and add the `Key`:`Value` pair indicated below into their respective text fields:
@@ -378,7 +378,7 @@ In this section, you will supply environment variables to be made available to y
 ### Configure Data Stream
 In this section, you will configure the data stream from Cloud Shell to simulate the transmission of manufacturing data to your Streaming instance's Messages Endpoint in OCI.
 
-1. Navigate to the hamburger menu at the top left of the webpage, and type `streaming` into the search field. Click the listing that appears on the page that contains the words `Streaming` and `Messaging`.
+1. Navigate to the hamburger menu at the top-left of the webpage, and type `streaming` into the search field. Click the listing that appears on the page that contains the words `Streaming` and `Messaging`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 3. Click on the hyperlinked name under `Name` column, which corresponds to the Stream resource that you created from your Resource Manager deployment.
 4. Click on the `Developer tools` icon on the upper right-hand side of the page, and then click `Cloud Shell`.
@@ -441,21 +441,21 @@ In this section, you will run the data stream from Cloud Shell to simulate strea
 	SENT: [{"equipment_id": 1234, "vibration_amplitude": 246.75, "vibration_frequency": 919.0, "temperature": 61.32, "humidity": 29.4}]
 	```
 4. Navigate to your Stream on the `Streaming` page on OCI: 
-	Click on the hamburger menu at the top left of the webpage, and type `streaming` into the search field. Click the listing that appears on the page that contains the words `Streaming` and `Messaging`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Streaming object you created from your Resource Manager deployment.
+	Click on the hamburger menu at the top-left of the webpage, and type `streaming` into the search field. Click the listing that appears on the page that contains the words `Streaming` and `Messaging`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Streaming object you created from your Resource Manager deployment.
 5. Click `Load Messages`.  This will show the data points that have been ingested by the Streaming service.
 6. Navigate to your Service Connector instance:
 	\
-	Click on the hamburger menu at the top left of the webpage, and type `service connector` into the search field. Click the listing that appears on the page that contains the words `Service Connector Hub` and `Messaging`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Service Connector object you created from your Resource Manager deployment.
-7. Click `Metrics` from the Resources list on the left side of the Service Connector page. This page provides detailed metrics about the Service Connector's data ingestion, Function task, and Object Storage target. About 1 minute after starting the data stream, you should see data populating under categories like `Bytes read from source`, `Bytes written to task`, and `Bytes written to target`. The source is the Streaming service, the task is the Function, and the target is Object Storage.
+	Click on the hamburger menu at the top-left of the webpage, and type `service connector` into the search field. Click the listing that appears on the page that contains the words `Service Connector Hub` and `Messaging`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Service Connector object you created from your Resource Manager deployment.
+7. Click `Metrics` from the Resources list on the left-hand side of the Service Connector page. This page provides detailed metrics about the Service Connector's data ingestion, Function task, and Object Storage target. About 1 minute after starting the data stream, you should see data populating under categories like `Bytes read from source`, `Bytes written to task`, and `Bytes written to target`. The source is the Streaming service, the task is the Function, and the target is Object Storage.
 8. Navigate to your Object Storage buckets:
 	\
-	Click on the hamburger menu at the top left of the webpage, and type `buckets` into the search field. Click the listing that appears on the page that contains the words `Buckets`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked bucket object that <b>does not</b> contain the word `raw`.
+	Click on the hamburger menu at the top-left of the webpage, and type `buckets` into the search field. Click the listing that appears on the page that contains the words `Buckets`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked bucket object that <b>does not</b> contain the word `raw`.
 9. If you do not see data in this bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the bucket until you see populated data. This data is processed into CSV format and has been inserted into this bucket by the Function triggered from the Service Connector.
 10. In the navigation ribbon on the top of the page, click `Object Storage` to return to the list of buckets. Then click on the hyperlinked bucket object that <b>does</b> contain the word `raw`.
 11. If you do not see data in this bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the bucket until you see populated data. This data is the unporcessed data that was transmitted to the Streaming service and has been inserted into this bucket by the Service Connector.
-12. Navigate to your ADW instance:
+12. Navigate to your Autonomous Data Warehouse (ADW) instance:
 	\
-	Click on the hamburger menu at the top left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Database object you created from your Resource Manager deployment.
+	Click on the hamburger menu at the top-left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Database object you created from your Resource Manager deployment.
 13. Click `Database actions`. Note that you may need to allow pop-ups in your browser if launching the new page fails.
 14. Enter your username and password for your ADW instance. For this lab, the default values are as indicated below. If you specified a custom password for your ADW instance, replace the default value with the custom value.
 	\
@@ -484,38 +484,39 @@ In this section, you will run the data stream from Cloud Shell to simulate strea
 ### Configure Oracle Analytics Cloud
 In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to visualize the data stream.
 
-1. Return to a browser tab where you can access the main OCI Console. Click on the hamburger menu at the top left of the webpage, and type `analytics` into the search field. Click the listing that appears on the page that contains the words `Analytics Cloud` and `Analytics`.
+1. Return to a browser tab where you can access the main OCI Console. Click on the hamburger menu at the top-left of the webpage, and type `analytics` into the search field. Click the listing that appears on the page that contains the words `Analytics Cloud` and `Analytics`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 3. Click `Create Instance`.
-4. Note that the OAC instance requires a name, and that all other values can be left as default for this lab. Use `streaming_oac` as a prefix specific to this lab, and as a suffix, add the unique string associated with your deployment in order to provide the required uniqueness to the name of the OAC instance within the tenancy.
+4. Note that the Oracle Analytic Cloud (OAC) instance requires a name, and that all other values can be left as default for this lab. Use `streaming_oac` as a prefix specific to this lab, and as a suffix, add the unique string associated with your deployment in order to provide the required uniqueness to the name of the OAC instance within the tenancy.
 	\
 	\
-	You can find the unique string from your Terraform deployment on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click `Outputs` on the left-hand side of the page. Copy the string under the `Value` column that corresponds to `random_string` under the Key column.
+	You can find the unique string from your Terraform deployment on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click `Outputs` on the left-hand side of the page. Copy the string under the `Value` column that corresponds to `random_string` under the `Key` column.
 5. Click `Create`.
-6. While the OAC instance is provisioning, navigate back to the `Autonomous Data Warehouse` page on OCI: 
-	Click on the hamburger menu at the top left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked ADW object you created from your Resource Manager deployment.
-7. Click `Database connection`, then click `Download wallet`. Enter a password for the wallet. This password may be of your choosing. For simplicity, you may choose `Streaming!2345`, which is the password provided in this lab for the `admin` user in ADW. Then click `Download`. This wallet will download to your computer and will be required to connect OAC to ADW. Click `Close` on the `Database connection` window.
-8. Navigate back to OAC: 
-	Click on the hamburger menu at the top left of the webpage, and type `analytics` into the search field. Click the listing that appears on the page that contains the words `Analytics Cloud` and `Analytics`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked OAC object you created.
+6. While the OAC instance is provisioning, navigate back to the Autonomous Data Warehouse (ADW) page on OCI: 
+	Click on the hamburger menu at the top-left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked ADW object you created from your Resource Manager deployment.
+7. Click `Database connection`, then click `Download wallet`. Enter a password for the wallet. This password may be of your choosing. For simplicity, you may choose `Streaming!2345`, which is the password provided in this lab for the `admin` user in ADW. Then click `Download`. The .zip file that gets downloaded to your local machine is the wallet, and will be required to connect OAC to ADW. Click `Close` on the `Database connection` window.
+8. Return to the OAC page:
+	\
+	Click on the hamburger menu at the top-left of the webpage, and type `analytics` into the search field. Click the listing that appears on the page that contains the words `Analytics Cloud` and `Analytics`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked OAC object you created.
 9. If the OAC instance does not have a `State` of `Active`, wait for it to finish provisioning.
 10. Once the instance is active, click `Analytics Home Page` to open Oracle Analytics Cloud.
-11. Click `Create` in the top right corner of the OAC home page, then click `Connection`. Select `Oracle Autonomous Data Warehouse`.
-12. Enter a name for the connection, e.g. `streaming_adw_conn`, then drag and drop the downloaded wallet file into the `Client Credentials` box.
+11. Click `Create` in the top-right corner of the OAC home page, then click `Connection`. Select `Oracle Autonomous Data Warehouse`.
+12. Enter a name for the connection. For this lab, use `streaming_adw_conn`, as this name is referred to later in this lab. Then, drag and drop the downloaded wallet file into the `Client Credentials` box. The `Description` field is optional. Leave the remaining fields unchanged.
 13. The `Username` and `Password` sections are referencing the ADW instance, so enter `admin` for the username, and `Streaming!2345` for the password, or your own custom password if you chose to set a custom password.
-14. Click `Save`. The connection will validate, and then save. If the connection fails, double check your username and password for the database. <i>Note: The password is the database password, not the wallet password, although the same password is provided for both items in this lab.</i>
-15. Click `Create` in the top right corner of the OAC home page, then click `Dataset`. Select the database connection you just created.
-16. Expand the `Schemas` list, then the `ADMIN` schema on the left side of the page. Drag and drop `STREAMDATA_VIEW` into the main canvas area to add it to the dataset. This will load a preview of the data.
+14. Click `Save`. The connection will validate, and then save. If the connection fails, double check your username and password for the database. <i>Note: The password to be supplied here is the password for the `admin` user in ADW, which is `Streaming!2345`, or your own custom password if you chose to set a custom password.</i>
+15. Click `Create` in the top-right corner of the OAC home page, then click `Dataset`. Select the database connection you just created, named `streaming_adw_conn`.
+16. On the left-hand side of the page, expand the `Schemas` dropdown menu by clicking the arrow next to `Schemas`. Then, expand the dropdown menu of the `ADMIN` schema that appears on the `Schemas` dropdown menu. Drag and drop `STREAMDATA_VIEW` into the main canvas area to add it to the dataset. This will load a preview of the data.
 17. Convert `PARTITION`, `OFFSET`, `TIMESTAMP`, and `EQUIPMENT_ID` to attributes. To do this, click on the pound sign next to each column's name and select `Attribute`.
-18. Click the `Save` icon in the top right corner of the page, provide a name for the dataset, and click `OK`.
-19. Click the `Back` arrow in the top left corner of the page to return to the OAC home page.
-20. Click `Create` in the top right corner of the OAC home page, then click `Workbook`. Select the dataset you just created, then click `Add to Workbook`. For now, close the Auto Insights window on the right side of the page.
-21. Hold `command` if on a Mac or `control` if on a PC, then select `KEY` and `VIBRATION_AMPLITUDE` from the data pane on the left side of the page. Drag and drop these data elements onto the canvas. This will create a line chart.
+18. Click the `Save` icon in the top-right corner of the page, which appears as an image of a hard-drive. Provide a name for the dataset. For this lab, use `streaming_dataset`, as this name is referred to later in this lab. The `Description` field is optional. Click `OK`.
+19. Click the `Back` arrow in the top-left corner of the page to return to the OAC home page.
+20. Click `Create` in the top-right corner of the OAC home page, then click `Workbook`. In the popup titled `Add Data`, Select the dataset you just created, named `streaming_dataset`, then click `Add to Workbook`. For now, close the `Auto Insights` window on the right-hand side of the page by clicking on the light-bulb icon.
+21. Hold `command` if using a Mac or `control` if using a PC, then select `KEY` and `VIBRATION_AMPLITUDE` from the data pane on the left-hand side of the page. Drag and drop these data elements onto the canvas. This will create a line chart.
 22. Select `VIBRATION_FREQUENCY`, `TEMPERATURE`, and `HUMIDITY` from the data pane, and drag and drop these data elements in the `Values (Y-Axis)` section of the visualization pane just to the right of the data pane. Be sure not to drop the data elements on top of `VIBRATION_AMPLITUDE`, as that will add the new elements in place of the existing data, rather than in addition to the existing data.
 23. Right click on the Canvas tab on the bottom of the page labeled `Canvas 1` and select `Canvas Properties`.
 24. Click on `Disabled` next to `Auto Refresh Data` to switch it to `Enabled`. Click `Sec` to switch to `Min`, and change the value from 30 to 1. Click `OK`. This will refresh the canvas every minute.
-25. Click the `Refresh Data` button in the top right toolbar. It looks like a white play button with an arrow circling around it. This will start the auto refresh process.
-26. Click the `Save` icon in the top right corner of the page. Provide a name for the workbook and click `Save`.
-27. Click the `Preview` button in the top right toolbar to view the dashboard as an end user. It looks like an outline of a play button. Click the `Refresh Data` button in the toolbar to start the auto refresh process in this view.
+25. Click the `Refresh Data` button in the top-right toolbar. It looks like a white play button with an arrow circling around it. This will start the auto refresh process.
+26. Click the `Save` icon in the top-right corner of the page. Provide a name for the workbook and click `Save`.
+27. Click the `Preview` button in the top-right toolbar to view the dashboard as an end user. It looks like an outline of a play button. Click the `Refresh Data` button in the toolbar to start the auto refresh process in this view.
 \
 \
 <b>Congratulations! You are now visualizing the output of your completed streaming pipeline!</b>
