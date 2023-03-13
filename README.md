@@ -420,7 +420,7 @@ In this section, you will configure the data stream from Cloud Shell to simulate
 	\
 	By appending the `export` command to your `~/.bashrc` file, this variable will be automatically assigned for each Cloud Shell session.\
 	\
-	Note that if you wish to review the values set for environment variables in this lab, you can execute the following command.
+	Note that if you wish to review the values set for environment variables in this lab, you can execute the following command in Cloud Shell.
 	```
 	env | grep ^STREAMING_
 	```
