@@ -565,7 +565,6 @@ The following steps describe the process of clearing the data out of the pipelin
 3. Click the trash can icon in the toolbar above the JSON query editor. This button is labeled `Delete All Documents in the list` when hovering over it.
 4. Click `OK` to confirm.
 
-\
 <b>Clearing the Object Storage Buckets</b>
 
 1. Navigate to Object Storage:
@@ -577,7 +576,6 @@ The following steps describe the process of clearing the data out of the pipelin
 	3. Click `Delete Folder`.
 	4. Enter the folder name into the confirmation window as prompted, and click `Delete`.
 
-\
 After these steps, the JSON collection and Object Storage Bucktes are empty and ready to recieve new stream data.
 
 ### Resource Cleanup
