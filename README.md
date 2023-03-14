@@ -18,6 +18,10 @@ This document provides instructions for deployment and configuration of a cloud-
 	- [Run The Stream Pipeline](#run-the-stream-pipeline)
 	- [Configure Oracle Analytics Cloud](#configure-oracle-analytics-cloud)
 	- [Stop the Data Stream](#stop-the-data-stream)
+- [Additional Steps](#additional-steps)
+	- [Logging & Troubleshooting](#logging-&-troubleshooting)
+	- [Data Cleanup](#data-cleanup)
+	- [Resource Cleanup](#resource-cleanup)
 
 ### Introduction
 Data streaming is a powerful tool capable of accelerating business processes and facilitating real-time decision-making across a wide variety of industries and use cases. There are many ways to implement streaming technology, and each solution offers different benefits and drawbacks. The approach documented below is a cloud-native, low-code approach to streaming, covering the complete data lifecycle from ingestion to analysis. This will enable organizations to implement a complete streaming pipeline quickly without the need to spend valuable time and energy procuring, configuring and managing IT infrastructure.
@@ -165,9 +169,9 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	You can find the unique string from your Terraform deployment on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click `Outputs` on the left-hand side of the page. Copy the string under the `Value` column that corresponds to `random_string` under the Key column.
 	\
 	\
-	Copy and paste, but do not yet execute, the following command into Cloud Shell. Add the string unique to your deployment to the prefix `streaming_fnc`, then run the command.
+	Copy and paste, but do not yet execute, the following command into Cloud Shell. Replace `UNIQUESTRING` with the string unique to your deployment, then run the command.
 	```
-	export STREAMING_FUNCTION_NAME=streaming_fnc
+	export STREAMING_FUNCTION_NAME=streaming_fnc_UNIQUESTRING
 	```
 8. These commands will generate the value for the `region key` that corresponds to the `region identifier`, and the region in which you are configuring your Function.
 	```
@@ -206,13 +210,13 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	```
 	fn list apps
 	```
-15. Copy and paste, but do not yet execute, the following command into Cloud Shell. Add the string unique to your deployment to the prefix `streaming_fnc`, then run the command. This will generate boilerplate code for your Function. You will customize this code with logic provided later in this lab.
+15. Copy and paste, but do not yet execute, the following command into Cloud Shell. Replace `UNIQUESTRING` with the string unique to your deployment, then run the command. This will generate boilerplate code for your Function. You will customize this code with logic provided later in this lab.
 	```
-	fn init --runtime python streaming_fnc
+	fn init --runtime python streaming_fnc_UNIQUESTRING
 	```
-16. Switch into the generated directory, adding string unique to your deployment to the prefix `streaming_fnc` included in the command below.
+16. Switch into the generated directory, replacing `UNIQUESTRING` with the string unique to your deployment in the command below.
 	```
-	cd streaming_fnc
+	cd streaming_fnc_UNIQUESTRING
 	```
 17. Copy the contents of [func.py](./modules/functions/func.py) from this repository to your clipboard. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
@@ -274,7 +278,7 @@ In this section, you will deploy a Service Connector instance, using the <i>O</i
 1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. The new compartment will end with the four-character alphanumeric string unique to your deployment.
 3. Click on the hyperlinked Application object you created, called `streaming_app`.
-4. Click on the hyperlinked Function object you created, called `streaming_fnc`.
+4. Click on the hyperlinked Function object you created, called `streaming_fnc_UNIQUESTRING`.
 5. Copy the Function OCID, which can be found next to `OCID:`. You will supply this value in a later step when you edit your Resource Manager Stack.
 6. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `stacks` into the search field. Click the listing that appears on the page that contains the words `Stacks` and `Resource Manager`.
 7. Click on the dropdown under `Compartment`, and select the compartment where you created your Resource Manager Stack object. If your tenancy environment is new, this will be your root-level compartment.
@@ -346,7 +350,7 @@ In this section, you will supply environment variables to be made available to y
 4. In another browser tab with your main OCI Console open, navigate to the hamburger menu at the top-left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
 5. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 6. Click on the hyperlinked Application object you created, called `streaming_app`.
-7. Click on the hyperlinked Function object you created, called `streaming_fnc`.
+7. Click on the hyperlinked Function object you created, called `streaming_fnc_UNIQUESTRING`.
 8. Click `Configuration` on the left-hand side of the page, and add the `Key`:`Value` pair indicated below into their respective text fields:
 	\
 	\
@@ -529,3 +533,51 @@ To stop the data stream, navigate to the page with the Cloud Shell running `stre
 \
 \
 <b>Thank you, and congratulations on completing this workshop!</b>
+
+## Additional Steps
+### Logging & Troubleshooting
+If the stream pipeline is not functioning as expected, the first thing to check is the function configuration page to ensure that all the configuration keys and values are correct. Review the steps in [Configure Function Parameters](#configure-function-parameters), and pay special attention to case sensitivity and eliminating leading/trailing spaces. Any innaccuracy in these parameters will cause the pipeline to fail. 
+\
+\
+If the function configuration is correct and the pipeline is still not running properly, the following steps will walk through how to enable logging for the function. These logs can provide additional information about certain points of failure.
+
+1. Navigate to the hamburger menu at the top-left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
+2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
+3. Click on the hyperlinked Application object you created, called `streaming_app`.
+4. Click `Logs` in the `Resources` menu on the left side of the Application page.
+5. Locate the `Function Invocation Logs` row in the `Logs` window in the middle of the page, and click on the switch icon in the `Enable Log` column.
+6. Ensure that the correct compartment is selected, and leave the other options as default. This will auto-create the default Log Group and provide a standard name and retention policy. Click `Enable Log`.
+7. Click the hyperlined log name from the `Log Name` column to view the Log.
+8. Run the stream, and refresh this Log page to view the output of the function. Basic error messages have been included in the function code to help identify where the function is failing.
+
+### Data Cleanup
+The following steps describe the process of clearing the data out of the pipeline. This can be useful when you want to start a fresh stream of data without any residual data from previous pipeline usage. This process involves clearing the JSON collection and clearing both Object Storage Buckets.
+\
+\
+<b>Clearing the JSON Collection</b>
+
+1. Navigate to Autonomous Data Warehouse Database Actions:
+	1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`.
+	2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
+	3. Click on the hyperlinked Database object you created.
+	4. Click `Database actions`, and enter your username and password for your ADW instance if prompted.
+2. Click on the tile labeled `JSON`.
+3. Click the trash can icon in the toolbar above the JSON query editor. This button is labeled `Delete All Documents in the list` when hovering over it.
+4. Click `OK` to confirm.
+\
+\
+<b>Claring the Object Storage Buckets</b>
+
+1. Navigate to Object Storage:
+	1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `buckets` into the search field. Click the listing that appears on the page that contains the word `Buckets`.
+	2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
+2. For each Bucket:
+	1. Click on the hyperlinked Bucket name
+	2. Locate the row in the `Objects` window for the highest level folder in the Bucket, and click on the three vertical dots on the far right side of the row.
+	3. Click `Delete Folder`.
+	4. Enter the folder name into the confirmation window as prompted, and click `Delete`.
+\
+\
+After these steps, the JSON collection and Object Storage Bucktes are empty and ready to recieve new stream data.
+
+### Resource Cleanup
