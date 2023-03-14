@@ -19,7 +19,7 @@ This document provides instructions for deployment and configuration of a cloud-
 	- [Configure Oracle Analytics Cloud](#configure-oracle-analytics-cloud)
 	- [Stop the Data Stream](#stop-the-data-stream)
 - [Additional Steps](#additional-steps)
-	- [Logging & Troubleshooting](#logging-&-troubleshooting)
+	- [Troubleshooting and Logging](#troubleshooting-and-logging)
 	- [Data Cleanup](#data-cleanup)
 	- [Resource Cleanup](#resource-cleanup)
 
@@ -535,7 +535,7 @@ To stop the data stream, navigate to the page with the Cloud Shell running `stre
 <b>Thank you, and congratulations on completing this workshop!</b>
 
 ## Additional Steps
-### Logging & Troubleshooting
+### Troubleshooting and Logging
 If the stream pipeline is not functioning as expected, the first thing to check is the function configuration page to ensure that all the configuration keys and values are correct. Review the steps in [Configure Function Parameters](#configure-function-parameters), and pay special attention to case sensitivity and eliminating leading/trailing spaces. Any innaccuracy in these parameters will cause the pipeline to fail. 
 \
 \
@@ -564,9 +564,10 @@ The following steps describe the process of clearing the data out of the pipelin
 2. Click on the tile labeled `JSON`.
 3. Click the trash can icon in the toolbar above the JSON query editor. This button is labeled `Delete All Documents in the list` when hovering over it.
 4. Click `OK` to confirm.
+
 \
 \
-<b>Claring the Object Storage Buckets</b>
+<b>Clearing the Object Storage Buckets</b>
 
 1. Navigate to Object Storage:
 	1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `buckets` into the search field. Click the listing that appears on the page that contains the word `Buckets`.
@@ -576,6 +577,7 @@ The following steps describe the process of clearing the data out of the pipelin
 	2. Locate the row in the `Objects` window for the highest level folder in the Bucket, and click on the three vertical dots on the far right side of the row.
 	3. Click `Delete Folder`.
 	4. Enter the folder name into the confirmation window as prompted, and click `Delete`.
+
 \
 \
 After these steps, the JSON collection and Object Storage Bucktes are empty and ready to recieve new stream data.
