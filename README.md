@@ -587,7 +587,7 @@ If the function configuration is correct and the pipeline is still not running p
 8. Run the stream, and refresh this Log page to view the output of the function. Basic error messages have been included in the function code to help identify where the function is failing.
 
 ### Troubleshooting Resource Manager Cleanup
-If an error is encountered and the Destroy job reaches the Failed state as a result, identify which scenario listed below best describes the error encountered, and follow the steps associated with that scenario.
+If an error is encountered and the Destroy job reaches the `Failed` state as a result, identify which scenario listed below best describes the error encountered, and follow the steps associated with that scenario.
 
 - [Compartment being reported as in the `ACTIVE` state](#compartment-being-reported-as-in-the-active-state)
 - [Some other resource is indicated in the error message](#some-other-resource-is-indicated-in-the-error-message)
@@ -699,7 +699,7 @@ These steps will walk through the process of performing the `Destroy` operation 
 5. Notice the caution message shown on the pane that appears. Then, click `Destroy`. You can monitor the deprovisioning process by monitoring the `Logs` window.
 \
 \
-If an error is encountered and the Destroy job reaches the Failed state as a result, please review the [Troubleshooting Resource Manager Cleanup](#troubleshooting-resource-manager-cleanup) section.
+If an error is encountered and the Destroy job reaches the `Failed` state as a result, please review the [Troubleshooting Resource Manager Cleanup](#troubleshooting-resource-manager-cleanup) section.
 
 #### Deprovision Resource Manager Stack instance
 These steps will walk through the process of deprovisioning the Resource Manager Stack instance itself. As a best practice, ensure that the resources that were deployed using the Resource Manager Stack have been deprovisioned using the `Destroy` operation from the Resource Manager Stack page. This will eliminate the need to deprovision each resource individually.
