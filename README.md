@@ -643,8 +643,7 @@ These steps will walk through the process of removing the folders, files, and pe
 	```
 	1. Navigate to the bottom of the file by typing `G`.
 	2. For each line that starts with `export STREAMING_`, remove the line by typing `dd`.
-	3. Activate `insert` mode by typing `i`.
-	4. Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
+	3. Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
 4. Exit out of Cloud Shell using the `X` icon.
 
 <b>Deprovision Infrastructure Deployed via Resource Manager Stack</b>
