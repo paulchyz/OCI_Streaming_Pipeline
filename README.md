@@ -603,7 +603,7 @@ This may be due to the presence of resources that have been provisioned within t
 6. For each such resource:
 	1. Navigate to the corresponding resource page
 	2. Delete the resource from that page
-7. Repeat the steps indicated in the [Resource Cleanup](#resource-cleanup) section to resume the deprovisioning process from the Resource Manager Stack. If unsuccessful, repeat this section until all resources that depend on the compartment have been deprovisioned.
+7. Repeat the steps indicated in the [Deprovision Infrastructure Deployed via Resource Manager Stack](#deprovision-infrastructure-deployed-via-resource-manager-stack) section to resume the deprovisioning process from the Resource Manager Stack. If unsuccessful, repeat this section until all resources that depend on the compartment have been deprovisioned.
 
 #### Some other resource is indicated in the error message
 The steps indicated below walk through a workaround for deprovisioning any resources associated with the error.
@@ -613,7 +613,7 @@ The steps indicated below walk through a workaround for deprovisioning any resou
 	1. Navigate to the corresponding resource page
 	2. Delete the resource from that page
 3. Repeat the previous step, for the resource indicated in the error message
-4. Repeat the steps indicated in the [Resource Cleanup](#resource-cleanup) section to resume the deprovisioning process from the Resource Manager Stack. If unsuccessful, repeat this section until all resources indicated in any error messages have been deprovisioned.
+4. Repeat the steps indicated in the [Deprovision Infrastructure Deployed via Resource Manager Stack](#deprovision-infrastructure-deployed-via-resource-manager-stack) section to resume the deprovisioning process from the Resource Manager Stack. If unsuccessful, repeat this section until all resources indicated in any error messages have been deprovisioned.
 
 ### Data Cleanup
 The following steps describe the process of clearing the data out of the pipeline. This can be useful when you want to start a fresh stream of data without any residual data from previous pipeline usage. This process involves clearing the JSON collection and clearing both Object Storage Buckets.
