@@ -587,8 +587,8 @@ If the function configuration is correct and the pipeline is still not running p
 8. Run the stream, and refresh this Log page to view the output of the function. Basic error messages have been included in the function code to help identify where the function is failing.
 
 ### Troubleshooting Resource Manager Cleanup
-
 If an error is encountered and the Destroy job reaches the Failed state as a result, identify which scenario listed below best describes the error encountered, and follow the steps associated with that scenario.
+
 - [Compartment being reported as in the `ACTIVE` state](#compartment-being-reported-as-in-the-active-state)
 - [Some other resource is indicated in the error message](#some-other-resource-is-indicated-in-the-error-message)
 
@@ -646,7 +646,8 @@ After these steps, the JSON collection and Object Storage Bucktes are empty and 
 
 ### Resource Cleanup
 The following steps walk through the process of deprovisioning the resources that were deployed in this lab. This will terminate billing for infrastructure resources, and re-allocate capacity for other projects.
-- [Deprovision Oracle Analytics Cloud (OAC) instance](#deprovision-oracle-analytics-cloud-(oac)-instance)
+
+- [Deprovision Oracle Analytics Cloud (OAC) instance](#deprovision-oracle-analytics-cloud-oac-instance)
 - [Deprovision Application](#deprovision-application)
 - [Remove Cloud Shell artifacts](#remove-cloud-shell-artifacts)
 - [Deprovision Infrastructure Deployed via Resource Manager Stack](#deprovision-infrastructure-deployed-via-resource-manager-stack)
@@ -661,7 +662,6 @@ The following steps walk through the process of deprovisioning the resources tha
 	4. Click on the `More actions` button, and click `Delete` from the dropdown menu that appears. Then, click `Delete`.
 
 #### Deprovision Application
-\
 Deprovisioning the Application will deprovision the associated Function as well.
 
 1. Navigate to Application:
@@ -671,7 +671,6 @@ Deprovisioning the Application will deprovision the associated Function as well.
 	4. Click on the `Delete` button. Then, click `Delete` on the pop-up window that appears to confirm.
 
 #### Remove Cloud Shell artifacts
-\
 These steps will walk through the process of removing the folders, files, and persisting environment variables set up on Cloud Shell for this project.
 
 1. Navigate to Cloud Shell: Click on the `Developer tools` icon on the upper right-hand side of the page, and then click `Cloud Shell`.
@@ -691,7 +690,6 @@ These steps will walk through the process of removing the folders, files, and pe
 4. Exit out of Cloud Shell using the `X` icon.
 
 #### Deprovision Infrastructure Deployed via Resource Manager Stack
-\
 These steps will walk through the process of performing the `Destroy` operation in the Resource Manager Stack instance to deprovision the resources that were deployed from running the `Apply` action from the same Resource Manager Stack instance.
 
 1. Navigate to Resource Manager: In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `stacks` into the search field. Click the listing that appears on the page that contains the words `Stacks` and `Resource Manager`.
@@ -700,10 +698,10 @@ These steps will walk through the process of performing the `Destroy` operation 
 4. Click on the red `Destroy` button at the top of the page.
 5. Notice the caution message shown on the pane that appears. Then, click `Destroy`. You can monitor the deprovisioning process by monitoring the `Logs` window.
 \
+\
 If an error is encountered and the Destroy job reaches the Failed state as a result, please review the [Troubleshooting Resource Manager Cleanup](#troubleshooting-resource-manager-cleanup) section.
 
 #### Deprovision Resource Manager Stack instance
-\
 These steps will walk through the process of deprovisioning the Resource Manager Stack instance itself. As a best practice, ensure that the resources that were deployed using the Resource Manager Stack have been deprovisioned using the `Destroy` operation from the Resource Manager Stack page. This will eliminate the need to deprovision each resource individually.
 
 1. Navigate to Resource Manager: In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `stacks` into the search field. Click the listing that appears on the page that contains the words `Stacks` and `Resource Manager`.
