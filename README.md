@@ -20,6 +20,8 @@ This document provides instructions for deployment and configuration of a cloud-
 	- [Stop the Data Stream](#stop-the-data-stream)
 - [Additional Steps](#additional-steps)
 	- [Troubleshooting and Logging](#troubleshooting-and-logging)
+		- [Troubleshooting and Logging when Running the Streaming Pipeline](#troubleshooting-and-logging-when-running-the-streaming-pipeline)
+		- [Troubleshooting Resource Manager Cleanup](#troubleshooting-resource-manager-cleanup)
 	- [Data Cleanup](#data-cleanup)
 	- [Resource Cleanup](#resource-cleanup)
 
@@ -480,8 +482,14 @@ In this section, you will run the data stream from Cloud Shell to simulate strea
 	\
 	Click on the hamburger menu at the top-left of the webpage, and type `buckets` into the search field. Click the listing that appears on the page that contains the words `Buckets`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Bucket object that <b>does not</b> contain the word `raw`.
 9. If you do not see data in this Bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the Bucket until you see populated data. This data is processed into CSV format and has been inserted into this Bucket by the Function triggered from the Service Connector.
+\
+\
+If data has not populated within this Bucket after a minute or two, please review the [Troubleshooting and Logging when Running the Streaming Pipeline](#troubleshooting-and-logging-when-running-the-streaming-pipeline) section.
 10. In the navigation ribbon on the top of the page, click `Object Storage` to return to the list of Buckets. Then click on the hyperlinked Bucket object that <b>does</b> contain the word `raw`.
 11. If you do not see data in this Bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the Bucket until you see populated data. This data is the unprocessed data that was transmitted to the Streaming service and has been inserted into this Bucket by the Service Connector.
+\
+\
+If data has not populated within this Bucket after a minute or two, please review the [Troubleshooting and Logging when Running the Streaming Pipeline](#troubleshooting-and-logging-when-running-the-streaming-pipeline) section.
 12. Navigate to your Autonomous Data Warehouse (ADW) instance:
 	\
 	Click on the hamburger menu at the top-left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Database object you created from your Resource Manager deployment.
@@ -562,7 +570,8 @@ To stop the data stream, navigate to the page with the Cloud Shell running `stre
 <b>Thank you, and congratulations on completing this workshop!</b>
 
 ## Additional Steps
-### Troubleshooting and Logging
+### Troubleshooting and Logging when Running the Streaming Pipeline
+
 If the stream pipeline is not functioning as expected, the first thing to check is the function configuration page to ensure that all the configuration keys and values are correct. Review the steps in [Configure Function Parameters](#configure-function-parameters), and pay special attention to case sensitivity and eliminating leading/trailing spaces. Any innaccuracy in these parameters will cause the pipeline to fail. 
 \
 \
@@ -577,11 +586,41 @@ If the function configuration is correct and the pipeline is still not running p
 7. Click the hyperlined log name from the `Log Name` column to view the Log.
 8. Run the stream, and refresh this Log page to view the output of the function. Basic error messages have been included in the function code to help identify where the function is failing.
 
+### Troubleshooting Resource Manager Cleanup
+
+If an error is encountered and the Destroy job reaches the Failed state as a result, identify which scenario listed below best describes the error encountered, and follow the steps associated with that scenario.
+- [Compartment being reported as in the `ACTIVE` state](#compartment-being-reported-as-in-the-active-state)
+- [Some other resource is indicated in the error message](#some-other-resource-is-indicated-in-the-error-message)
+
+#### Compartment being reported as in the `ACTIVE` state
+This may be due to the presence of resources that have been provisioned within the compartment that are not associated with the Resource Manager Stack. The compartment will remain in the `ACTIVE` state so long as there are any resources within it, as a measure to protect resources from being unintentionally deleted. The steps to ensure that there are no resources in the compartment are indicated below:
+
+1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `compartments` into the search field. Click the listing that appears on the page that contains the word `Compartments` and `Identity`.
+2. Click on the hyperlinked name of the deployed compartment if it is listed on the page, or of any parent compartment until your reach the deployed compartment, and then click on the hyperlinked name of the deployed compartment. Note that if there are many compartments in your tenancy, using the page navigation at the bottom right-hand side of the page may be necessary.
+3. Click `Work Requests` under `Resources` on the left-hand side of the page.
+4. Hover over the `i` icon next to the text `Failed` in the `Status` column under `Work Requests`. The message that appears should indicate the resources that are dependent on the compartment, and are preventing the compartment from being deprovisioned.
+5. Identify any resource that is a dependent upon the resource indicated in the error message
+6. For each such resource:
+	1. Navigate to the corresponding resource page
+	2. Delete the resource from that page
+7. Repeat the steps indicated in the [Resource Cleanup](#resource-cleanup) section to resume the deprovisioning process from the Resource Manager Stack. If unsuccessful, repeat this section until all resources that depend on the compartment have been deprovisioned.
+
+#### Some other resource is indicated in the error message
+The steps indicated below walk through a workaround for deprovisioning any resources associated with the error.
+
+1. Identify any resource that is a dependent upon the resource indicated in the error message
+2. For each such resource:
+	1. Navigate to the corresponding resource page
+	2. Delete the resource from that page
+3. Repeat the previous step, for the resource indicated in the error message
+4. Repeat the steps indicated in the [Resource Cleanup](#resource-cleanup) section to resume the deprovisioning process from the Resource Manager Stack. If unsuccessful, repeat this section until all resources indicated in any error messages have been deprovisioned.
+
 ### Data Cleanup
 The following steps describe the process of clearing the data out of the pipeline. This can be useful when you want to start a fresh stream of data without any residual data from previous pipeline usage. This process involves clearing the JSON collection and clearing both Object Storage Buckets.
-\
-\
-<b>Clearing the JSON Collection</b>
+- [Clearing the JSON Collection](#clearing-the-json-collection)
+- [Clearing the Object Storage Buckets](#clearing-the-object-storage-buckets)
+
+#### Clearing the JSON Collection
 
 1. Navigate to Autonomous Data Warehouse (ADW) Database Actions:
 	1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`.
@@ -592,7 +631,7 @@ The following steps describe the process of clearing the data out of the pipelin
 3. Click the trash can icon in the toolbar above the JSON query editor. This button is labeled `Delete All Documents in the list` when hovering over it.
 4. Click `OK` to confirm.
 
-<b>Clearing the Object Storage Buckets</b>
+#### Clearing the Object Storage Buckets
 
 1. Navigate to Object Storage:
 	1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `buckets` into the search field. Click the listing that appears on the page that contains the word `Buckets`.
@@ -607,8 +646,13 @@ After these steps, the JSON collection and Object Storage Bucktes are empty and 
 
 ### Resource Cleanup
 The following steps walk through the process of deprovisioning the resources that were deployed in this lab. This will terminate billing for infrastructure resources, and re-allocate capacity for other projects.
+- [Deprovision Oracle Analytics Cloud (OAC) instance](#deprovision-oracle-analytics-cloud-(oac)-instance)
+- [Deprovision Application](#deprovision-application)
+- [Remove Cloud Shell artifacts](#remove-cloud-shell-artifacts)
+- [Deprovision Infrastructure Deployed via Resource Manager Stack](#deprovision-infrastructure-deployed-via-resource-manager-stack)
+- [Deprovision Resource Manager Stack instance](#deprovision-resource-manager-stack-instance)
 
-<b>Deprovision Oracle Analytics Cloud (OAC) instance</b>
+#### Deprovision Oracle Analytics Cloud (OAC) instance
 
 1. Navigate to OAC:
 	1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `analytics` into the search field. Click the listing that appears on the page that contains the word `Analytics Cloud` and `Analytics`.
@@ -616,7 +660,7 @@ The following steps walk through the process of deprovisioning the resources tha
 	3. Click on the hyperlinked OAC instance name.
 	4. Click on the `More actions` button, and click `Delete` from the dropdown menu that appears. Then, click `Delete`.
 
-<b>Deprovision Application</b>
+#### Deprovision Application
 \
 Deprovisioning the Application will deprovision the associated Function as well.
 
@@ -626,7 +670,7 @@ Deprovisioning the Application will deprovision the associated Function as well.
 	3. Click on the hyperlinked Application instance name.
 	4. Click on the `Delete` button. Then, click `Delete` on the pop-up window that appears to confirm.
 
-<b>Remove Cloud Shell artifacts</b>
+#### Remove Cloud Shell artifacts
 \
 These steps will walk through the process of removing the folders, files, and persisting environment variables set up on Cloud Shell for this project.
 
@@ -646,7 +690,7 @@ These steps will walk through the process of removing the folders, files, and pe
 	3. Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
 4. Exit out of Cloud Shell using the `X` icon.
 
-<b>Deprovision Infrastructure Deployed via Resource Manager Stack</b>
+#### Deprovision Infrastructure Deployed via Resource Manager Stack
 \
 These steps will walk through the process of performing the `Destroy` operation in the Resource Manager Stack instance to deprovision the resources that were deployed from running the `Apply` action from the same Resource Manager Stack instance.
 
@@ -655,8 +699,10 @@ These steps will walk through the process of performing the `Destroy` operation 
 3. Click on the hyperlinked Resource Manager Stack object you created for this lab.
 4. Click on the red `Destroy` button at the top of the page.
 5. Notice the caution message shown on the pane that appears. Then, click `Destroy`. You can monitor the deprovisioning process by monitoring the `Logs` window.
+\
+If an error is encountered and the Destroy job reaches the Failed state as a result, please review the [Troubleshooting Resource Manager Cleanup](#troubleshooting-resource-manager-cleanup) section.
 
-<b>Deprovision Resource Manager Stack instance</b>
+#### Deprovision Resource Manager Stack instance
 \
 These steps will walk through the process of deprovisioning the Resource Manager Stack instance itself. As a best practice, ensure that the resources that were deployed using the Resource Manager Stack have been deprovisioned using the `Destroy` operation from the Resource Manager Stack page. This will eliminate the need to deprovision each resource individually.
 
