@@ -149,10 +149,12 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	\
 	\
 	Note that in the example provided below, `us-ashburn-1` is the value provided as the `region identifier` used to represent the `US East (Ashburn)` region. Replace this with the correct value based on your selection when you deployed the Stack.
+
 	```
 	fn use context us-ashburn-1
 	```
 	Note that you can list the values for `region identifier` available to your Cloud Shell environment using the following command:
+
 	```
 	fn list context
 	```
@@ -170,35 +172,43 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	\
 	\
 	Copy and paste, but do not yet execute, the following command into Cloud Shell. Replace `UNIQUESTRING` with the string unique to your deployment, then run the command.
+
 	```
 	export STREAMING_FUNCTION_NAME=streaming_fnc_UNIQUESTRING
 	```
 8. These commands will generate the value for the `region key` that corresponds to the `region identifier`, and the region in which you are configuring your Function.
+
 	```
 	export STREAMING_CONTEXT_REGION_IDENTIFIER=$(fn inspect context | grep api-url | grep -Po '(?<=functions.).*(?=.oci)')
 	export STREAMING_CONTEXT_REGION_KEY=$(oci iam region list | jq -r ".data[] | select(.name == \"$STREAMING_CONTEXT_REGION_IDENTIFIER\").key" | tr '[:upper:]' '[:lower:]')
 	```
 	Alternatively, the `region key` can be obtained by finding the `region key` that corresponds to the `region identifier` you used when selecting your `context` object from the table shown in [this documentation](https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm#ariaid-title2). Use a lower-case representation of the `region key` when replacing the placeholder value (`your_region_key`) in the command indicated below, and then run the command.
+
 	```
 	export STREAMING_CONTEXT_REGION_KEY=your_region_key
 	```
 9. Programatically generate the tenancy name.
+
 	```
 	export STREAMING_TENANCY_NAME=$(oci iam tenancy get --tenancy-id $OCI_TENANCY | jq -r .data.name)
 	```
 	Alternatively, the tenancy name can be obtained by navigating to the user icon on the upper right-hand side of the page, hovering over the dropdown menu, and reading the name next to `Tenancy:`. The value can also be obtained by clicking on this option, and locating the `Name` field on the tenancy page. Replace the placeholder value (`your_tenancy_name`) in the command indicated below, and then run the command.
+
 	```
 	export STREAMING_TENANCY_NAME=your_tenancy_name
 	```
 10. Generate the OCIR container image repository for your Function.
+
 	```
 	fn update context registry ${STREAMING_CONTEXT_REGION_KEY}.ocir.io/${STREAMING_TENANCY_NAME}/${STREAMING_FUNCTION_NAME}
 	```
 11. You will construct a command to sign into OCIR. On your browser tab with Cloud Shell, minimize Cloud Shell using the `_` icon, and navigate to the user icon on the upper right-hand side of the page, hovering over the dropdown menu, click `User settings`. Copy the name of your user in large text at the top of the page, including the `oracleidentitycloudservice/` prefix if present. Restore Cloud Shell, replace the placeholder value (`your_user_extended_name`) in the command indicated below, and then run the command.
+
 	```
 	export STREAMING_USER_EXTENDED_NAME=your_user_extended_name
 	```
 12. When the following command is run, you will be prompted for a password, which will be the result of an Auth Token that you will generate. Run the command, and do not supply a value until later instructions.
+
 	```
 	docker login -u "${STREAMING_TENANCY_NAME}/${STREAMING_USER_EXTENDED_NAME}" ${STREAMING_CONTEXT_REGION_KEY}.ocir.io
 	```
@@ -207,14 +217,17 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	\
 	Note that if you lose the generated token, you may repeat this step to generate a new one.
 14. Verify your setup by listing Application objects in the compartment.
+
 	```
 	fn list apps
 	```
 15. Copy and paste, but do not yet execute, the following command into Cloud Shell. Replace `UNIQUESTRING` with the string unique to your deployment, then run the command. This will generate boilerplate code for your Function. You will customize this code with logic provided later in this lab.
+
 	```
 	fn init --runtime python streaming_fnc_UNIQUESTRING
 	```
 16. Switch into the generated directory, replacing `UNIQUESTRING` with the string unique to your deployment in the command below.
+
 	```
 	cd streaming_fnc_UNIQUESTRING
 	```
@@ -222,6 +235,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	\
 	\
 	On Cloud Shell, open the copy of `func.py` that you generated using the `fn init` command:
+
 	```
 	vi func.py
 	```
@@ -238,6 +252,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	\
 	\
 	On Cloud Shell, open the copy of `func.yaml` that you generated using the `fn init` command:
+
 	```
 	vi func.yaml
 	```
@@ -254,6 +269,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	\
 	\
 	On Cloud Shell, open the copy of `requirements.txt` that you generated using the `fn init` command:
+
 	```
 	vi requirements.txt
 	```
@@ -267,6 +283,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	- Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
 
 20. Now that you have finished making the necessary edits to your Function logic, deploy your Function to OCIR, and associate it with the Application object you created.
+
 	```
 	fn -v deploy --app streaming_app
 	```
@@ -278,7 +295,7 @@ In this section, you will deploy a Service Connector instance, using the <i>O</i
 1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. The new compartment will end with the four-character alphanumeric string unique to your deployment.
 3. Click on the hyperlinked Application object you created, called `streaming_app`.
-4. Click on the hyperlinked Function object you created, called `streaming_fnc_UNIQUESTRING`.
+4. Click on the hyperlinked Function object you created, called `streaming_fnc_UNIQUESTRING`, where `UNIQUESTRING` appears as the string unique to your deployment.
 5. Copy the Function OCID, which can be found next to `OCID:`. You will supply this value in a later step when you edit your Resource Manager Stack.
 6. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `stacks` into the search field. Click the listing that appears on the page that contains the words `Stacks` and `Resource Manager`.
 7. Click on the dropdown under `Compartment`, and select the compartment where you created your Resource Manager Stack object. If your tenancy environment is new, this will be your root-level compartment.
@@ -316,6 +333,7 @@ In this section, you will set up the following items in your Autonomous Data War
 9. Click `Create`.
 10. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`. Feel free to close the pop-up that warns that you are logged in as `ADMIN` user by clicking `X`. Also, feel free to skip the tutorial that is automatically launched. The tutorial can be skipped by clicking `X` on the pop-ups, and revisited by clicking on the binoculars icon on the upper right-hand side of the page.
 11. Copy and paste the following PL/SQL code snippet into the editor. Once this code snippet has been executed, you will have created a database view, which uses a stored query to create a virtual table that can be queried to return the JSON collection data in a relational format.
+
 	```
 	-- Create database view to return relational data from JSON collection
 	CREATE OR REPLACE VIEW STREAMDATA_VIEW AS 
@@ -389,6 +407,7 @@ In this section, you will configure the data stream from Cloud Shell to simulate
 5. Copy the contents of [stream.py](./modules/compute/stream.py) from this repository to your clipboard. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
 	On Cloud Shell, navigate to the home directory, and then open a new file named `stream.py`.
+
 	```
 	cd;vi stream.py
 	```
@@ -400,6 +419,7 @@ In this section, you will configure the data stream from Cloud Shell to simulate
 	- Press `ESC` to escape `insert` mode.
 	- Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
 6. Copy and paste, but do not yet execute, the following command into Cloud Shell. On the page showing details about your Streaming instance. Copy the Streaming OCID by clicking `Copy` next to `OCID:` to your clipboard. Replace the placeholder value (`YOUR_STREAM_OCID`) by pasting the contents of your clipboard into its place, then execute the command.
+
 	```
 	echo "export STREAMING_STREAM_OCID=YOUR_STREAM_OCID" >> ~/.bashrc; source ~/.bashrc
 	```
@@ -408,6 +428,7 @@ In this section, you will configure the data stream from Cloud Shell to simulate
 	\
 	By appending the `export` command to your `~/.bashrc` file, this variable will be automatically assigned for each Cloud Shell session.
 7. Copy and paste, but do not yet execute, the following command into Cloud Shell. On the page showing details about your Streaming instance. Copy the string that corresponds to `Messages Endpoint` to your clipboard. Replace the placeholder value (`YOUR_MESSAGES_ENDPOINT`) by pasting the contents of your clipboard into its place, then execute the command.
+
 	```
 	echo "export STREAMING_MESSAGES_ENDPOINT=YOUR_MESSAGES_ENDPOINT" >> ~/.bashrc; source ~/.bashrc
 	```
@@ -416,6 +437,7 @@ In this section, you will configure the data stream from Cloud Shell to simulate
 	\
 	By appending the `export` command to your `~/.bashrc` file, this variable will be automatically assigned for each Cloud Shell session.
 8. Execute the following command into Cloud Shell.
+
 	```
 	echo "export STREAMING_OCI_CONFIG_FILE_LOCATION=/etc/oci/config" >> ~/.bashrc; source ~/.bashrc
 	```
@@ -425,6 +447,7 @@ In this section, you will configure the data stream from Cloud Shell to simulate
 	By appending the `export` command to your `~/.bashrc` file, this variable will be automatically assigned for each Cloud Shell session.\
 	\
 	Note that if you wish to review the values set for environment variables in this lab, you can execute the following command in Cloud Shell.
+
 	```
 	env | grep ^STREAMING_
 	```
@@ -435,10 +458,12 @@ In this section, you will run the data stream from Cloud Shell to simulate strea
 
 1. If you do not have a Cloud Shell session prepared from [the previous section](#configure-data-stream), open the Cloud Shell and follow steps 6-8 to configure the necessary environment variables.
 2. Navigate to your home directory and initiate the data stream.
+
 	```
 	cd;python stream.py
 	```
 3. You should see output in the Cloud Shell displaying data points that are being sent into the stream. For example:
+
 	```
 	SENT: [{"equipment_id": 1234, "vibration_amplitude": 275.0, "vibration_frequency": 1066.0, "temperature": 54.9, "humidity": 30.27}]
 	SENT: [{"equipment_id": 1234, "vibration_amplitude": 270.75, "vibration_frequency": 963.0, "temperature": 59.28, "humidity": 30.09}]
@@ -451,12 +476,12 @@ In this section, you will run the data stream from Cloud Shell to simulate strea
 	\
 	Click on the hamburger menu at the top-left of the webpage, and type `service connector` into the search field. Click the listing that appears on the page that contains the words `Service Connector Hub` and `Messaging`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Service Connector object you created from your Resource Manager deployment.
 7. Click `Metrics` from the Resources list on the left-hand side of the Service Connector page. This page provides detailed metrics about the Service Connector's data ingestion, Function task, and Object Storage target. About 1 minute after starting the data stream, you should see data populating under categories like `Bytes read from source`, `Bytes written to task`, and `Bytes written to target`. The source is the Streaming service, the task is the Function, and the target is Object Storage.
-8. Navigate to your Object Storage buckets:
+8. Navigate to your Object Storage Buckets:
 	\
-	Click on the hamburger menu at the top-left of the webpage, and type `buckets` into the search field. Click the listing that appears on the page that contains the words `Buckets`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked bucket object that <b>does not</b> contain the word `raw`.
-9. If you do not see data in this bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the bucket until you see populated data. This data is processed into CSV format and has been inserted into this bucket by the Function triggered from the Service Connector.
-10. In the navigation ribbon on the top of the page, click `Object Storage` to return to the list of buckets. Then click on the hyperlinked bucket object that <b>does</b> contain the word `raw`.
-11. If you do not see data in this bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the bucket until you see populated data. This data is the unprocessed data that was transmitted to the Streaming service and has been inserted into this bucket by the Service Connector.
+	Click on the hamburger menu at the top-left of the webpage, and type `buckets` into the search field. Click the listing that appears on the page that contains the words `Buckets`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Bucket object that <b>does not</b> contain the word `raw`.
+9. If you do not see data in this Bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the Bucket until you see populated data. This data is processed into CSV format and has been inserted into this Bucket by the Function triggered from the Service Connector.
+10. In the navigation ribbon on the top of the page, click `Object Storage` to return to the list of Buckets. Then click on the hyperlinked Bucket object that <b>does</b> contain the word `raw`.
+11. If you do not see data in this Bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the Bucket until you see populated data. This data is the unprocessed data that was transmitted to the Streaming service and has been inserted into this Bucket by the Service Connector.
 12. Navigate to your Autonomous Data Warehouse (ADW) instance:
 	\
 	Click on the hamburger menu at the top-left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Database object you created from your Resource Manager deployment.
@@ -468,6 +493,7 @@ In this section, you will run the data stream from Cloud Shell to simulate strea
 15. Click on the tile labeled `JSON`. In the query editor, leave the query as `{}` and click the green `Run Query` button to run the query. This will return all JSON elements in the JSON database. There is one JSON element for each data point that was tramsitted into the stream.
 16. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`.
 17. Copy and paste the following PL/SQL query into the editor. This query returns the JSON data from STREAMDATA. The data points are contained within the `BLOB` element in each row.
+
 	```
 	-- Select all metadadata in JSON collection.  JSON payload data is within "BLOB"
 	SELECT * FROM STREAMDATA;
@@ -475,6 +501,7 @@ In this section, you will run the data stream from Cloud Shell to simulate strea
 	\
 	Highlight the PL/SQL statement, then click on the round green `Run Statement` icon at the top of the editor to execute this statement.
 18. Copy and paste the following PL/SQL query into the editor. This query returns the data in STREAMDATA_VIEW. This data has been converted to table format by the Stored Procedure we configured earlier in this lab. Converting to table format allows the data to be easily queried for things like data visualization.
+
 	```
 	-- Select all data in STREAMDATA_VIEW
 	SELECT * FROM STREAMDATA_VIEW ORDER BY KEY DESC;
@@ -556,7 +583,7 @@ The following steps describe the process of clearing the data out of the pipelin
 \
 <b>Clearing the JSON Collection</b>
 
-1. Navigate to Autonomous Data Warehouse Database Actions:
+1. Navigate to Autonomous Data Warehouse (ADW) Database Actions:
 	1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`.
 	2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 	3. Click on the hyperlinked Database object you created.
@@ -572,10 +599,70 @@ The following steps describe the process of clearing the data out of the pipelin
 	2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 2. For each Bucket:
 	1. Click on the hyperlinked Bucket name
-	2. Locate the row in the `Objects` window for the highest level folder in the Bucket, and click on the three vertical dots on the far right side of the row.
+	2. Locate the row in the `Objects` window for the highest level folder in the Bucket, and click on the three vertically-oriented dots on the far right-hand side of the row.
 	3. Click `Delete Folder`.
 	4. Enter the folder name into the confirmation window as prompted, and click `Delete`.
 
 After these steps, the JSON collection and Object Storage Bucktes are empty and ready to recieve new stream data.
 
 ### Resource Cleanup
+The following steps walk through the process of deprovisioning the resources that were deployed in this lab. This will terminate billing for infrastructure resources, and re-allocate capacity for other projects.
+
+<b>Deprovision Oracle Analytics Cloud (OAC) instance</b>
+
+1. Navigate to OAC:
+	1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `analytics` into the search field. Click the listing that appears on the page that contains the word `Analytics Cloud` and `Analytics`.
+	2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
+	3. Click on the hyperlinked OAC instance name.
+	4. Click on the `More actions` button, and click `Delete` from the dropdown menu that appears. Then, click `Delete`.
+
+<b>Deprovision Application</b>
+\
+Deprovisioning the Application will deprovision the associated Function as well.
+
+1. Navigate to Application:
+	1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the word `Applications` and `Functions`.
+	2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
+	3. Click on the hyperlinked Application instance name.
+	4. Click on the `Delete` button. Then, click `Delete` on the pop-up window that appears to confirm.
+
+<b>Remove Cloud Shell artifacts</b>
+\
+These steps will walk through the process of removing the folders, files, and persisting environment variables set up on Cloud Shell for this project.
+
+1. Navigate to Cloud Shell: Click on the `Developer tools` icon on the upper right-hand side of the page, and then click `Cloud Shell`.
+2. Remove `stream.py` and your `streaming_fnc_UNIQUESTRING` folder, replacing `UNIQUESTRING` when running the following command in Cloud Shell.
+
+	```
+	rm -rf stream.py streaming_fnc_UNIQUESTRING
+	```
+3. Open the copy of `~/.bashrc`, and remove any export commands that have been appended to the file in this lab using the `vi` text editor and associated `vi`-related commands.
+
+	```
+	vi ~/.bashrc
+	```
+- Navigate to the bottom of the file by typing `G`.
+- For each line that starts with `export STREAMING_`, remove the line by typing `dd`.
+- Activate `insert` mode by typing `i`.
+- Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
+4. Exit out of Cloud Shell using the `X` icon.
+
+<b>Deprovision Infrastructure Deployed via Resource Manager Stack</b>
+\
+These steps will walk through the process of performing the `Destroy` operation in the Resource Manager Stack instance to deprovision the resources that were deployed from running the `Apply` action from the same Resource Manager Stack instance.
+
+1. Navigate to Resource Manager: In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `stacks` into the search field. Click the listing that appears on the page that contains the words `Stacks` and `Resource Manager`.
+2. Click on the dropdown under `Compartment`, and select the compartment where you created your Resource Manager Stack object. If your tenancy environment is new, this will be your root-level compartment.
+3. Click on the hyperlinked Resource Manager Stack object you created for this lab.
+4. Click on the red `Destroy` button at the top of the page.
+5. Notice the caution message shown on the pane that appears. Then, click `Destroy`. You can monitor the deprovisioning process by monitoring the `Logs` window.
+
+<b>Deprovision Resource Manager Stack instance</b>
+\
+These steps will walk through the process of deprovisioning the Resource Manager Stack instance itself. As a best practice, ensure that the resources that were deployed using the Resource Manager Stack have been deprovisioned using the `Destroy` operation from the Resource Manager Stack page. This will eliminate the need to deprovision each resource individually.
+
+1. Navigate to Resource Manager: In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `stacks` into the search field. Click the listing that appears on the page that contains the words `Stacks` and `Resource Manager`.
+2. Click on the dropdown under `Compartment`, and select the compartment where you created your Resource Manager Stack object. If your tenancy environment is new, this will be your root-level compartment.
+3. Click on the hyperlinked Resource Manager Stack object you created for this lab.
+4. Ensure that the resources that were provisioned using the Resource Manager Stack have been deprovisioned using the `Destroy` operation: Locate the `Jobs` section in the middle of the page. Ensure that the `Type` and `State` values of the top-most (i.e. most recent) job read `Destroy` and `Succeeded`, respectively.
+5. Click on the `More actions` button, and click `Delete stack` from the dropdown menu that appears. Then, click `Delete`.
