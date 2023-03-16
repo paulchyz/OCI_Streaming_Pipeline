@@ -593,7 +593,7 @@ If an error is encountered and the Destroy job reaches the `Failed` state as a r
 - [Some other resource is indicated in the error message](#some-other-resource-is-indicated-in-the-error-message)
 
 #### Compartment being reported as in the `ACTIVE` state
-This may be due to the presence of resources that have been provisioned within the compartment that are not associated with the Resource Manager Stack. The compartment will remain in the `ACTIVE` state so long as there are any resources within it, as a measure to protect resources from being unintentionally deleted. The steps to ensure that there are no resources in the compartment are indicated below:
+This may be due to the presence of resources that have been provisioned within the compartment that are not associated with the Resource Manager Stack. The compartment will remain in the `ACTIVE` state so long as there are any resources within it, as a measure to protect resources from being unintentionally deleted. The steps to ensure that there are no resources in the compartment are indicated below.
 
 1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `compartments` into the search field. Click the listing that appears on the page that contains the word `Compartments` and `Identity`.
 2. Click on the hyperlinked name of the deployed compartment if it is listed on the page, or of any parent compartment until your reach the deployed compartment, and then click on the hyperlinked name of the deployed compartment. Note that if there are many compartments in your tenancy, using the page navigation at the bottom right-hand side of the page may be necessary.
@@ -655,20 +655,18 @@ The following steps walk through the process of deprovisioning the resources tha
 
 #### Deprovision Oracle Analytics Cloud (OAC) instance
 
-1. Navigate to OAC:
-	1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `analytics` into the search field. Click the listing that appears on the page that contains the word `Analytics Cloud` and `Analytics`.
-	2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
-	3. Click on the hyperlinked OAC instance name.
-	4. Click on the `More actions` button, and click `Delete` from the dropdown menu that appears. Then, click `Delete`.
+1. Navigate to OAC: In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `analytics` into the search field. Click the listing that appears on the page that contains the word `Analytics Cloud` and `Analytics`.
+2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
+3. Click on the hyperlinked OAC instance name.
+4. Click on the `More actions` button, and click `Delete` from the dropdown menu that appears. Then, click `Delete`.
 
 #### Deprovision Application
 Deprovisioning the Application will deprovision the associated Function as well.
 
-1. Navigate to Application:
-	1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the word `Applications` and `Functions`.
-	2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
-	3. Click on the hyperlinked Application instance name.
-	4. Click on the `Delete` button. Then, click `Delete` on the pop-up window that appears to confirm.
+1. Navigate to Application: In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the word `Applications` and `Functions`.
+2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
+3. Click on the hyperlinked Application instance name.
+4. Click on the `Delete` button. Then, click `Delete` on the pop-up window that appears to confirm.
 
 #### Remove Cloud Shell artifacts
 These steps will walk through the process of removing the folders, files, and persisting environment variables set up on Cloud Shell for this project.
