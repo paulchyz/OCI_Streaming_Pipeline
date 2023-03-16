@@ -599,20 +599,20 @@ This may be due to the presence of resources that have been provisioned within t
 2. Click on the hyperlinked name of the deployed compartment if it is listed on the page, or of any parent compartment until your reach the deployed compartment, and then click on the hyperlinked name of the deployed compartment. Note that if there are many compartments in your tenancy, using the page navigation at the bottom right-hand side of the page may be necessary.
 3. Click `Work Requests` under `Resources` on the left-hand side of the page.
 4. Hover over the `i` icon next to the text `Failed` in the `Status` column under `Work Requests`. The message that appears should indicate the resources that are dependent on the compartment, and are preventing the compartment from being deprovisioned.
-5. Identify any resource that is a dependent upon the resource indicated in the error message
+5. Identify any resource that is dependent upon the resource indicated in the error message.
 6. For each such resource:
-	1. Navigate to the corresponding resource page
-	2. Delete the resource from that page
+	1. Navigate to the corresponding resource page.
+	2. Delete the resource from that page.
 7. Repeat the steps indicated in the [Deprovision Infrastructure Deployed via Resource Manager Stack](#deprovision-infrastructure-deployed-via-resource-manager-stack) section to resume the deprovisioning process from the Resource Manager Stack. If unsuccessful, repeat this section until all resources that depend on the compartment have been deprovisioned.
 
 #### Some other resource is indicated in the error message
 The steps indicated below walk through a workaround for deprovisioning any resources associated with the error.
 
-1. Identify any resource that is a dependent upon the resource indicated in the error message
+1. Identify any resource that is dependent upon the resource indicated in the error message.
 2. For each such resource:
-	1. Navigate to the corresponding resource page
-	2. Delete the resource from that page
-3. Repeat the previous step, for the resource indicated in the error message
+	1. Navigate to the corresponding resource page.
+	2. Delete the resource from that page.
+3. Repeat the previous step, for the resource indicated in the error message.
 4. Repeat the steps indicated in the [Deprovision Infrastructure Deployed via Resource Manager Stack](#deprovision-infrastructure-deployed-via-resource-manager-stack) section to resume the deprovisioning process from the Resource Manager Stack. If unsuccessful, repeat this section until all resources indicated in any error messages have been deprovisioned.
 
 ### Data Cleanup
