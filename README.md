@@ -19,9 +19,8 @@ This document provides instructions for deployment and configuration of a cloud-
 	- [Configure Oracle Analytics Cloud](#configure-oracle-analytics-cloud)
 	- [Stop the Data Stream](#stop-the-data-stream)
 - [Additional Steps](#additional-steps)
-	- [Troubleshooting and Logging](#troubleshooting-and-logging)
-		- [Troubleshooting and Logging when Running the Streaming Pipeline](#troubleshooting-and-logging-when-running-the-streaming-pipeline)
-		- [Troubleshooting Resource Manager Cleanup](#troubleshooting-resource-manager-cleanup)
+	- [Troubleshooting and Logging when Running the Streaming Pipeline](#troubleshooting-and-logging-when-running-the-streaming-pipeline)
+	- [Troubleshooting Resource Manager Cleanup](#troubleshooting-resource-manager-cleanup)
 	- [Data Cleanup](#data-cleanup)
 	- [Resource Cleanup](#resource-cleanup)
 
