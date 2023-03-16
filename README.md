@@ -241,12 +241,12 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	```
 	Replace boilerplate logic with custom logic:
 
-	- Navigate to the top of the file by typing `gg`.
-	- Remove all of the contents in the file by typing `dG`.
-	- Activate `insert` mode by typing `i`.
-	- Paste the contents that you copied from your clipboard.
-	- Press `ESC` to escape `insert` mode.
-	- Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
+	1. Navigate to the top of the file by typing `gg`.
+	2. Remove all of the contents in the file by typing `dG`.
+	3. Activate `insert` mode by typing `i`.
+	4. Paste the contents that you copied from your clipboard.
+	5. Press `ESC` to escape `insert` mode.
+	6. Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
 
 18. Copy the contents of [func.yaml](./modules/functions/func.yaml) from this repository to your clipboard. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
@@ -258,12 +258,12 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	```
 	Replace boilerplate logic with custom logic:
 
-	- Navigate to the top of the file by typing `gg`.
-	- Remove all of the contents in the file by typing `dG`.
-	- Activate `insert` mode by typing `i`.
-	- Paste the contents that you copied from your clipboard.
-	- Press `ESC` to escape `insert` mode.
-	- Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
+	1. Navigate to the top of the file by typing `gg`.
+	2. Remove all of the contents in the file by typing `dG`.
+	3. Activate `insert` mode by typing `i`.
+	4. Paste the contents that you copied from your clipboard.
+	5. Press `ESC` to escape `insert` mode.
+	6. Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
 
 19. Copy the contents of [requirements.txt](./modules/functions/requirements.txt) from this repository to your clipboard. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
@@ -275,12 +275,12 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	```
 	Replace boilerplate logic with custom logic:
 
-	- Navigate to the top of the file by typing `gg`.
-	- Remove all of the contents of the file by typing `dG`.
-	- Activate `insert` mode by typing `i`.
-	- Paste the contents that you copied from your clipboard.
-	- Press `ESC` to escape `insert` mode.
-	- Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
+	1. Navigate to the top of the file by typing `gg`.
+	2. Remove all of the contents of the file by typing `dG`.
+	3. Activate `insert` mode by typing `i`.
+	4. Paste the contents that you copied from your clipboard.
+	5. Press `ESC` to escape `insert` mode.
+	6. Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
 
 20. Now that you have finished making the necessary edits to your Function logic, deploy your Function to OCIR, and associate it with the Application object you created.
 
@@ -414,10 +414,10 @@ In this section, you will configure the data stream from Cloud Shell to simulate
 
 	Populate the file with the desired logic:
 
-	- Activate `insert` mode by typing `i`.
-	- Paste the contents that you copied from your clipboard.
-	- Press `ESC` to escape `insert` mode.
-	- Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
+	1. Activate `insert` mode by typing `i`.
+	2. Paste the contents that you copied from your clipboard.
+	3. Press `ESC` to escape `insert` mode.
+	4. Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
 6. Copy and paste, but do not yet execute, the following command into Cloud Shell. On the page showing details about your Streaming instance. Copy the Streaming OCID by clicking `Copy` next to `OCID:` to your clipboard. Replace the placeholder value (`YOUR_STREAM_OCID`) by pasting the contents of your clipboard into its place, then execute the command.
 
 	```
@@ -641,10 +641,10 @@ These steps will walk through the process of removing the folders, files, and pe
 	```
 	vi ~/.bashrc
 	```
-- Navigate to the bottom of the file by typing `G`.
-- For each line that starts with `export STREAMING_`, remove the line by typing `dd`.
-- Activate `insert` mode by typing `i`.
-- Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
+	1. Navigate to the bottom of the file by typing `G`.
+	2. For each line that starts with `export STREAMING_`, remove the line by typing `dd`.
+	3. Activate `insert` mode by typing `i`.
+	4. Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
 4. Exit out of Cloud Shell using the `X` icon.
 
 <b>Deprovision Infrastructure Deployed via Resource Manager Stack</b>
