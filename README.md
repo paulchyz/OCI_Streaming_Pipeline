@@ -3,26 +3,26 @@ This document provides instructions for deployment and configuration of a cloud-
 
 ## Table of Contents
 
-- [Introduction](#introduction)
-- [Objective](#objective)
-- [System Architecture](#system-architecture)
-- [Prerequisites](#prerequisites)
-- [Which OCI resources will you provision?](#which-oci-resources-will-you-provision)
-- [Lab Steps](#lab-steps)
-	- [Deploy Infrastructure using Resource Manager](#deploy-infrastructure-using-resource-manager)
-	- [Configure Function](#configure-function)
-	- [Deploy Service Connector](#deploy-service-connector)
-	- [Configure ADW for Stream Processing](#configure-adw-for-stream-processing)
-	- [Configure Function Parameters](#configure-function-parameters)
-	- [Configure Data Stream](#configure-data-stream)
-	- [Run The Stream Pipeline](#run-the-stream-pipeline)
-	- [Configure Oracle Analytics Cloud](#configure-oracle-analytics-cloud)
-	- [Stop the Data Stream](#stop-the-data-stream)
-- [Additional Steps](#additional-steps)
-	- [Troubleshooting and Logging when Running the Streaming Pipeline](#troubleshooting-and-logging-when-running-the-streaming-pipeline)
-	- [Troubleshooting Resource Manager Cleanup](#troubleshooting-resource-manager-cleanup)
-	- [Data Cleanup](#data-cleanup)
-	- [Resource Cleanup](#resource-cleanup)
+1. [Introduction](#introduction)
+2. [Objective](#objective)
+3. [System Architecture](#system-architecture)
+4. [Prerequisites](#prerequisites)
+5. [Which OCI resources will you provision?](#which-oci-resources-will-you-provision)
+6. [Lab Steps](#lab-steps)
+	1. [Deploy Infrastructure using Resource Manager](#deploy-infrastructure-using-resource-manager)
+	2. [Configure Function](#configure-function)
+	3. [Deploy Service Connector](#deploy-service-connector)
+	4. [Configure ADW for Stream Processing](#configure-adw-for-stream-processing)
+	5. [Configure Function Parameters](#configure-function-parameters)
+	6. [Configure Data Stream](#configure-data-stream)
+	7. [Run The Stream Pipeline](#run-the-stream-pipeline)
+	8. [Configure Oracle Analytics Cloud](#configure-oracle-analytics-cloud)
+	9. [Stop the Data Stream](#stop-the-data-stream)
+7. [Additional Steps](#additional-steps)
+	1. [Data Cleanup](#data-cleanup)
+	2. [Resource Cleanup](#resource-cleanup)
+	3. [Troubleshooting and Logging when Running the Streaming Pipeline](#troubleshooting-and-logging-when-running-the-streaming-pipeline)
+	4. [Troubleshooting Resource Manager Cleanup](#troubleshooting-resource-manager-cleanup)
 
 ### Introduction
 Data streaming is a powerful tool capable of accelerating business processes and facilitating real-time decision-making across a wide variety of industries and use cases. There are many ways to implement streaming technology, and each solution offers different benefits and drawbacks. The approach documented below is a cloud-native, low-code approach to streaming, covering the complete data lifecycle from ingestion to analysis. This will enable organizations to implement a complete streaming pipeline quickly, without the need to spend valuable time and effort procuring, configuring and managing IT infrastructure.
@@ -41,52 +41,41 @@ To follow this lab, you must have administrative access to all resources within 
 <details>
 <summary>Identity and Access Management (IAM) resources</summary>
 <p></p>
-<pre>
 <b>Compartment</b>: Logical container for resources, which can be accessed only by entities that have been given permission by an administrator in your organization.
 <b>Policy</b>: A collection of Policy Statements used to manage access to resources in your OCI environment.
-</pre>
 </details>
 <details>
 <summary>Autonomous Data Warehouse (ADW)</summary>
 <p></p>
-<pre>
 Managed data warehouse service that automates provisioning, configuring, securing, tuning, scaling, and backing up of the data warehouse. It includes tools for self-service data loading, data transformations, business models, automatic insights, and built-in converged database capabilities that enable simpler queries across multiple data types and machine learning analysis.
-</pre>
 </details>
 <details>
 <summary>Functions</summary>
 <p></p>
-<pre>
 Serverless, event-driven service that lets developers build, run, and scale applications without provisioning or managing any infrastructure. You only pay for the resources used when the function is running. Functions integrate with other OCI services and Oracle SaaS applications.
-</pre>
 </details>
 <details>
 <summary>Object Storage Bucket</summary>
 <p></p>
-<pre>
 Securely store any type of data in its native format, with built-in redundancy.
-</pre>
 </details>
 <details>
 <summary>Service Connector</summary>
 <p></p>
-<pre>
-</pre>
+Cloud message bus platform that offers a single pane of glass for describing, executing, and monitoring interactions when moving data between Oracle Cloud Infrastructure services.
 </details>
 <details>
 <summary>Streaming</summary>
 <p></p>
-<pre>
 Real-time, serverless, Apache Kafka-compatible event streaming platform for developers and data scientists.
-</pre>
 </details>
 <details>
 <summary>Virtual Cloud Network (VCN)</summary>
 <p></p>
-<pre>
 Customizable and private cloud network.
-</pre>
 </details>
+
+<sub>[Back to top](#oci-streaming-pipeline)</sub>
 
 ## Lab Steps
 ### Deploy Infrastructure using Resource Manager
@@ -129,6 +118,8 @@ The infrastructure resources that comprise this customized arrangement are presc
 	\
 	\
 	<b>Congratulations! You've successfully deployed a custom stack of OCI resources using Resource Manager!</b>
+\
+<sub>[Back to top](#oci-streaming-pipeline)</sub>
 
 ### Configure Function
 In this section, you will configure an instance of the serverless OCI Functions service, called a Function. The Function will act as a prescription for custom logic to be installed and executed on a machine that gets dynamically provisioned when the designated Function endpoint is invoked. This dynamic allocation of infrastructure is what makes the OCI Functions service a serverless platform. The custom logic is sourced from a container image repository located within the Oracle Cloud Infrastructure Registry (OCIR).  
@@ -289,7 +280,8 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	fn -v deploy --app streaming_app
 	```
 	<b>Congratulations! You've successfully deployed your Function!</b>
-
+\
+<sub>[Back to top](#oci-streaming-pipeline)</sub>
 ### Deploy Service Connector
 In this section, you will deploy a Service Connector instance, using the <i>O</i>racle <i>C</i>loud <i>Id</i>entifier (OCID) of your Function and the same Resource Manager Stack you created [earlier in this lab](#deploy-infrastructure-using-resource-manager).
 
@@ -314,7 +306,8 @@ In this section, you will deploy a Service Connector instance, using the <i>O</i
 	\
 	\
 	<b>Congratulations! You've successfully added Service Connector to your existing deployment using Resource Manager!</b>
-
+\
+<sub>[Back to top](#oci-streaming-pipeline)</sub>
 ### Configure ADW for Stream Processing
 In this section, you will set up the following items in your Autonomous Data Warehouse (ADW) instance:
 - <b>JSON Collection</b>: This object will store data points from a data stream in JSON format.
@@ -359,7 +352,8 @@ In this section, you will set up the following items in your Autonomous Data War
 	\
 	\
 	<b>Congratulations! You've successfully configured your ADW for stream processing!</b>
-
+\
+<sub>[Back to top](#oci-streaming-pipeline)</sub>
 ### Configure Function Parameters
 In this section, you will supply environment variables to be made available to your Function machines while they execute their associated logic. These environment variables will supply the necessary values for your streaming pipeline to integrate with some of the resources in our deployment, work end-to-end. These environment variables must be set using `Key`:`Value` pairs, where each pair represents the name of an environment variable, and its associated value, respectively.
 
@@ -397,7 +391,8 @@ In this section, you will supply environment variables to be made available to y
 	\
 	\
 	<b>Congratulations! You've successfully configured your Function with the environment variables needed to run the data stream!</b>
-
+\
+<sub>[Back to top](#oci-streaming-pipeline)</sub>
 ### Configure Data Stream
 In this section, you will configure the data stream from Cloud Shell to simulate the transmission of manufacturing data to your Streaming instance's Messages Endpoint in OCI.
 
@@ -453,7 +448,8 @@ In this section, you will configure the data stream from Cloud Shell to simulate
 	env | grep ^STREAMING_
 	```
 	<b>Congratulations! You've successfully configured your Cloud Shell and are ready to run the data stream!</b>
-
+\
+<sub>[Back to top](#oci-streaming-pipeline)</sub>
 ### Run The Stream Pipeline
 In this section, you will run the data stream from Cloud Shell to simulate streaming manufacturing data, then you will view the output from each step of the pipeline.
 
@@ -518,7 +514,8 @@ If data has not populated within this Bucket after a minute or two, please revie
 	\
 	\
 	<b>Congratulations! You've successfully run and viewed the output of the data stream!</b>
-
+\
+<sub>[Back to top](#oci-streaming-pipeline)</sub>
 ### Configure Oracle Analytics Cloud
 In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to visualize the data stream.
 
@@ -560,65 +557,22 @@ In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to v
 <b>Congratulations! You are now visualizing the output of your completed streaming pipeline!</b>
 
 ![OAC Workbook](/images/oac_workbook.png)
-
+\
+<sub>[Back to top](#oci-streaming-pipeline)</sub>
 ### Stop the Data Stream
 
 To stop the data stream, navigate to the page with the Cloud Shell running `stream.py`, click within the Cloud Shell window, and press `ctrl` + `c` to stop the script. 
 \
 \
 <b>Thank you, and congratulations on completing this workshop!</b>
-
+\
+<sub>[Back to top](#oci-streaming-pipeline)</sub>
 ## Additional Steps
-### Troubleshooting and Logging when Running the Streaming Pipeline
-
-If the stream pipeline is not functioning as expected, the first thing to check is the function configuration page to ensure that all the configuration keys and values are correct. Review the steps in [Configure Function Parameters](#configure-function-parameters), and pay special attention to case sensitivity and eliminating leading/trailing spaces. Any innaccuracy in these parameters will cause the pipeline to fail. 
-\
-\
-If the function configuration is correct and the pipeline is still not running properly, the following steps will walk through how to enable logging for the function. These logs can provide additional information about certain points of failure.
-
-1. Navigate to the hamburger menu at the top-left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
-2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
-3. Click on the hyperlinked Application object you created, called `streaming_app`.
-4. Click `Logs` in the `Resources` menu on the left side of the Application page.
-5. Locate the `Function Invocation Logs` row in the `Logs` window in the middle of the page, and click on the switch icon in the `Enable Log` column.
-6. Ensure that the correct compartment is selected, and leave the other options as default. This will auto-create the default Log Group and provide a standard name and retention policy. Click `Enable Log`.
-7. Click the hyperlined log name from the `Log Name` column to view the Log.
-8. Run the stream, and refresh this Log page to view the output of the function. Basic error messages have been included in the function code to help identify where the function is failing.
-
-### Troubleshooting Resource Manager Cleanup
-If an error is encountered and the Destroy job reaches the `Failed` state as a result, identify which scenario listed below best describes the error encountered, and follow the steps associated with that scenario.
-
-- [Compartment being reported as in the `ACTIVE` state](#compartment-being-reported-as-in-the-active-state)
-- [Some other resource is indicated in the error message](#some-other-resource-is-indicated-in-the-error-message)
-
-#### Compartment being reported as in the `ACTIVE` state
-This may be due to the presence of resources that have been provisioned within the compartment that are not associated with the Resource Manager Stack. The compartment will remain in the `ACTIVE` state so long as there are any resources within it, as a measure to protect resources from being unintentionally deleted. The steps to ensure that there are no resources in the compartment are indicated below.
-
-1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `compartments` into the search field. Click the listing that appears on the page that contains the word `Compartments` and `Identity`.
-2. Click on the hyperlinked name of the deployed compartment if it is listed on the page, or of any parent compartment until your reach the deployed compartment, and then click on the hyperlinked name of the deployed compartment. Note that if there are many compartments in your tenancy, using the page navigation at the bottom right-hand side of the page may be necessary.
-3. Click `Work Requests` under `Resources` on the left-hand side of the page.
-4. Hover over the `i` icon next to the text `Failed` in the `Status` column under `Work Requests`. The message that appears should indicate the resources that are dependent on the compartment, and are preventing the compartment from being deprovisioned.
-5. Identify any resource that is dependent upon the resource indicated in the error message.
-6. For each such resource:
-	1. Navigate to the corresponding resource page.
-	2. Delete the resource from that page.
-7. Repeat the steps indicated in the [Deprovision Infrastructure Deployed via Resource Manager Stack](#deprovision-infrastructure-deployed-via-resource-manager-stack) section to resume the deprovisioning process from the Resource Manager Stack. If unsuccessful, repeat this section until all resources that depend on the compartment have been deprovisioned.
-
-#### Some other resource is indicated in the error message
-The steps indicated below walk through a workaround for deprovisioning any resources associated with the error.
-
-1. Identify any resource that is dependent upon the resource indicated in the error message.
-2. For each such resource:
-	1. Navigate to the corresponding resource page.
-	2. Delete the resource from that page.
-3. Repeat the previous step, for the resource indicated in the error message.
-4. Repeat the steps indicated in the [Deprovision Infrastructure Deployed via Resource Manager Stack](#deprovision-infrastructure-deployed-via-resource-manager-stack) section to resume the deprovisioning process from the Resource Manager Stack. If unsuccessful, repeat this section until all resources indicated in any error messages have been deprovisioned.
 
 ### Data Cleanup
 The following steps describe the process of clearing the data out of the pipeline. This can be useful when you want to start a fresh stream of data without any residual data from previous pipeline usage. This process involves clearing the JSON collection and clearing both Object Storage Buckets.
 - [Clearing the JSON Collection](#clearing-the-json-collection)
 - [Clearing the Object Storage Buckets](#clearing-the-object-storage-buckets)
-
 #### Clearing the JSON Collection
 
 1. Navigate to Autonomous Data Warehouse (ADW) Database Actions:
@@ -629,7 +583,6 @@ The following steps describe the process of clearing the data out of the pipelin
 2. Click on the tile labeled `JSON`.
 3. Click the trash can icon in the toolbar above the JSON query editor. This button is labeled `Delete All Documents in the list` when hovering over it.
 4. Click `OK` to confirm.
-
 #### Clearing the Object Storage Buckets
 
 1. Navigate to Object Storage:
@@ -642,7 +595,8 @@ The following steps describe the process of clearing the data out of the pipelin
 	4. Enter the folder name into the confirmation window as prompted, and click `Delete`.
 
 After these steps, the JSON collection and Object Storage Bucktes are empty and ready to recieve new stream data.
-
+\
+<sub>[Back to top](#oci-streaming-pipeline)</sub>
 ### Resource Cleanup
 The following steps walk through the process of deprovisioning the resources that were deployed in this lab. This will terminate billing for infrastructure resources, and re-allocate capacity for other projects.
 
@@ -706,3 +660,52 @@ These steps will walk through the process of deprovisioning the Resource Manager
 3. Click on the hyperlinked Resource Manager Stack object you created for this lab.
 4. Ensure that the resources that were provisioned using the Resource Manager Stack have been deprovisioned using the `Destroy` operation: Locate the `Jobs` section in the middle of the page. Ensure that the `Type` and `State` values of the top-most (i.e. most recent) job read `Destroy` and `Succeeded`, respectively.
 5. Click on the `More actions` button, and click `Delete stack` from the dropdown menu that appears. Then, click `Delete`.
+\
+<sub>[Back to top](#oci-streaming-pipeline)</sub>
+### Troubleshooting and Logging when Running the Streaming Pipeline
+
+If the stream pipeline is not functioning as expected, the first thing to check is the function configuration page to ensure that all the configuration keys and values are correct. Review the steps in [Configure Function Parameters](#configure-function-parameters), and pay special attention to case sensitivity and eliminating leading/trailing spaces. Any innaccuracy in these parameters will cause the pipeline to fail. 
+\
+\
+If the function configuration is correct and the pipeline is still not running properly, the following steps will walk through how to enable logging for the function. These logs can provide additional information about certain points of failure.
+
+1. Navigate to the hamburger menu at the top-left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
+2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
+3. Click on the hyperlinked Application object you created, called `streaming_app`.
+4. Click `Logs` in the `Resources` menu on the left side of the Application page.
+5. Locate the `Function Invocation Logs` row in the `Logs` window in the middle of the page, and click on the switch icon in the `Enable Log` column.
+6. Ensure that the correct compartment is selected, and leave the other options as default. This will auto-create the default Log Group and provide a standard name and retention policy. Click `Enable Log`.
+7. Click the hyperlined log name from the `Log Name` column to view the Log.
+8. Run the stream, and refresh this Log page to view the output of the function. Basic error messages have been included in the function code to help identify where the function is failing.
+\
+<sub>[Back to top](#oci-streaming-pipeline)</sub>
+### Troubleshooting Resource Manager Cleanup
+If an error is encountered and the Destroy job reaches the `Failed` state as a result, identify which scenario listed below best describes the error encountered, and follow the steps associated with that scenario.
+
+- [Compartment being reported as in the `ACTIVE` state](#compartment-being-reported-as-in-the-active-state)
+- [Some other resource is indicated in the error message](#some-other-resource-is-indicated-in-the-error-message)
+
+#### Compartment being reported as in the `ACTIVE` state
+This may be due to the presence of resources that have been provisioned within the compartment that are not associated with the Resource Manager Stack. The compartment will remain in the `ACTIVE` state so long as there are any resources within it, as a measure to protect resources from being unintentionally deleted. The steps to ensure that there are no resources in the compartment are indicated below.
+
+1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `compartments` into the search field. Click the listing that appears on the page that contains the word `Compartments` and `Identity`.
+2. Click on the hyperlinked name of the deployed compartment if it is listed on the page, or of any parent compartment until your reach the deployed compartment, and then click on the hyperlinked name of the deployed compartment. Note that if there are many compartments in your tenancy, using the page navigation at the bottom right-hand side of the page may be necessary.
+3. Click `Work Requests` under `Resources` on the left-hand side of the page.
+4. Hover over the `i` icon next to the text `Failed` in the `Status` column under `Work Requests`. The message that appears should indicate the resources that are dependent on the compartment, and are preventing the compartment from being deprovisioned.
+5. Identify any resource that is dependent upon the resource indicated in the error message.
+6. For each such resource:
+	1. Navigate to the corresponding resource page.
+	2. Delete the resource from that page.
+7. Repeat the steps indicated in the [Deprovision Infrastructure Deployed via Resource Manager Stack](#deprovision-infrastructure-deployed-via-resource-manager-stack) section to resume the deprovisioning process from the Resource Manager Stack. If unsuccessful, repeat this section until all resources that depend on the compartment have been deprovisioned.
+
+#### Some other resource is indicated in the error message
+The steps indicated below walk through a workaround for deprovisioning any resources associated with the error.
+
+1. Identify any resource that is dependent upon the resource indicated in the error message.
+2. For each such resource:
+	1. Navigate to the corresponding resource page.
+	2. Delete the resource from that page.
+3. Repeat the previous step, for the resource indicated in the error message.
+4. Repeat the steps indicated in the [Deprovision Infrastructure Deployed via Resource Manager Stack](#deprovision-infrastructure-deployed-via-resource-manager-stack) section to resume the deprovisioning process from the Resource Manager Stack. If unsuccessful, repeat this section until all resources indicated in any error messages have been deprovisioned.
+\
+<sub>[Back to top](#oci-streaming-pipeline)</sub>
