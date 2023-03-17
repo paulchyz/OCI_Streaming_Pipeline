@@ -37,7 +37,7 @@ This repository leverages Oracle Cloud's array of infrastructure services to dep
 <sub>[Back to top](#oci-streaming-pipeline)</sub>
 
 ### Prerequisites
-To follow this lab, you must have the following:
+To follow this lab, you must have the following in place:
 - Administrative access to all resources within an Oracle Cloud Infrastructure (OCI) tenancy or trial tenancy environment, or to all resources within a compartment in your environment
 - Sufficient resource availability within your home region in your OCI environment. You can check resource availability in your home region on the [limits page](https://cloud.oracle.com/limits?region=home).
 
