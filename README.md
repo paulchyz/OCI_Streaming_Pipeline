@@ -33,6 +33,8 @@ This repository leverages Oracle Cloud's array of infrastructure services to dep
 ### System Architecture
 
 ![System Architecture](/images/system_architecture.png)
+\
+<sub>[Back to top](#oci-streaming-pipeline)</sub>
 
 ### Prerequisites
 To follow this lab, you must have administrative access to all resources within an Oracle Cloud Infrastructure (OCI) tenancy or trial tenancy environment, or to all resources within a compartment in your environment.
@@ -41,8 +43,10 @@ To follow this lab, you must have administrative access to all resources within 
 <details>
 <summary>Identity and Access Management (IAM) resources</summary>
 <p></p>
-<b>Compartment</b>: Logical container for resources, which can be accessed only by entities that have been given permission by an administrator in your organization.
-<b>Policy</b>: A collection of Policy Statements used to manage access to resources in your OCI environment.
+
+- <b>Compartment</b>: Logical container for resources, which can be accessed only by entities that have been given permission by an administrator in your organization.
+
+- <b>Policy</b>: A collection of Policy Statements used to manage access to resources in your OCI environment.
 </details>
 <details>
 <summary>Autonomous Data Warehouse (ADW)</summary>
