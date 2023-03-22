@@ -13,6 +13,9 @@ config = oci.config.from_file(file_location=os.environ['STREAMING_OCI_CONFIG_FIL
 sid = os.environ['STREAMING_STREAM_OCID']
 message_endpoint = os.environ['STREAMING_MESSAGES_ENDPOINT']
 
+# Initialize service client with default config file
+streaming_client = oci.streaming.StreamClient(config, message_endpoint)
+
 amp_odds = .01
 freq_odds = .01
 temp_odds = .01
@@ -94,9 +97,6 @@ while True:
     encoded_value = b64encode(payload.encode()).decode()
     timestamp = str(datetime.datetime.now())
     encoded_key = b64encode(timestamp.encode()).decode()
-
-    # Initialize service client with default config file
-    streaming_client = oci.streaming.StreamClient(config, message_endpoint)
 
     # Send the message request to streaming service
     mesgs=[oci.streaming.models.PutMessagesDetailsEntry(value=encoded_value,key=encoded_key)]
