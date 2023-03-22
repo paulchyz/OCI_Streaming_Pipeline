@@ -73,12 +73,11 @@ def put_object(client, namespace, dst_bucket, obj_name, data):
 
 # Load JSON data into ADW JSON collection
 def load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name):
-    for obj in decoded_objects:
-        insert_status = soda_insert(ordsbaseurl, schema, dbuser, dbpwd, obj, json_collection_name)
-        if "id" in insert_status["items"][0]:
-            print("INFO - Successfully inserted document ID " + insert_status["items"][0]["id"], flush=True)
-        else:
-            raise SystemExit("Error while inserting: " + insert_status)
+    insert_status = soda_insert(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name)
+    if "id" in insert_status["items"][0]:
+        print("INFO - Successfully inserted document ID " + insert_status["items"][0]["id"], flush=True)
+    else:
+        raise SystemExit("Error while inserting: " + insert_status)
     return insert_status
 
 # SODA call to perform DB insert
