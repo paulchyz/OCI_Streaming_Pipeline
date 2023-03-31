@@ -66,6 +66,11 @@ Serverless, event-driven service that lets developers build, run, and scale appl
 Securely store any type of data in its native format, with built-in redundancy.
 </details>
 <details>
+<summary>Oracle Analytics Cloud (OAC)</summary>
+<p></p>
+Service that provides the capabilities required to address the entire analytics process including data ingestion and modeling, data preparation and enrichment, and visualization and collaboration, without compromising security and governance.
+</details>
+<details>
 <summary>Service Connector</summary>
 <p></p>
 Cloud message bus platform that offers a single pane of glass for describing, executing, and monitoring interactions when moving data between Oracle Cloud Infrastructure services.
