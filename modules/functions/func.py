@@ -22,11 +22,11 @@ def handler(ctx, data: io.BytesIO=None):
         client, namespace = config_object_store()
         src_objects = json.loads(data.getvalue().decode('utf-8'))
         output = execute_etl(client, namespace, processed_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name)
+        return output
 
     except (Exception, ValueError) as ex:
         logging.getLogger().info('Top Level Error: ' + str(ex))
-
-    return output
+        return None
 
 # Configure object storage credentials
 def config_object_store():
