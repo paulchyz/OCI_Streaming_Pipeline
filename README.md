@@ -39,7 +39,7 @@ This repository leverages Oracle Cloud's array of infrastructure services to dep
 ### Prerequisites
 To follow this lab, you must have the following in place:
 - Administrative access to all resources within an Oracle Cloud Infrastructure (OCI) tenancy or trial tenancy environment, or to all resources within a compartment in your environment
-- Sufficient resource availability within your home region in your OCI environment. You can check resource availability in your home region on the [limits page](https://cloud.oracle.com/limits?region=home).
+- Sufficient resource availability in your OCI environment within your home region to deploy an enclosing compartment, and in the region preferred for deployment of other resources. You can check resource availability within the region indicated on-screen on the [limits page](https://cloud.oracle.com/limits?region=home).
 
 ### Which OCI resources will you provision?
 <details>
@@ -109,9 +109,9 @@ The infrastructure resources that comprise this customized arrangement are presc
 	<i>About Compartments: In OCI, the compartment serves as a logical container of resources. Resources are scoped to a compartment from an Identity and Access Management (IAM) perspective, and are said to be "contained within" a compartment. A selection of users or resources within Oracle may be granted access to specified resources within a compartment using IAM Policy Statements, which can be written by a tenancy administrator.</i>
 
 5. Click `Next` to proceed to the `Configure Variables` section.
-6. In the `Name Your Resources` field, enter a string that will be included within the names of the resources deployed by the Stack.
-7. In the `Parent Compartment` field, select the compartment where you wish for the OCI resources to be deployed from the Resource Manager Stack object. For this lab, one of the deployed resources will be a new compartment, which will contain the other resources. For users with a new tenancy, this will be the root compartment.
-8. In the `Region` field, select the region where you wish to deploy your resources. For this lab, this will be the value that corresponds to your home region. This should be shown in the upper right-hand side of the page, and appear in a format similar to `US East (Ashburn)`. Make a note of the string you select for this value, called the `region identifier`, which we will refer to later in this lab.
+6. In the `Parent Compartment` field, select the compartment where you wish for the OCI resources to be deployed from the Resource Manager Stack object. For this lab, one of the deployed resources will be a new compartment, which will contain the other resources. For users with a new tenancy, this will be the root compartment.
+7. In the `Home Region` field, select the value that corresponds to your home region, as the compartment referenced in your stack configuration is globally-scoped, and must be deployed using the home region. You can identify your home region by checking the upper right-hand side of the page, where it appears in a format similar to `US East (Ashburn)`.
+8. In the `Custom Region` field, the region where you wish to deploy the regionally-scoped resources that are referenced in your stack configuration. Make a note of the string you select for this value, called the `region identifier`, which we will refer to later in this lab.
 9. Update the `Name of New Compartment (Prefix)`, `Description for New Compartment`, `IAM Policy Name (Prefix)`, and `IAM Policy Description` if desired, and keep `Enable Delete for Compartment` and `Deploy IAM Policy` selected.
 10. For this lab, we will deploy a subset of resources that can deployed using the Terraform code. In the `Select Resources` tile, ensure that only the checkboxes that correspond to the below indicated services are selected to deploy the corresponding services:
 
@@ -148,7 +148,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	\
 	Then, click `Create`.
 4. Click on the `Developer tools` icon on the upper right-hand side of the page, and then click `Cloud Shell`. This will open a command-line interface (CLI) environment from which we will programmatically configure and deploy a serverless instance of OCI Functions, called a Function. The subsequent steps will walk you through how to configure and deploy your Function using the Cloud Shell CLI.
-5. Select the `context` object, which is named according to the region in which you are operating. Use the `region identifier` value you selected when configuring your Terraform stack.
+5. Select the `context` object, which is named according to the region in which you are operating. Use the `region identifier` value you selected in the `Custom Region` field when configuring your Terraform stack.
 	\
 	\
 	Note that in the example provided below, `us-ashburn-1` is the value provided as the `region identifier` used to represent the `US East (Ashburn)` region. Replace this with the correct value based on your selection when you deployed the Stack.
@@ -185,7 +185,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	export STREAMING_CONTEXT_REGION_IDENTIFIER=$(fn inspect context | grep api-url | grep -Po '(?<=functions.).*(?=.oci)')
 	export STREAMING_CONTEXT_REGION_KEY=$(oci iam region list | jq -r ".data[] | select(.name == \"$STREAMING_CONTEXT_REGION_IDENTIFIER\").key" | tr '[:upper:]' '[:lower:]')
 	```
-	Alternatively, the `region key` can be obtained by finding the `region key` that corresponds to the `region identifier` you used when selecting your `context` object from the table shown in [this documentation](https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm#ariaid-title2). Use a lower-case representation of the `region key` when replacing the placeholder value (`your_region_key`) in the command indicated below, and then run the command.
+	Alternatively, the `region key` can be obtained by finding the `region key` that corresponds to the `region identifier` you used when setting up your `context` object, from the table shown in [this documentation](https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm#ariaid-title2). Use a lower-case representation of the `region key` when replacing the placeholder value (`your_region_key`) in the command indicated below, and then run the command.
 
 	```
 	export STREAMING_CONTEXT_REGION_KEY=your_region_key
