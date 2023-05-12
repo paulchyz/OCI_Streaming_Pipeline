@@ -22,11 +22,11 @@ def handler(ctx, data: io.BytesIO=None):
         client, namespace = config_object_store()
         src_objects = json.loads(data.getvalue().decode('utf-8'))
         output = execute_etl(client, namespace, processed_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name)
+        return output
 
     except (Exception, ValueError) as ex:
         logging.getLogger().info('Top Level Error: ' + str(ex))
-
-    return output
+        return None
 
 # Configure object storage credentials
 def config_object_store():
@@ -47,18 +47,13 @@ def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema,
 # Decode stream data
 def decode_objects(src_objects):
     for obj in src_objects:
-            obj['key'] = base64.b64decode(obj['key']).decode('utf-8')
-            obj['value'] = json.loads(base64.b64decode(obj['value']).decode('utf-8'))
+        obj['key'] = base64.b64decode(obj['key']).decode('utf-8')
+        obj['value'] = json.loads(base64.b64decode(obj['value']).decode('utf-8'))
     return src_objects
 
 # Convert decoded data into JSON format
-def to_csv(data_list):
-    for item in data_list:
-        for key in item['value'][0]:
-            item[key] = item['value'][0][key]
-        del item['value']
-
-    df = pd.json_normalize(data_list)
+def to_csv(decoded_objects):
+    df = pd.json_normalize(decoded_objects, record_path=['value'], meta=['stream', 'partition', 'key', 'offset', 'timestamp'], meta_prefix='batch_')
     csv_data = df.to_csv(index=False)
     return csv_data
 

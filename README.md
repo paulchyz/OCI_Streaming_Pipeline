@@ -251,7 +251,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	5. Press `ESC` to escape `insert` mode.
 	6. Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
 
-18. Copy the contents of [func.yaml](./modules/functions/func.yaml) from this repository to your clipboard. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
+18. Copy the contents of [func.yaml](./modules/functions/func.yaml) from this repository to your clipboard. You will replace the boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
 	\
 	On Cloud Shell, open the copy of `func.yaml` that you generated using the `fn init` command:
@@ -268,7 +268,7 @@ In this pipeline, the Function invocation will carry out the necessary transform
 	5. Press `ESC` to escape `insert` mode.
 	6. Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
 
-19. Copy the contents of [requirements.txt](./modules/functions/requirements.txt) from this repository to your clipboard. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
+19. Copy the contents of [requirements.txt](./modules/functions/requirements.txt) from this repository to your clipboard. You will replace the boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
 	\
 	\
 	On Cloud Shell, open the copy of `requirements.txt` that you generated using the `fn init` command:
@@ -337,31 +337,7 @@ In this section, you will set up the following items in your Autonomous Data War
 8. Enter `STREAMDATA` into the `Collection Name` field. Use upper-case letters for this name, because the endpoint address for the JSON Collection will incorporate this provided name, and it is case-sensitive.
 9. Click `Create`.
 10. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`. Feel free to close the pop-up that warns that you are logged in as `ADMIN` user by clicking `X`. Also, feel free to skip the tutorial that is automatically launched. The tutorial can be skipped by clicking `X` on the pop-ups, and revisited by clicking on the binoculars icon on the upper right-hand side of the page.
-11. Copy and paste the following PL/SQL code snippet into the editor. Once this code snippet has been executed, you will have created a database view, which uses a stored query to create a virtual table that can be queried to return the JSON collection data in a relational format.
-
-	```
-	-- Create database view to return relational data from JSON collection
-	CREATE OR REPLACE VIEW STREAMDATA_VIEW AS
-	SELECT STREAM, TO_TIMESTAMP(KEY, 'YYYY-MM-DD HH24:MI:SS.FF') KEY, PARTITION, OFFSET, TIMESTAMP, EQUIPMENT_ID, VIBRATION_AMPLITUDE, VIBRATION_FREQUENCY, TEMPERATURE, HUMIDITY from STREAMDATA,
-		JSON_TABLE (
-			STREAMDATA.JSON_DOCUMENT COLUMNS (
-				NESTED PATH '$[*]' COLUMNS (
-					STREAM VARCHAR2(40) PATH '$.stream',
-					KEY VARCHAR2(100) PATH '$.key',
-					PARTITION NUMBER PATH '$.partition',
-					OFFSET NUMBER PATH '$.offset',
-					TIMESTAMP NUMBER PATH '$.timestamp',
-					EQUIPMENT_ID NUMBER PATH '$.equipment_id',
-					VIBRATION_AMPLITUDE NUMBER PATH '$.vibration_amplitude',
-					VIBRATION_FREQUENCY NUMBER PATH '$.vibration_frequency',
-					TEMPERATURE NUMBER PATH '$.temperature',
-					HUMIDITY NUMBER PATH '$.humidity'
-				)
-			)
-		) ORDER BY KEY DESC;
-	```
-	\
-	Click on the `Run Script` icon at the top of the editor to execute this code snippet as a script.
+11. Copy and paste the contents of [STREAM_PIPELINE.sql](./modules/sql/STREAM_PIPELINE.sql) from this repository into the editor. Highlight all of the PL/SQL code above the section labeled `FOR REFERENCE` and click on the green `Run Statement` button. This will create 3 database views, which use stored queries to create virtual tables that can be queried to return the JSON collection data in a relational format.
 	\
 	\
 	<b>Congratulations! You've successfully configured your ADW for stream processing!</b>
@@ -516,7 +492,7 @@ If data has not populated within this Bucket after a minute or two, please revie
 	```
 	\
 	Highlight the PL/SQL statement, then click on the round green `Run Statement` icon at the top of the editor to execute this statement.
-18. Copy and paste the following PL/SQL query into the editor. This query returns the data in STREAMDATA_VIEW. This data has been converted to table format by the Stored Procedure we configured earlier in this lab. Converting to table format allows the data to be easily queried for things like data visualization.
+18. Copy and paste the following PL/SQL query into the editor. This query returns the data in STREAMDATA_VIEW. This data has been converted to table format by the Stored Procedure we configured earlier in this lab. Converting to table format allows the data to be easily queried for things like data visualization. STREAMDATA_LAST10_VIEW and STREAMDATA_LAST3_VIEW return the same table format as STREAMDATA_VIEW, but they only return the most recent 10 minutes or 3 minutes of data respectively.
 
 	```
 	-- Select all data in STREAMDATA_VIEW
