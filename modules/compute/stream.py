@@ -10,28 +10,22 @@ config = oci.config.from_file(file_location=os.environ['STREAMING_OCI_CONFIG_FIL
 sid = os.environ['STREAMING_STREAM_OCID']
 message_endpoint = os.environ['STREAMING_MESSAGES_ENDPOINT']
 
-amp_odds = .001
-freq_odds = .001
-temp_odds = .001
-hum_odds = .001
+amp_odds = .005
+freq_odds = .005
+temp_odds = .005
+hum_odds = .005
 
-amp_flag = False
-freq_flag = False
-temp_flag = False
-hum_flag = False
-
-amp_count = 0
-freq_count = 0
-temp_count = 0
-hum_count = 0
+outlier_count = 5
 
 base_amp = float(250)
 base_freq = float(1000)
 base_temp = float(60)
 base_hum = float(30)
 
-equipment_ids = [101, 102, 103, 104, 105, 106]
-outlier_count = 500
+equipment_ids = [101, 102, 103]
+flags = []
+for id in equipment_ids:
+     flags.append([0, 0, 0, 0])
 
 message_count = 0
 
@@ -41,67 +35,75 @@ streaming_client = oci.streaming.StreamClient(config, message_endpoint)
 start_time = datetime.datetime.now()
 
 while True:
+    x = 0
     for id in equipment_ids:
         payload_list = []
+
+        if (flags[x][0] == 0):
+            if (random.random() < amp_odds):
+                flags[x][0] = 1
+        elif (flags[x][0] >= outlier_count):
+             flags[x][0] = 0
+        else:
+             flags[x][0] = flags[x][0] + 1
+
+        if (flags[x][1] == 0):
+            if (random.random() < freq_odds):
+                flags[x][1] = 1
+        elif (flags[x][1] >= outlier_count):
+             flags[x][1] = 0
+        else:
+             flags[x][1] = flags[x][1] + 1
+
+        if (flags[x][2] == 0):
+            if (random.random() < temp_odds):
+                flags[x][2] = 1
+        elif (flags[x][2] >= outlier_count):
+             flags[x][2] = 0
+        else:
+             flags[x][2] = flags[x][2] + 1
+
+        if (flags[x][3] == 0):
+            if (random.random() < hum_odds):
+                flags[x][3] = 1
+        elif (flags[x][3] >= outlier_count):
+             flags[x][3] = 0
+        else:
+             flags[x][3] = flags[x][3] + 1
+
         for i in range(1000):
             # AMPLITUDE
-            if (amp_flag == False) and (random.random() < amp_odds):
-                amp_flag = True
-
-            if (amp_flag == True) and amp_count < outlier_count:
-                amp_count = amp_count + 1
+            if (flags[x][0] >= 1):
                 vibration_amplitude = round(base_amp * round(random.uniform(1.5, 1.8), 3), 2)
-                #print ('AMPLITUDE OUTLIER')
             else:
-                amp_count = 0
-                amp_flag = False
                 vibration_amplitude = round(base_amp * round(random.uniform(0.9, 1.1), 3), 2)
 
             # FREQUENCY
-            if (freq_flag == False) and (random.random() < freq_odds):
-                freq_flag = True
-
-            if (freq_flag == True) and freq_count < outlier_count:
-                freq_count = freq_count + 1
+            if (flags[x][1] >= 1):
                 vibration_frequency = round(base_freq * round(random.uniform(1.5, 1.8), 3), 2)
-                #print ('FREQUENCY OUTLIER')
             else:
-                freq_count = 0
-                freq_flag = False
                 vibration_frequency = round(base_freq * round(random.uniform(0.9, 1.1), 3), 2)
 
             # TEMPURATURE
-            if (temp_flag == False) and (random.random() < temp_odds):
-                temp_flag = True
-
-            if (temp_flag == True) and temp_count < outlier_count:
-                temp_count = temp_count + 1
+            if (flags[x][2] >= 1):
                 tempurature = round(base_temp * round(random.uniform(1.5, 1.8), 3), 2)
-                #print ('TEMPERATURE OUTLIER')
             else:
-                temp_count = 0
-                temp_flag = False
                 tempurature = round(base_temp * round(random.uniform(0.9, 1.1), 3), 2)
 
             # HUMIDITY
-            if (hum_flag == False) and (random.random() < hum_odds):
-                hum_flag = True
-
-            if (hum_flag == True) and hum_count < outlier_count:
-                hum_count = hum_count + 1
+            if (flags[x][3] >= 1):
                 humidity = round(base_hum * round(random.uniform(1.5, 1.8), 3), 2)
-                #print ('HUMIDITY OUTLIER')
             else:
-                hum_count = 0
-                hum_flag = False
                 humidity = round(base_hum * round(random.uniform(0.9, 1.1), 3), 2)
 
             data = {"timestamp": str(datetime.datetime.now()), "equipment_id": id, "vibration_amplitude": vibration_amplitude, "vibration_frequency": vibration_frequency, "temperature": tempurature, "humidity": humidity}
             payload_list.append(data)
+            time.sleep(0.0003)
 
         payload = json.dumps(payload_list)
         encoded_value = b64encode(payload.encode()).decode()
         encoded_key = b64encode(str(id).encode()).decode()
+        x = x+1
 
         # Send the message request to streaming service
         mesgs=[oci.streaming.models.PutMessagesDetailsEntry(value=encoded_value,key=encoded_key)]
@@ -119,5 +121,3 @@ while True:
                 print ('SENT: ' + str(message_count))
         else:
             print ('MESSAGE FAILURE: ' + str(put_messages_response.data.failures))
-
-        time.sleep(1)
