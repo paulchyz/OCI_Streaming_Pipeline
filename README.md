@@ -337,7 +337,7 @@ In this section, you will set up the following items in your Autonomous Data War
 8. Enter `STREAMDATA` into the `Collection Name` field. Use upper-case letters for this name, because the endpoint address for the JSON Collection will incorporate this provided name, and it is case-sensitive.
 9. Click `Create`.
 10. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`. Feel free to close the pop-up that warns that you are logged in as `ADMIN` user by clicking `X`. Also, feel free to skip the tutorial that is automatically launched. The tutorial can be skipped by clicking `X` on the pop-ups, and revisited by clicking on the binoculars icon on the upper right-hand side of the page.
-11. Copy and paste the contents of [STREAM_PIPELINE.sql](./modules/sql/STREAM_PIPELINE.sql) from this repository into the editor. Highlight all of the PL/SQL code above the section labeled `FOR REFERENCE` and click on the green `Run Statement` button. This will create 3 database views, which use stored queries to create virtual tables that can be queried to return the JSON collection data in a relational format.
+11. Copy and paste the contents of [STREAM_PIPELINE.sql](./modules/sql/STREAM_PIPELINE.sql) from this repository into the editor. Highlight the PL/SQL code labeled `STREAMDATA_VIEW` (lines 3-23) and click on the green `Run Statement` button. Next, highlight and run the first two lines of PL/SQL code labeled `STREAMDATA_LAST10_VIEW` (lines 27-28), then highlight and run the first two lines of PL/SQL code labeled `STREAMDATA_LAST3_VIEW` (lines 33-34).  This will create 3 database views, which use stored queries to create virtual tables that can be queried to return the JSON collection data in a relational format.  The WHERE clauses will be added later on in the deployment process.
 	\
 	\
 	<b>Congratulations! You've successfully configured your ADW for stream processing!</b>
@@ -451,9 +451,10 @@ In this section, you will run the data stream from Cloud Shell to simulate strea
 3. You should see output in the Cloud Shell displaying data points that are being sent into the stream. For example:
 
 	```
-	SENT: [{"equipment_id": 1234, "vibration_amplitude": 275.0, "vibration_frequency": 1066.0, "temperature": 54.9, "humidity": 30.27}]
-	SENT: [{"equipment_id": 1234, "vibration_amplitude": 270.75, "vibration_frequency": 963.0, "temperature": 59.28, "humidity": 30.09}]
-	SENT: [{"equipment_id": 1234, "vibration_amplitude": 246.75, "vibration_frequency": 919.0, "temperature": 61.32, "humidity": 29.4}]
+	SENT: 1000
+	SENT: 2000
+	SENT: 3000 - 3000 msgs/sec
+	SENT: 4000 - 4000 msgs/sec
 	```
 4. Navigate to your Stream on the `Streaming` page on OCI: 
 	Click on the hamburger menu at the top-left of the webpage, and type `streaming` into the search field. Click the listing that appears on the page that contains the words `Streaming` and `Messaging`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Streaming object you created from your Resource Manager deployment.
@@ -496,7 +497,7 @@ If data has not populated within this Bucket after a minute or two, please revie
 
 	```
 	-- Select all data in STREAMDATA_VIEW
-	SELECT * FROM STREAMDATA_VIEW ORDER BY KEY DESC;
+	SELECT * FROM STREAMDATA_VIEW;
 	```
 	\
 	Highlight the PL/SQL statement, then click on the round green `Run Statement` icon at the top of the editor to execute this statement.
@@ -529,18 +530,19 @@ In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to v
 13. The `Username` and `Password` sections are referencing the ADW instance, so enter `admin` for the username, and `Streaming!2345` for the password, or your own custom password if you chose to set a custom password.
 14. Click `Save`. The connection will validate, and then save. If the connection fails, double check your username and password for the database. <i>Note: The password to be supplied here is the password for the `admin` user in ADW, which is `Streaming!2345`, or your own custom password if you chose to set a custom password.</i>
 15. Click `Create` in the top-right corner of the OAC home page, then click `Dataset`. Select the database connection you just created, named `streaming_adw_conn`.
-16. On the left-hand side of the page, expand the `Schemas` dropdown menu by clicking the arrow next to `Schemas`. Then, expand the dropdown menu of the `ADMIN` schema that appears on the `Schemas` dropdown menu. Drag and drop `STREAMDATA_VIEW` into the main canvas area to add it to the dataset. This will load a preview of the data.
-17. Convert `PARTITION`, `OFFSET`, `TIMESTAMP`, and `EQUIPMENT_ID` to attributes. To do this, click on the pound sign next to each column's name and select `Attribute`.
+16. On the left-hand side of the page, expand the `Schemas` dropdown menu by clicking the arrow next to `Schemas`. Then, expand the dropdown menu of the `ADMIN` schema that appears on the `Schemas` dropdown menu. Drag and drop `STREAMDATA_LAST3_VIEW` into the main canvas area to add it to the dataset. This will load a preview of the data.
+17. Convert `KEY`, `PARTITION`, `OFFSET`, and `EQUIPMENT_ID` to attributes. To do this, click on the pound sign next to each column's name and select `Attribute`.
 18. Click the `Save` icon in the top-right corner of the page, which appears as an image of a hard-drive. Provide a name for the dataset. For this lab, use `streaming_dataset`, as this name is referred to later in this lab. The `Description` field is optional. Click `OK`.
 19. Click the `Back` arrow in the top-left corner of the page to return to the OAC home page.
-20. Click `Create` in the top-right corner of the OAC home page, then click `Workbook`. In the popup titled `Add Data`, Select the dataset you just created, named `streaming_dataset`, then click `Add to Workbook`. For now, close the `Auto Insights` window on the right-hand side of the page by clicking on the light-bulb icon.
-21. Hold `command` if using a Mac or `control` if using a PC, then select `KEY` and `VIBRATION_AMPLITUDE` from the data pane on the left-hand side of the page. Drag and drop these data elements onto the canvas. This will create a line chart.
-22. Select `VIBRATION_FREQUENCY`, `TEMPERATURE`, and `HUMIDITY` from the data pane, and drag and drop these data elements in the `Values (Y-Axis)` section of the visualization pane just to the right of the data pane. Be sure not to drop the data elements on top of `VIBRATION_AMPLITUDE`, as that will add the new elements in place of the existing data, rather than in addition to the existing data.
-23. Right click on the Canvas tab on the bottom of the page labeled `Canvas 1` and select `Canvas Properties`.
-24. Click on `Disabled` next to `Auto Refresh Data` to switch it to `Enabled`. Click `Sec` to switch to `Min`, and change the value from `30` to `1`. Click `OK`. This will refresh the canvas every minute.
-25. Click the `Refresh Data` button in the top-right toolbar. It looks like a white play button with an arrow circling around it. This will start the auto refresh process.
-26. Click the `Save` icon in the top-right corner of the page. Provide a name for the workbook and click `Save`.
-27. Click the `Preview` button in the top-right toolbar to view the dashboard as an end user. It looks like an outline of a play button. Click the `Refresh Data` button in the toolbar to start the auto refresh process in this view.
+20. In another browser tab, navigate back to the SQL Editor in `Autonomous Data Warehouse` `Database actions`.  In the provided [STREAM_PIPELINE.sql](./modules/sql/STREAM_PIPELINE.sql), highlight and run all three lines of PL/SQL for STREAMDATA_LAST10_VIEW and STREAMDATA_LAST3_VIEW, including the WHERE clauses. Return to the browser tab with `Analytics Cloud` after executing this code.
+21. On the OAC home page, click `Create` in the top-right corner of the page, then click `Workbook`. In the popup titled `Add Data`, Select the dataset you just created, named `streaming_dataset`, then click `Add to Workbook`. For now, close the `Auto Insights` window on the right-hand side of the page by clicking on the light-bulb icon.
+22. In the data pane on the left side of the screen, click the arrow next to `TIMESTAMP` to expand that data field. Hold `command` if using a Mac or `control` if using a PC, then select `Second` and `VIBRATION_AMPLITUDE` from the data pane. Drag and drop these data elements onto the canvas. This will create a line chart.
+23. Select `VIBRATION_FREQUENCY`, `TEMPERATURE`, and `HUMIDITY` from the data pane, and drag and drop these data elements in the `Values (Y-Axis)` section of the visualization pane just to the right of the data pane. Be sure not to drop the data elements on top of `VIBRATION_AMPLITUDE`, as that will add the new elements in place of the existing data, rather than in addition to the existing data.
+24. Right click on the Canvas tab on the bottom of the page labeled `Canvas 1` and select `Canvas Properties`.
+25. Click on `Disabled` next to `Auto Refresh Data` to switch it to `Enabled`. Change the value from `30` to `10`, and click `OK`. This will refresh the canvas every 10 seconds.
+26. Click the `Refresh Data` button in the top-right toolbar. It looks like a white play button with an arrow circling around it. This will start the auto refresh process.
+27. Click the `Save` icon in the top-right corner of the page. Provide a name for the workbook and click `Save`.
+28. Click the `Preview` button in the top-right toolbar to view the dashboard as an end user. It looks like an outline of a play button. Click the `Refresh Data` button in the toolbar to start the auto refresh process in this view.
 \
 \
 <b>Congratulations! You are now visualizing the output of your completed streaming pipeline!</b>
