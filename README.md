@@ -10,14 +10,10 @@ This document provides instructions for deployment and configuration of a cloud-
 5. [Which OCI resources will you provision?](#which-oci-resources-will-you-provision)
 6. [Lab Steps](#lab-steps)
 	1. [Deploy Infrastructure using Resource Manager](#deploy-infrastructure-using-resource-manager)
-	2. [Configure Function](#configure-function)
-	3. [Deploy Service Connector](#deploy-service-connector)
-	4. [Configure ADW for Stream Processing](#configure-adw-for-stream-processing)
-	5. [Configure Function Parameters](#configure-function-parameters)
-	6. [Configure Data Stream](#configure-data-stream)
-	7. [Run The Stream Pipeline](#run-the-stream-pipeline)
-	8. [Configure Oracle Analytics Cloud](#configure-oracle-analytics-cloud)
-	9. [Stop the Data Stream](#stop-the-data-stream)
+	2. [Configure AJD for Stream Processing](#configure-ajd-for-stream-processing)
+	3. [Run The Stream Pipeline](#run-the-stream-pipeline)
+	4. [Configure Oracle Analytics Cloud](#configure-oracle-analytics-cloud)
+	5. [Stop the Data Stream](#stop-the-data-stream)
 7. [Additional Steps](#additional-steps)
 	1. [Data Cleanup](#data-cleanup)
 	2. [Resource Cleanup](#resource-cleanup)
@@ -51,9 +47,9 @@ To follow this lab, you must have the following in place:
 - <b>Policy</b>: A collection of Policy Statements used to manage access to resources in your OCI environment.
 </details>
 <details>
-<summary>Autonomous Data Warehouse (ADW)</summary>
+<summary>Autonomous JSON Database (AJD)</summary>
 <p></p>
-Managed data warehouse service that automates provisioning, configuring, securing, tuning, scaling, and backing up of the data warehouse. It includes tools for self-service data loading, data transformations, business models, automatic insights, and built-in converged database capabilities that enable simpler queries across multiple data types and machine learning analysis.
+Managed JSON database service that automates provisioning, configuring, securing, tuning, scaling, and backing up of the database. It includes tools for self-service data loading, data transformations, business models, automatic insights, and built-in converged database capabilities that enable simpler queries across multiple data types and machine learning analysis.
 </details>
 <details>
 <summary>Functions</summary>
@@ -90,7 +86,7 @@ Customizable and private cloud network.
 
 ## Lab Steps
 ### Deploy Infrastructure using Resource Manager
-In this section, you will deploy a customized arrangement of Oracle Cloud Infrastructure (OCI) resources, on top of which you will convert your data stream to data that is accessible as structured data from within Autonomous Data Warehouse (ADW).
+In this section, you will deploy a customized arrangement of Oracle Cloud Infrastructure (OCI) resources, on top of which you will convert your data stream to data that is accessible as structured data from within Autonomous JSON Database (AJD).
 
 The infrastructure resources that comprise this customized arrangement are prescribed as Terraform code, which is an approach to <i>infrastructure as code</i> (IaC). OCI supports team-oriented, UI-enabled infrastructure deployment and management using Terraform logic, through a service called Resource Manager. You will create a Resource Manager Stack object, which will act as the platform from which you can deploy and manage the infrastructure resources that underpin the data streaming and conversion process.
 
@@ -115,340 +111,79 @@ The infrastructure resources that comprise this customized arrangement are presc
 9. Update the `Name of New Compartment (Prefix)`, `Description for New Compartment`, `IAM Policy Name (Prefix)`, and `IAM Policy Description` if desired, and keep `Enable Delete for Compartment` and `Deploy IAM Policy` selected.
 10. For this lab, we will deploy a subset of resources that can deployed using the Terraform code. In the `Select Resources` tile, ensure that only the checkboxes that correspond to the below indicated services are selected to deploy the corresponding services:
 
-	- `Deploy Autonomous Data Warehouse (ADW)`
+	- `Deploy Autonomous Database (ADB)`
+	- `Deploy Compute Instance`
 	- `Deploy Object Storage`
 	- `Deploy Streaming`
 	- `Deploy Virtual Cloud Network (VCN)`
-11. <i>Optional</i>: In the `ADW Admin Password` field, change the password to one you would like to use to access Autonomous Data Warehouse. Remember this password for use later on.
-12. The remaining details on the `Configure Variables` page can be left as their default values or updated to fit your needs.
-13. When you are finished editing your variables in the `Configure Variables` section, click `Next` to proceed to the `Review` section.
-14. Select the checkbox for `Run Apply`, and click `Create`. You can monitor the deployment by monitoring the `Logs` window.
-15. Once the selected resources have been provisioned, click `Job resources` to open a page that shows details about the resources that were provisioned.
-16. Copy the name of the deployed compartment to your clipboard for later use. You can find the name of the compartment under the `Name` column, where the value under `Type` appears as `oci_identity_compartment`.
-17. Keep this browser tab open, as we will refer to this page later in this lab. Duplicate the current browser tab, and proceed using the new browser tab.
+
+11. Scroll to the Compute Instance tile. You will edit the following variables:
+	1. **OCIR Username**: Your Oracle Cloud Infrastructure Registry (OCIR) username will be used to login to Docker for Function deployment to OCIR, and to OCI Applications for Functions.
+		1. Click on the person icon at the top right of the page, and observe the name that appears under `Profile`. Your name will appear similar to `Default/john.doe@mydomain.com` if your user is part of the `Default` domain, for example. Enter this username into the `OCIR Username` field.
+	2. **OCIR Password**: This value will be used to authenticate into Docker for Function deployment to Oracle Cloud Infrastructure Registry (OCIR) and Applications.
+		1. Duplicate the current browser tab. On the new tab, click the person icon. Then, from the dropdown menu, click `My profile`.
+		2. Scroll down on your profile page, and click `Auth tokens` on the left side of the screen. Then, click `Generate token`. Supply a description you will recognize, such as `streaming lab`, and then click `Generate token`.
+		3. Copy the generated token to your clipboard by clicking `Copy`, and paste it into the `OCIR Password` field on the original browser tab, where you are editing the stack configuration details. Then, click `Close`. Note that if you close out of the window before copying the token, it will be necessary to generate a new token, for which you may refer to the previous step.
+	3. **SSH Public Key Pair**: You will generate an SSH key pair, which you will later use to access your compute instance.
+		1. On the new browser tab, click Developer Tools, marked with `<>`, and open Cloud Shell.
+		2. Feel free to skip or follow the Cloud Shell tutorial. On the Cloud Shell command-line interface (CLI), run the following command to generate an SSH key pair. Then, press Enter to proceed with default settings for the key pair. The default settings call for a save location of `~/.ssh`, and no password required to use the SSH key pair.
+			```
+			ssh-keygen -t rsa
+			```
+		3. Print the contents of the public SSH key file to the CLI output console. Then, copy and paste the contents into the `Public SSH Key` field on your original browser tab.
+12. <i>Optional</i>: In the `ADB Admin Password` field, change the password to one you would like to use to access Autonomous JSON Database. Remember this password for use later on.
+13. The remaining details on the `Configure Variables` page can be left as their default values or updated to fit your needs.
+14. When you are finished editing your variables in the `Configure Variables` section, click `Next` to proceed to the `Review` section.
+15. Select the checkbox for `Run Apply`, and click `Create`. You can monitor the deployment by monitoring the `Logs` window.
+16. Once the selected resources have been provisioned, click `Job resources` to open a page that shows details about the resources that were provisioned.
+17. Copy the name of the deployed compartment to your clipboard for later use. You can find the name of the compartment under the `Name` column, where the value under `Type` appears as `oci_identity_compartment`.
+18. Keep this browser tab open, as we will refer to this page later in this lab. Duplicate the current browser tab, and proceed using the new browser tab.
 	\
 	\
 	<b>Congratulations! You've successfully deployed a custom stack of OCI resources using Resource Manager!</b>
 \
 <sub>[Back to top](#oci-streaming-pipeline)</sub>
 
-### Configure Function
-In this section, you will configure an instance of the serverless OCI Functions service, called a Function. The Function will act as a prescription for custom logic to be installed and executed on a machine that gets dynamically provisioned when the designated Function endpoint is invoked. This dynamic allocation of infrastructure is what makes the OCI Functions service a serverless platform. The custom logic is sourced from a container image repository located within the Oracle Cloud Infrastructure Registry (OCIR).  
-	\
-In this pipeline, the Function invocation will carry out the necessary transformations to the data present in the data stream, so that the data is accessible in Object Storage and the Autonomous Data Warehouse (ADW) instance.
-
-1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
-2. Click on the dropdown under `Compartment` on the left-hand side of the page. Paste the value from your clipboard, which is the name of the compartment that was deployed from the Resource Manager stack, and then select the same compartment name that appears on the dropdown menu.
-3. A Function is logically "contained within" an Application, so you will create an Application object. Click `Create application`, and enter values for the corresponding parameters:
-
-	- `Name` : `streaming_app`
-	- `VCN` : <i>Ensure that the compartment is set to the deployed compartment. Then, select the deployed VCN, which is named `ST_vcn` unless customized.</i>
-	- `subnets` : <i>Ensure that the compartment is set to the deployed compartment. Then, select the deployed subnet, which is named `Subnet1` unless customized.</i>
-	\
-	\
-	Then, click `Create`.
-4. Click on the `Developer tools` icon on the upper right-hand side of the page, and then click `Cloud Shell`. This will open a command-line interface (CLI) environment from which we will programmatically configure and deploy a serverless instance of OCI Functions, called a Function. The subsequent steps will walk you through how to configure and deploy your Function using the Cloud Shell CLI.
-5. Select the `context` object, which is named according to the region in which you are operating. Use the `region identifier` value you selected in the `Custom Region` field when configuring your Terraform stack.
-	\
-	\
-	Note that in the example provided below, `us-ashburn-1` is the value provided as the `region identifier` used to represent the `US East (Ashburn)` region. Replace this with the correct value based on your selection when you deployed the Stack.
-
-	```
-	fn use context us-ashburn-1
-	```
-	Note that you can list the values for `region identifier` available to your Cloud Shell environment using the following command:
-
-	```
-	fn list context
-	```
-6. Update the `context` with the <i>O</i>racle <i>C</i>loud <i>Id</i>entifier (OCID) of the compartment where we deployed our stack. You can find the compartment OCID on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click `Outputs` on the left-hand side of the page. Copy the string under the `Value` column that corresponds to `iam_compartment_id` under the `Key` column. Use this value to replace `YOUR_COMPARTMENT_OCID` in the command indicated below.
-	```
-	fn update context oracle.compartment-id YOUR_COMPARTMENT_OCID
-	```
-7. Over the next few steps, you will generate the values you will use to generate an Oracle Coud Infrastructure Registry (OCIR) container image repository. This repository is where your Function code will be hosted, available to serverless Function machines as they are dynamically allocated. Although programmatic methods of obtaining the values are offered for rapid setup, front-end methods are offered as alternatives for some of the values.
-	\
-	\
-	First, prepare a name to use for your Function. Use `streaming_fnc` as a prefix specific to this lab, and as a suffix, add the unique string associated with your deployment in order to provide uniqueness to the name of the Function instance within your OCI user account.
-	\
-	\
-	You can find the unique string from your Terraform deployment on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click `Outputs` on the left-hand side of the page. Copy the string under the `Value` column that corresponds to `random_string` under the Key column.
-	\
-	\
-	Copy and paste, but do not yet execute, the following command into Cloud Shell. Replace `UNIQUESTRING` with the string unique to your deployment, then run the command.
-
-	```
-	export STREAMING_FUNCTION_NAME=streaming_fnc_UNIQUESTRING
-	```
-8. These commands will generate the value for the `region key` that corresponds to the `region identifier`, and the region in which you are configuring your Function.
-
-	```
-	export STREAMING_CONTEXT_REGION_IDENTIFIER=$(fn inspect context | grep api-url | grep -Po '(?<=functions.).*(?=.oci)')
-	export STREAMING_CONTEXT_REGION_KEY=$(oci iam region list | jq -r ".data[] | select(.name == \"$STREAMING_CONTEXT_REGION_IDENTIFIER\").key" | tr '[:upper:]' '[:lower:]')
-	```
-	Alternatively, the `region key` can be obtained by finding the `region key` that corresponds to the `region identifier` you used when setting up your `context` object, from the table shown in [this documentation](https://docs.oracle.com/en-us/iaas/Content/General/Concepts/regions.htm#ariaid-title2). Use a lower-case representation of the `region key` when replacing the placeholder value (`your_region_key`) in the command indicated below, and then run the command.
-
-	```
-	export STREAMING_CONTEXT_REGION_KEY=your_region_key
-	```
-9. Programatically generate the tenancy name.
-
-	```
-	export STREAMING_TENANCY_NAME=$(oci iam tenancy get --tenancy-id $OCI_TENANCY | jq -r .data.name)
-	```
-	Alternatively, the tenancy name can be obtained by navigating to the user icon on the upper right-hand side of the page, hovering over the dropdown menu, and reading the name next to `Tenancy:`. The value can also be obtained by clicking on this option, and locating the `Name` field on the tenancy page. Replace the placeholder value (`your_tenancy_name`) in the command indicated below, and then run the command.
-
-	```
-	export STREAMING_TENANCY_NAME=your_tenancy_name
-	```
-10. Generate the OCIR container image repository for your Function.
-
-	```
-	fn update context registry ${STREAMING_CONTEXT_REGION_KEY}.ocir.io/${STREAMING_TENANCY_NAME}/${STREAMING_FUNCTION_NAME}
-	```
-11. You will construct a command to sign into OCIR. On your browser tab with Cloud Shell, minimize Cloud Shell using the `_` icon, and navigate to the user icon on the upper right-hand side of the page, hovering over the dropdown menu, click `User settings`. Copy the name of your user in large text at the top of the page, including the `oracleidentitycloudservice/` prefix if present. Restore Cloud Shell, replace the placeholder value (`your_user_extended_name`) in the command indicated below, and then run the command.
-
-	```
-	export STREAMING_USER_EXTENDED_NAME=your_user_extended_name
-	```
-12. When the following command is run, you will be prompted for a password, which will be the result of an Auth Token that you will generate. Run the command, and do not supply a value until later instructions.
-
-	```
-	docker login -u "${STREAMING_TENANCY_NAME}/${STREAMING_USER_EXTENDED_NAME}" ${STREAMING_CONTEXT_REGION_KEY}.ocir.io
-	```
-13. Minimize Cloud Shell, and click `Auth Tokens` on the left-hand side of the page. Click `Generate Token`, and supply the `Description` field with a friendly description, such as `ocir login for streaming app`. Click `Generate Token`. Copy the generated token, click `Close`, restore Cloud Shell, supply the token as your password, and press `Enter`.
-	\
-	\
-	Note that if you lose the generated token, you may repeat this step to generate a new one.
-14. Verify your setup by listing Application objects in the compartment.
-
-	```
-	fn list apps
-	```
-15. Copy and paste, but do not yet execute, the following command into Cloud Shell. Replace `UNIQUESTRING` with the string unique to your deployment, then run the command. This will generate boilerplate code for your Function. You will customize this code with logic provided later in this lab.
-
-	```
-	fn init --runtime python streaming_fnc_UNIQUESTRING
-	```
-16. Switch into the generated directory, replacing `UNIQUESTRING` with the string unique to your deployment in the command below.
-
-	```
-	cd streaming_fnc_UNIQUESTRING
-	```
-17. Copy the contents of [func.py](./modules/functions/func.py) from this repository to your clipboard. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
-	\
-	\
-	On Cloud Shell, open the copy of `func.py` that you generated using the `fn init` command:
-
-	```
-	vi func.py
-	```
-	Replace boilerplate logic with custom logic:
-
-	1. Navigate to the top of the file by typing `gg`.
-	2. Remove all of the contents in the file by typing `dG`.
-	3. Activate `insert` mode by typing `i`.
-	4. Paste the contents that you copied from your clipboard.
-	5. Press `ESC` to escape `insert` mode.
-	6. Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
-
-18. Copy the contents of [func.yaml](./modules/functions/func.yaml) from this repository to your clipboard. You will replace the boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
-	\
-	\
-	On Cloud Shell, open the copy of `func.yaml` that you generated using the `fn init` command:
-
-	```
-	vi func.yaml
-	```
-	Replace boilerplate logic with custom logic:
-
-	1. Navigate to the top of the file by typing `gg`.
-	2. Remove all of the contents in the file by typing `dG`.
-	3. Activate `insert` mode by typing `i`.
-	4. Paste the contents that you copied from your clipboard.
-	5. Press `ESC` to escape `insert` mode.
-	6. Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
-
-19. Copy the contents of [requirements.txt](./modules/functions/requirements.txt) from this repository to your clipboard. You will replace the boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
-	\
-	\
-	On Cloud Shell, open the copy of `requirements.txt` that you generated using the `fn init` command:
-
-	```
-	vi requirements.txt
-	```
-	Replace boilerplate logic with custom logic:
-
-	1. Navigate to the top of the file by typing `gg`.
-	2. Remove all of the contents of the file by typing `dG`.
-	3. Activate `insert` mode by typing `i`.
-	4. Paste the contents that you copied from your clipboard.
-	5. Press `ESC` to escape `insert` mode.
-	6. Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
-
-20. Now that you have finished making the necessary edits to your Function logic, deploy your Function to OCIR, and associate it with the Application object you created.
-
-	```
-	fn -v deploy --app streaming_app
-	```
-	<b>Congratulations! You've successfully deployed your Function!</b>
-\
-<sub>[Back to top](#oci-streaming-pipeline)</sub>
-### Deploy Service Connector
-In this section, you will deploy a Service Connector instance, using the <i>O</i>racle <i>C</i>loud <i>Id</i>entifier (OCID) of your Function and the same Resource Manager Stack you created [earlier in this lab](#deploy-infrastructure-using-resource-manager).
-
-1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
-2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. The new compartment will end with the four-character alphanumeric string unique to your deployment.
-3. Click on the hyperlinked Application object you created, called `streaming_app`.
-4. Click on the hyperlinked Function object you created, called `streaming_fnc_UNIQUESTRING`, where `UNIQUESTRING` appears as the string unique to your deployment.
-5. Copy the Function OCID, which can be found next to `OCID:`. You will supply this value in a later step when you edit your Resource Manager Stack.
-6. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `stacks` into the search field. Click the listing that appears on the page that contains the words `Stacks` and `Resource Manager`.
-7. Click on the dropdown under `Compartment`, and select the compartment where you created your Resource Manager Stack object. If your tenancy environment is new, this will be your root-level compartment.
-8. Click on the hyperlinked Resource Manager Stack object you created for this lab.
-9. Click `Edit` > Click `Edit stack` > Click `Next`.
-10. In the `Region` field, select the same region where you deployed your resources previously.
-11. In the `Select Resources` tile, allow the checkboxes that are already checked to remain selected, and also select the checkbox next to `Deploy Service Connector Hub (SCH)`.
-12. In the `Service Connector Hub (SCH)` tile, paste the Function OCID into the `Function OCID` field.
-13. Click `Next` to proceed to the `Review` section.
-	\
-	Note that with this selection of resources, the only change that will be made to the existing deployment will be an additional Service Connector instance. The remainder of the deployment will remain unchanged.
-14. Select the checkbox for `Run apply`, and click `Save changes`. You can monitor the deployment by monitoring the `Logs` window.
-15. Once the selected resources have been provisioned, click `Job resources` to open a page that shows details about the resources that were provisioned.
-16. Keep this browser tab open, as we will refer to this page later in this lab. Duplicate the current browser tab, and proceed using the new browser tab.
-	\
-	\
-	<b>Congratulations! You've successfully added Service Connector to your existing deployment using Resource Manager!</b>
-\
-<sub>[Back to top](#oci-streaming-pipeline)</sub>
-### Configure ADW for Stream Processing
-In this section, you will set up the following items in your Autonomous Data Warehouse (ADW) instance:
+### Configure AJD for Stream Processing
+In this section, you will set up the following items in your Autonomous JSON Database (AJD) instance:
 - <b>JSON Collection</b>: This object will store data points from a data stream in JSON format.
 - <b>Database View</b>: This object will contain a virtual table that enables querying of the JSON data as if it were a relational table.
 
-1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`.
+1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `ajd` into the search field. Click the listing that appears on the page that contains the words `Autonomous JSON Database`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 3. Click on the hyperlinked Database object you created.
 4. Click `Database actions`. Note that you may need to allow pop-ups in your browser if launching the new page fails.
-5. Enter your username and password for your ADW instance. For this lab, the default values are as indicated below. If you specified a custom password for your ADW instance, replace the default value with the custom value.
+5. Enter your username and password for your AJD instance. For this lab, the default values are as indicated below. If you specified a custom password for your AJD instance, replace the default value with the custom value.
 	\
 	`Username`: `ADMIN`\
 	`Password`: `Streaming!2345`
-6. You have reached the `Database Actions` interface for your ADW instance. Click on the tile labeled `JSON`. Feel free to skip the tutorial that is automatically launched. The tutorial can be skipped by clicking `X` on the pop-ups, and revisited by clicking on the binoculars icon on the upper right-hand side of the page.
+6. You have reached the `Database Actions` interface for your AJD instance. Click on the tile labeled `JSON`. Feel free to skip the tutorial that is automatically launched. The tutorial can be skipped by clicking `X` on the pop-ups, and revisited by clicking on the binoculars icon on the upper right-hand side of the page.
 7. Click `Create Collection`.
 8. Enter `STREAMDATA` into the `Collection Name` field. Use upper-case letters for this name, because the endpoint address for the JSON Collection will incorporate this provided name, and it is case-sensitive.
 9. Click `Create`.
 10. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`. Feel free to close the pop-up that warns that you are logged in as `ADMIN` user by clicking `X`. Also, feel free to skip the tutorial that is automatically launched. The tutorial can be skipped by clicking `X` on the pop-ups, and revisited by clicking on the binoculars icon on the upper right-hand side of the page.
-11. Copy and paste the contents of [STREAM_PIPELINE.sql](./modules/sql/STREAM_PIPELINE.sql) from this repository into the editor. Highlight the PL/SQL code labeled `STREAMDATA_VIEW` (lines 3-23) and click on the green `Run Statement` button. Next, highlight and run the first two lines of PL/SQL code labeled `STREAMDATA_LAST10_VIEW` (lines 27-28), then highlight and run the first two lines of PL/SQL code labeled `STREAMDATA_LAST3_VIEW` (lines 33-34).  This will create 3 database views, which use stored queries to create virtual tables that can be queried to return the JSON collection data in a relational format.  The WHERE clauses will be added later on in the deployment process.
+11. Copy and paste the contents of [STREAM_PIPELINE.sql](./modules/sql/STREAM_PIPELINE.sql) from this repository into the editor. Highlight the PL/SQL code labeled `STREAMDATA_VIEW` (lines **3**-**23**) and click on the green `Run Statement` button. Next, highlight and run the first two lines of PL/SQL code labeled `STREAMDATA_LAST10_VIEW` (lines **27**-**28**), then highlight and run the first two lines of PL/SQL code labeled `STREAMDATA_LAST3_VIEW` (lines **33**-**34**).  This will create 3 database views, which use stored queries to create virtual tables that can be queried to return the JSON collection data in a relational format.  The WHERE clauses will be added later on in the deployment process.
 	\
 	\
-	<b>Congratulations! You've successfully configured your ADW for stream processing!</b>
-\
-<sub>[Back to top](#oci-streaming-pipeline)</sub>
-### Configure Function Parameters
-In this section, you will supply environment variables to be made available to your Function machines while they execute their associated logic. These environment variables will supply the necessary values for your streaming pipeline to integrate with some of the resources in our deployment, work end-to-end. These environment variables must be set using `Key`:`Value` pairs, where each pair represents the name of an environment variable, and its associated value, respectively.
-
-1. Navigate to the Database Actions interface for your Autonomous Data Warehouse (ADW) instance as [previously done](#configure-adw-for-stream-processing).
-2. Click on the hamburger menu in the upper left-hand side of the page, and click `RESTful Services ad SODA` under `Related Services`.
-3. Click `Copy` to copy the base URL of the Oracle REST Data Services (ORDS) HTTPS interface to your clipboard.
-4. In another browser tab with your main OCI Console open, navigate to the hamburger menu at the top-left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
-5. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
-6. Click on the hyperlinked Application object you created, called `streaming_app`.
-7. Click on the hyperlinked Function object you created, called `streaming_fnc_UNIQUESTRING`.
-8. Click `Configuration` on the left-hand side of the page, and add the `Key`:`Value` pair indicated below into their respective text fields:
-	\
-	\
-	`ords-base-url` : <i>Paste the base URL for the ORDS HTTPS interface</i>\
-	\
-	Click `+` to add the pair to the Function configuration.
-9. Next, you will retrieve the name of your Object Storage Bucket that will store processed data. Duplicate your current browser tab. Navigate to the hamburger menu at the top-left of the webpage, and type `buckets` into the search field. Click the listing that appears on the page that contains the word `Buckets`.
-10. Your viewing scope should already be set according to the compartment that was deployed from the Resource Manager Stack. If this is not the case, select that compartment from the dropdown under `Compartment`.
-11. Identify the listed Bucket object whose name does <b>NOT</b> include the string `raw`, and copy the name of this listing to your clipboard.
-12. Return to the browser tab showing the Function page, and add the `Key`:`Value` pair indicated below into their respective text fields:
-	\
-	\
-	`streaming-bucket-processed` : <i>Paste the name of the Object Storage Bucket for processed data</i>\
-	\
-	Click `+` to add the pair to the Function configuration.
-13. Add the `Key`:`Value` pairs indicated below. The `Value` values are to be set as defaults used for this lab. If you specified a custom password for your ADW instance, replace the default value with the custom value.
-	
-	<b>Important: `json-collection-name` is case-sensitive. `db-schema` and `db-user` must be lowercase.</b>
-	\
-	\
-	`json-collection-name` : `STREAMDATA`\
-	`db-schema` : `admin`\
-	`db-user` : `admin`\
-	`dbpwd-cipher` : `Streaming!2345`
-	\
-	\
-	<b>Congratulations! You've successfully configured your Function with the environment variables needed to run the data stream!</b>
-\
-<sub>[Back to top](#oci-streaming-pipeline)</sub>
-### Configure Data Stream
-In this section, you will configure the data stream from Cloud Shell to simulate the transmission of manufacturing data to your Streaming instance's Messages Endpoint in OCI.
-
-1. Navigate to the hamburger menu at the top-left of the webpage, and type `streaming` into the search field. Click the listing that appears on the page that contains the words `Streaming` and `Messaging`.
-2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
-3. Click on the hyperlinked name under `Name` column, which corresponds to the Stream resource that you created from your Resource Manager deployment.
-4. Click on the `Developer tools` icon on the upper right-hand side of the page, and then click `Cloud Shell`.
-5. Copy the contents of [stream.py](./modules/compute/stream.py) from this repository to your clipboard. You will replace boilerplate code with this custom logic using the `vi` text editor and associated `vi`-related commands.
-	\
-	On Cloud Shell, navigate to the home directory, and then open a new file named `stream.py`.
-
-	```
-	cd;vi stream.py
-	```
-
-	Populate the file with the desired logic:
-
-	1. Activate `insert` mode by typing `i`.
-	2. Paste the contents that you copied from your clipboard.
-	3. Press `ESC` to escape `insert` mode.
-	4. Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
-6. Copy and paste, but do not yet execute, the following command into Cloud Shell. On the page showing details about your Streaming instance. Copy the Streaming OCID by clicking `Copy` next to `OCID:` to your clipboard. Replace the placeholder value (`YOUR_STREAM_OCID`) by pasting the contents of your clipboard into its place, then execute the command.
-
-	```
-	echo "export STREAMING_STREAM_OCID=YOUR_STREAM_OCID" >> ~/.bashrc; source ~/.bashrc
-	```
-	This environment variable will be used by the script that will trigger the data stream to identify your Streaming instance.
-	\
-	\
-	By appending the `export` command to your `~/.bashrc` file, this variable will be automatically assigned for each Cloud Shell session.
-7. Copy and paste, but do not yet execute, the following command into Cloud Shell. On the page showing details about your Streaming instance. Copy the string that corresponds to `Messages Endpoint` to your clipboard. Replace the placeholder value (`YOUR_MESSAGES_ENDPOINT`) by pasting the contents of your clipboard into its place, then execute the command.
-
-	```
-	echo "export STREAMING_MESSAGES_ENDPOINT=YOUR_MESSAGES_ENDPOINT" >> ~/.bashrc; source ~/.bashrc
-	```
-	This environment variable will be used by the script that will trigger the data stream to identify the Messages Endpoint your Streaming instance.
-	\
-	\
-	By appending the `export` command to your `~/.bashrc` file, this variable will be automatically assigned for each Cloud Shell session.
-8. Execute the following command into Cloud Shell.
-
-	```
-	echo "export STREAMING_OCI_CONFIG_FILE_LOCATION=/etc/oci/config" >> ~/.bashrc; source ~/.bashrc
-	```
-	This environment variable will be used by the script that will trigger the data stream to identify the location of your OCI API credentials in your Cloud Shell environment.
-	\
-	\
-	By appending the `export` command to your `~/.bashrc` file, this variable will be automatically assigned for each Cloud Shell session.\
-	\
-	Note that if you wish to review the values set for environment variables in this lab, you can execute the following command in Cloud Shell.
-
-	```
-	env | grep ^STREAMING_
-	```
-	<b>Congratulations! You've successfully configured your Cloud Shell and are ready to run the data stream!</b>
+	<b>Congratulations! You've successfully configured your AJD for stream processing!</b>
 \
 <sub>[Back to top](#oci-streaming-pipeline)</sub>
 ### Run The Stream Pipeline
 In this section, you will run the data stream from Cloud Shell to simulate streaming manufacturing data, then you will view the output from each step of the pipeline.
 
-1. If you do not have a Cloud Shell session prepared from [the previous section](#configure-data-stream), open the Cloud Shell and follow steps 6-8 to configure the necessary environment variables.
-2. Navigate to your home directory and initiate the data stream.
+1. Click Developer Tools, marked with `<>`, and open Cloud Shell.
+2. Find the public IP address of the compute instance from your Resource Manager deployment. Navigate to this browser tab from which you deployed your Resource Manager Stack, and click Outputs on the left-hand side of the page. Clipboard-copy the public IP address under the `Value` column that corresponds to `compute_public_ip` under the `Key` column.
+3. On the Cloud Shell command-line interface (CLI), run the following command to access the compute instance from your Resource Manager deployment, replacing `PUBLIC_IP_ADDRESS` with the value copied to your clipboard when running the following command in Cloud Shell.
+	
+	```
+	ssh opc@PUBLIC_IP_ADDRESS
+	```
+4. Initiate the data stream by running the following command:
 
 	```
-	cd;python stream.py
+	python /home/opc/OCI_Streaming_Pipeline-master/modules/compute/stream.py
 	```
-3. You should see output in the Cloud Shell displaying data points that are being sent into the stream. For example:
+5. You should see output in the Cloud Shell displaying data points that are being sent into the stream. For example:
 
 	```
 	SENT: 1000
@@ -456,36 +191,36 @@ In this section, you will run the data stream from Cloud Shell to simulate strea
 	SENT: 3000 - 3000 msgs/sec
 	SENT: 4000 - 4000 msgs/sec
 	```
-4. Navigate to your Stream on the `Streaming` page on OCI: 
+6. Navigate to your Stream on the `Streaming` page on OCI: 
 	Click on the hamburger menu at the top-left of the webpage, and type `streaming` into the search field. Click the listing that appears on the page that contains the words `Streaming` and `Messaging`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Streaming object you created from your Resource Manager deployment.
-5. Click `Load Messages`.  This will show the data points that have been ingested by the Streaming service.
-6. Navigate to your Service Connector instance:
+7. Click `Load Messages`.  This will show the data points that have been ingested by the Streaming service.
+8. Navigate to your Service Connector instance:
 	\
 	Click on the hamburger menu at the top-left of the webpage, and type `service connector` into the search field. Click the listing that appears on the page that contains the words `Service Connector Hub` and `Messaging`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Service Connector object you created from your Resource Manager deployment.
-7. Click `Metrics` from the Resources list on the left-hand side of the Service Connector page. This page provides detailed metrics about the Service Connector's data ingestion, Function task, and Object Storage target. About 1 minute after starting the data stream, you should see data populating under categories like `Bytes read from source`, `Bytes written to task`, and `Bytes written to target`. The source is the Streaming service, the task is the Function, and the target is Object Storage.
-8. Navigate to your Object Storage Buckets:
+9. Click `Metrics` from the Resources list on the left-hand side of the Service Connector page. This page provides detailed metrics about the Service Connector's data ingestion, Function task, and Object Storage target. About 1 minute after starting the data stream, you should see data populating under categories like `Bytes read from source`, `Bytes written to task`, and `Bytes written to target`. The source is the Streaming service, the task is the Function, and the target is Object Storage.
+10. Navigate to your Object Storage Buckets:
 	\
 	Click on the hamburger menu at the top-left of the webpage, and type `buckets` into the search field. Click the listing that appears on the page that contains the words `Buckets`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Bucket object that <b>does not</b> contain the word `raw`.
-9. If you do not see data in this Bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the Bucket until you see populated data. This data is processed into CSV format and has been inserted into this Bucket by the Function triggered from the Service Connector.
+11. If you do not see data in this Bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the Bucket until you see populated data. This data is processed into CSV format and has been inserted into this Bucket by the Function triggered from the Service Connector.
 \
 \
 If data has not populated within this Bucket after a minute or two, please review the [Troubleshooting and Logging when Running the Streaming Pipeline](#troubleshooting-and-logging-when-running-the-streaming-pipeline) section.
-10. In the navigation ribbon on the top of the page, click `Object Storage` to return to the list of Buckets. Then click on the hyperlinked Bucket object that <b>does</b> contain the word `raw`.
-11. If you do not see data in this Bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the Bucket until you see populated data. This data is the unprocessed data that was transmitted to the Streaming service and has been inserted into this Bucket by the Service Connector.
+12. In the navigation ribbon on the top of the page, click `Object Storage` to return to the list of Buckets. Then click on the hyperlinked Bucket object that <b>does</b> contain the word `raw`.
+13. If you do not see data in this Bucket, it can take a minute or two to populate. There is a refresh button under the `More Actions` menu in the middle of the page.  Periodically refresh the Bucket until you see populated data. This data is the unprocessed data that was transmitted to the Streaming service and has been inserted into this Bucket by the Service Connector.
 \
 \
 If data has not populated within this Bucket after a minute or two, please review the [Troubleshooting and Logging when Running the Streaming Pipeline](#troubleshooting-and-logging-when-running-the-streaming-pipeline) section.
-12. Navigate to your Autonomous Data Warehouse (ADW) instance:
+14. Navigate to your Autonomous JSON Database (AJD) instance:
 	\
-	Click on the hamburger menu at the top-left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Database object you created from your Resource Manager deployment.
-13. Click `Database actions`. Note that you may need to allow pop-ups in your browser if launching the new page fails.
-14. Enter your username and password for your ADW instance. For this lab, the default values are as indicated below. If you specified a custom password for your ADW instance, replace the default value with the custom value.
+	Click on the hamburger menu at the top-left of the webpage, and type `ajd` into the search field. Click the listing that appears on the page that contains the words `Autonomous JSON Database`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked Database object you created from your Resource Manager deployment.
+15. Click `Database actions`. Note that you may need to allow pop-ups in your browser if launching the new page fails.
+16. Enter your username and password for your AJD instance. For this lab, the default values are as indicated below. If you specified a custom password for your AJD instance, replace the default value with the custom value.
 	\
 	`Username`: `ADMIN`\
 	`Password`: `Streaming!2345`
-15. Click on the tile labeled `JSON`. In the query editor, leave the query as `{}` and click the green `Run Query` button to run the query. This will return all JSON elements in the JSON database. There is one JSON element for each data point that was tramsitted into the stream.
-16. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`.
-17. Copy and paste the following PL/SQL query into the editor. This query returns the JSON data from STREAMDATA. The data points are contained within the `BLOB` element in each row.
+17. Click on the tile labeled `JSON`. In the query editor, leave the query as `{}` and click the green `Run Query` button to run the query. This will return all JSON elements in the JSON database. There is one JSON element for each data point that was tramsitted into the stream.
+18. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`.
+19. Copy and paste the following PL/SQL query into the editor. This query returns the JSON data from STREAMDATA. The data points are contained within the `BLOB` element in each row.
 
 	```
 	-- Select all metadadata in JSON collection.  JSON payload data is within "BLOB"
@@ -493,7 +228,7 @@ If data has not populated within this Bucket after a minute or two, please revie
 	```
 	\
 	Highlight the PL/SQL statement, then click on the round green `Run Statement` icon at the top of the editor to execute this statement.
-18. Copy and paste the following PL/SQL query into the editor. This query returns the data in STREAMDATA_VIEW. This data has been converted to table format by the Stored Procedure we configured earlier in this lab. Converting to table format allows the data to be easily queried for things like data visualization. STREAMDATA_LAST10_VIEW and STREAMDATA_LAST3_VIEW return the same table format as STREAMDATA_VIEW, but they only return the most recent 10 minutes or 3 minutes of data respectively.
+20. Copy and paste the following PL/SQL query into the editor. This query returns the data in STREAMDATA_VIEW. This data has been converted to table format by the Stored Procedure we configured earlier in this lab. Converting to table format allows the data to be easily queried for things like data visualization. STREAMDATA_LAST10_VIEW and STREAMDATA_LAST3_VIEW return the same table format as STREAMDATA_VIEW, but they only return the most recent 10 minutes or 3 minutes of data respectively.
 
 	```
 	-- Select all data in STREAMDATA_VIEW
@@ -512,24 +247,24 @@ In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to v
 1. Return to a browser tab where you can access the main OCI Console. Click on the hamburger menu at the top-left of the webpage, and type `analytics` into the search field. Click the listing that appears on the page that contains the words `Analytics Cloud` and `Analytics`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 3. Click `Create Instance`.
-4. Note that the Oracle Analytic Cloud (OAC) instance requires a name, and that all other values can be left as default for this lab. Use `streaming_oac` as a prefix specific to this lab, and as a suffix, add the unique string associated with your deployment in order to provide the required uniqueness to the name of the OAC instance within the tenancy.
+4. Note that the Oracle Analytic Cloud (OAC) instance requires a name, and that all other values can be left as default for this lab. Use `streamingoac` as a prefix specific to this lab, and as a suffix, add the unique string associated with your deployment in order to provide the required uniqueness to the name of the OAC instance within the tenancy.
 	\
 	\
 	You can find the unique string from your Terraform deployment on the browser tab from your Resource Manager deployment, where stack information is available. Navigate to this browser tab, and click `Outputs` on the left-hand side of the page. Copy the string under the `Value` column that corresponds to `random_string` under the `Key` column.
 5. Click `Create`.
-6. While the OAC instance is provisioning, navigate back to the Autonomous Data Warehouse (ADW) page on OCI: 
-	Click on the hamburger menu at the top-left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked ADW object you created from your Resource Manager deployment.
-7. Click `Database connection`, then click `Download wallet`. Enter a password for the wallet. This password may be of your choosing. For simplicity, you may choose `Streaming!2345`, which is the password provided in this lab for the `admin` user in ADW. Then click `Download`. The .zip file that gets downloaded to your local machine is the wallet, and will be required to connect OAC to ADW. Click `Close` on the `Database connection` window.
+6. While the OAC instance is provisioning, navigate back to the Autonomous JSON Database (AJD) page on OCI: 
+	Click on the hamburger menu at the top-left of the webpage, and type `adb` into the search field. Click the listing that appears on the page that contains the words `Autonomous JSON Database`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked AJD object you created from your Resource Manager deployment.
+7. Click `Database connection`, then click `Download wallet`. Enter a password for the wallet. This password may be of your choosing. For simplicity, you may choose `Streaming!2345`, which is the password provided in this lab for the `admin` user in AJD. Then click `Download`. The .zip file that gets downloaded to your local machine is the wallet, and will be required to connect OAC to AJD. Click `Close` on the `Database connection` window.
 8. Return to the OAC page:
 	\
 	Click on the hamburger menu at the top-left of the webpage, and type `analytics` into the search field. Click the listing that appears on the page that contains the words `Analytics Cloud` and `Analytics`. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack. Click on the hyperlinked OAC object you created.
 9. If the OAC instance does not have a `State` of `Active`, wait for it to finish provisioning.
 10. Once the instance is active, click `Analytics Home Page` to open Oracle Analytics Cloud.
-11. Click `Create` in the top-right corner of the OAC home page, then click `Connection`. Select `Oracle Autonomous Data Warehouse`.
-12. Enter a name for the connection. For this lab, use `streaming_adw_conn`, as this name is referred to later in this lab. Then, drag and drop the downloaded wallet file into the `Client Credentials` box. The `Description` field is optional. Leave the remaining fields unchanged.
-13. The `Username` and `Password` sections are referencing the ADW instance, so enter `admin` for the username, and `Streaming!2345` for the password, or your own custom password if you chose to set a custom password.
-14. Click `Save`. The connection will validate, and then save. If the connection fails, double check your username and password for the database. <i>Note: The password to be supplied here is the password for the `admin` user in ADW, which is `Streaming!2345`, or your own custom password if you chose to set a custom password.</i>
-15. Click `Create` in the top-right corner of the OAC home page, then click `Dataset`. Select the database connection you just created, named `streaming_adw_conn`.
+11. Click `Create` in the top-right corner of the OAC home page, then click `Connection`. Select `Oracle Autonomous Transaction Processing` to connect to your Autonomous JSON Database.
+12. Enter a name for the connection. For this lab, use `streaming_ajd_conn`, as this name is referred to later in this lab. Then, drag and drop the downloaded wallet file into the `Client Credentials` box. The `Description` field is optional. Leave the remaining fields unchanged.
+13. The `Username` and `Password` sections are referencing the AJD instance, so enter `admin` for the username, and `Streaming!2345` for the password, or your own custom password if you chose to set a custom password.
+14. Click `Save`. The connection will validate, and then save. If the connection fails, double check your username and password for the database. <i>Note: The password to be supplied here is the password for the `admin` user in AJD, which is `Streaming!2345`, or your own custom password if you chose to set a custom password.</i>
+15. Click `Create` in the top-right corner of the OAC home page, then click `Dataset`. Select the database connection you just created, named `streaming_ajd_conn`.
 16. On the left-hand side of the page, expand the `Schemas` dropdown menu by clicking the arrow next to `Schemas`. Then, expand the dropdown menu of the `ADMIN` schema that appears on the `Schemas` dropdown menu. Drag and drop `STREAMDATA_LAST3_VIEW` into the main canvas area to add it to the dataset. This will load a preview of the data.
 17. Convert `KEY`, `PARTITION`, `OFFSET`, and `EQUIPMENT_ID` to attributes. To do this, click on the pound sign next to each column's name and select `Attribute`.
 18. Click the `Save` icon in the top-right corner of the page, which appears as an image of a hard-drive. Provide a name for the dataset. For this lab, use `streaming_dataset`, as this name is referred to later in this lab. The `Description` field is optional. Click `OK`.
@@ -566,11 +301,11 @@ The following steps describe the process of clearing the data out of the pipelin
 - [Clearing the Object Storage Buckets](#clearing-the-object-storage-buckets)
 #### Clearing the JSON Collection
 
-1. Navigate to Autonomous Data Warehouse (ADW) Database Actions:
-	1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `adw` into the search field. Click the listing that appears on the page that contains the words `Autonomous Data Warehouse`.
+1. Navigate to Autonomous JSON Database (AJD) Database Actions:
+	1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `adb` into the search field. Click the listing that appears on the page that contains the words `Autonomous JSON Database`.
 	2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 	3. Click on the hyperlinked Database object you created.
-	4. Click `Database actions`, and enter your username and password for your ADW instance if prompted.
+	4. Click `Database actions`, and enter your username and password for your AJD instance if prompted.
 2. Click on the tile labeled `JSON`.
 3. Click the trash can icon in the toolbar above the JSON query editor. This button is labeled `Delete All Documents in the list` when hovering over it.
 4. Click `OK` to confirm.
@@ -655,10 +390,7 @@ These steps will walk through the process of deprovisioning the Resource Manager
 <sub>[Back to top](#oci-streaming-pipeline)</sub>
 ### Troubleshooting and Logging when Running the Streaming Pipeline
 
-If the stream pipeline is not functioning as expected, the first thing to check is the function configuration page to ensure that all the configuration keys and values are correct. Review the steps in [Configure Function Parameters](#configure-function-parameters), and pay special attention to case sensitivity and eliminating leading/trailing spaces. Any innaccuracy in these parameters will cause the pipeline to fail. 
-\
-\
-If the function configuration is correct and the pipeline is still not running properly, the following steps will walk through how to enable logging for the function. These logs can provide additional information about certain points of failure.
+If the stream pipeline is not functioning as expected, follow these steps to enable logging for the function. These logs can provide additional information about certain points of failure.
 
 1. Navigate to the hamburger menu at the top-left of the webpage, and type `functions` into the search field. Click the listing that appears on the page that contains the words `Applications` and `Functions`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
