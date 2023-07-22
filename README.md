@@ -169,7 +169,7 @@ In this section, you will set up the following items in your Autonomous JSON Dat
 8. Enter `STREAMDATA` into the `Collection Name` field. Use upper-case letters for this name, because the endpoint address for the JSON Collection will incorporate this provided name, and it is case-sensitive.
 9. Click `Create`.
 10. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`. Feel free to close the pop-up that warns that you are logged in as `ADMIN` user by clicking `X`. Also, feel free to skip the tutorial that is automatically launched. The tutorial can be skipped by clicking `X` on the pop-ups, and revisited by clicking on the binoculars icon on the upper right-hand side of the page.
-11. Copy and paste the contents of [STREAM_PIPELINE.sql](./modules/sql/STREAM_PIPELINE.sql) from this repository into the editor. Highlight the PL/SQL code labeled `STREAMDATA_VIEW` (lines **3**-**23**) and click on the green `Run Statement` button. Next, highlight and run the first two lines of PL/SQL code labeled `STREAMDATA_LAST10_VIEW` (lines **27**-**28**), then highlight and run the first two lines of PL/SQL code labeled `STREAMDATA_LAST3_VIEW` (lines **33**-**34**).  This will create 3 database views, which use stored queries to create virtual tables that can be queried to return the JSON collection data in a relational format.  The WHERE clauses will be added later on in the deployment process.
+11. Copy and paste the contents of [STREAM_PIPELINE.sql](./modules/sql/STREAM_PIPELINE.sql) from this repository into the editor. Highlight the PL/SQL code labeled `STREAMDATA_VIEW` (lines **3**-**23**) and click on the green `Run Statement` button. Next, highlight and run the first two lines of PL/SQL code labeled `STREAMDATA_LAST10_VIEW` (lines **27**-**28**), then highlight and run the first two lines of PL/SQL code labeled `STREAMDATA_LAST3_VIEW` (lines **33**-**34**).  This will create 3 database views, which use stored queries to create virtual tables that can be queried to return the JSON collection data in a relational format.  The `WHERE` clauses will be added later on in the deployment process.
 	\
 	\
 	<b>Congratulations! You've successfully configured your AJD for stream processing!</b>
@@ -233,7 +233,6 @@ If data has not populated within this Bucket after a minute or two, please revie
 	-- Select all metadadata in JSON collection.  JSON payload data is within "BLOB"
 	SELECT * FROM STREAMDATA;
 	```
-	\
 	Highlight the PL/SQL statement, then click on the round green `Run Statement` icon at the top of the editor to execute this statement.
 20. Copy and paste the following PL/SQL query into the editor. This query returns the data in `STREAMDATA_VIEW`. This data has been converted to table format by the Stored Procedure we configured earlier in this lab. Converting to table format allows the data to be easily queried for things like data visualization. `STREAMDATA_LAST10_VIEW` and `STREAMDATA_LAST3_VIEW` return the same table format as `STREAMDATA_VIEW`, but they only return the most recent 10 minutes or 3 minutes of data respectively.
 
@@ -241,7 +240,6 @@ If data has not populated within this Bucket after a minute or two, please revie
 	-- Select all data in STREAMDATA_VIEW
 	SELECT * FROM STREAMDATA_VIEW;
 	```
-	\
 	Highlight the PL/SQL statement, then click on the round green `Run Statement` icon at the top of the editor to execute this statement.
 	\
 	\
@@ -270,7 +268,9 @@ In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to v
 11. Click `Create` in the top-right corner of the OAC home page, then click `Connection`. Select `Oracle Autonomous Transaction Processing` to connect to your Autonomous JSON Database.
 12. Enter a name for the connection. For this lab, use `streaming_ajd_conn`, as this name is referred to later in this lab. Then, drag and drop the downloaded wallet file into the `Client Credentials` box. The `Description` field is optional. Leave the remaining fields unchanged.
 13. The `Username` and `Password` sections are referencing the AJD instance, so enter `admin` for the username, and `Streaming!2345` for the password, or your own custom password if you chose to set a custom password.
-14. Click `Save`. The connection will validate, and then save. If the connection fails, double check your username and password for the database. <i>Note: The password to be supplied here is the password for the `admin` user in AJD, which is `Streaming!2345`, or your own custom password if you chose to set a custom password.</i>
+14. Click `Save`. The connection will validate, and then save. If the connection fails, double check your username and password for the database.
+	\
+	<i>Note: The password to be supplied here is the password for the `admin` user in AJD, which is `Streaming!2345`, or your own custom password if you chose to set a custom password.</i>
 15. Click `Create` in the top-right corner of the OAC home page, then click `Dataset`. Select the database connection you just created, named `streaming_ajd_conn`.
 16. On the left-hand side of the page, expand the `Schemas` dropdown menu by clicking the arrow next to `Schemas`. Then, expand the dropdown menu of the `ADMIN` schema that appears on the `Schemas` dropdown menu. Drag and drop `STREAMDATA_LAST3_VIEW` into the main canvas area to add it to the dataset. This will load a preview of the data.
 17. Convert `KEY`, `PARTITION`, `OFFSET`, and `EQUIPMENT_ID` to attributes. To do this, click on the pound sign next to each column's name and select `Attribute`.
@@ -333,11 +333,11 @@ After these steps, the JSON collection and Object Storage Bucktes are empty and 
 ### Resource Cleanup
 The following steps walk through the process of deprovisioning the resources that were deployed in this lab. This will terminate billing for infrastructure resources, and re-allocate capacity for other projects.
 
-- [Deprovision Oracle Analytics Cloud (OAC) instance](#deprovision-oracle-analytics-cloud-oac-instance)
-- [Deprovision Application](#deprovision-application)
-- [Remove Cloud Shell artifacts](#remove-cloud-shell-artifacts)
-- [Deprovision Infrastructure Deployed via Resource Manager Stack](#deprovision-infrastructure-deployed-via-resource-manager-stack)
-- [Deprovision Resource Manager Stack instance](#deprovision-resource-manager-stack-instance)
+1. [Deprovision Oracle Analytics Cloud (OAC) instance](#deprovision-oracle-analytics-cloud-oac-instance)
+2. [Deprovision Application](#deprovision-application)
+3. [Remove Cloud Shell artifacts](#remove-cloud-shell-artifacts)
+4. [Deprovision Infrastructure Deployed via Resource Manager Stack](#deprovision-infrastructure-deployed-via-resource-manager-stack)
+5. [Deprovision Resource Manager Stack instance](#deprovision-resource-manager-stack-instance)
 
 #### Deprovision Oracle Analytics Cloud (OAC) instance
 
