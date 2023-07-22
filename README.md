@@ -126,18 +126,25 @@ The infrastructure resources that comprise this customized arrangement are presc
 		3. Copy the generated token to your clipboard by clicking `Copy`, and paste it into the `OCIR Password` field on the original browser tab, where you are editing the stack configuration details. Then, click `Close`. Note that if you close out of the window before copying the token, it will be necessary to generate a new token, for which you may refer to the previous step.
 	3. **SSH Public Key Pair**: You will generate an SSH key pair, which you will later use to access your compute instance.
 		1. On the new browser tab, click Developer Tools, marked with `<>`, and open Cloud Shell.
-		2. Feel free to skip or follow the Cloud Shell tutorial. On the Cloud Shell command-line interface (CLI), run the following command to generate an SSH key pair. Then, press Enter to proceed with default settings for the key pair. The default settings call for a save location of `~/.ssh`, and no password required to use the SSH key pair.
+		2. Feel free to skip or follow the Cloud Shell tutorial. Note your ability to minimize, maximize, and restore the Cloud Shell window as is convenient for intermittent interaction with the OCI Console UI.
+		3. On the Cloud Shell command-line interface (CLI), run the following command to generate an SSH key pair. Then, press `Enter` to proceed with default settings for the key pair. The default settings result in save locations of **~/.ssh/id_rsa** and **~/.ssh/id_rsa.pub** for the private and public SSH keys, respectively, and no password required to use the SSH key pair.
+			
 			```
 			ssh-keygen -t rsa
 			```
-		3. Print the contents of the public SSH key file to the CLI output console. Then, copy and paste the contents into the `Public SSH Key` field on your original browser tab.
+		4. Print the contents of the public SSH key file to the CLI output console by running the following command.
+			
+			```
+			cat ~/.ssh/id_rsa.pub
+			```
+		5. Copy and paste the printed contents into the `Public SSH Key` field on your original browser tab.
 12. <i>Optional</i>: In the `ADB Admin Password` field, change the password to one you would like to use to access Autonomous JSON Database. Remember this password for use later on.
 13. The remaining details on the `Configure Variables` page can be left as their default values or updated to fit your needs.
 14. When you are finished editing your variables in the `Configure Variables` section, click `Next` to proceed to the `Review` section.
 15. Select the checkbox for `Run Apply`, and click `Create`. You can monitor the deployment by monitoring the `Logs` window.
 16. Once the selected resources have been provisioned, click `Job resources` to open a page that shows details about the resources that were provisioned.
 17. Copy the name of the deployed compartment to your clipboard for later use. You can find the name of the compartment under the `Name` column, where the value under `Type` appears as `oci_identity_compartment`.
-18. Keep this browser tab open, as we will refer to this page later in this lab. Duplicate the current browser tab, and proceed using the new browser tab.
+18. Keep this browser tab open, as we will refer to this page later in this lab. Proceed with the next section using either the browser tab you have duplicated earlier in this section, or another browser tab that where you are logged into the OCI Console.
 	\
 	\
 	<b>Congratulations! You've successfully deployed a custom stack of OCI resources using Resource Manager!</b>
@@ -149,7 +156,7 @@ In this section, you will set up the following items in your Autonomous JSON Dat
 - <b>JSON Collection</b>: This object will store data points from a data stream in JSON format.
 - <b>Database View</b>: This object will contain a virtual table that enables querying of the JSON data as if it were a relational table.
 
-1. In your main OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `ajd` into the search field. Click the listing that appears on the page that contains the words `Autonomous JSON Database`.
+1. In your OCI Console, navigate to the hamburger menu at the top-left of the webpage, and type `ajd` into the search field. Click the listing that appears on the page that contains the words `Autonomous JSON Database`.
 2. Click on the dropdown under `Compartment`, and select the compartment that was deployed from the Resource Manager Stack.
 3. Click on the hyperlinked Database object you created.
 4. Click `Database actions`. Note that you may need to allow pop-ups in your browser if launching the new page fails.
@@ -220,7 +227,7 @@ If data has not populated within this Bucket after a minute or two, please revie
 	`Password`: `Streaming!2345`
 17. Click on the tile labeled `JSON`. In the query editor, leave the query as `{}` and click the green `Run Query` button to run the query. This will return all JSON elements in the JSON database. There is one JSON element for each data point that was tramsitted into the stream.
 18. Click on the hamburger menu in the upper left-hand side of the page, and click `SQL` under `Development`.
-19. Copy and paste the following PL/SQL query into the editor. This query returns the JSON data from STREAMDATA. The data points are contained within the `BLOB` element in each row.
+19. Copy and paste the following PL/SQL query into the editor. This query returns the JSON data from `STREAMDATA`. The data points are contained within the `BLOB` element in each row.
 
 	```
 	-- Select all metadadata in JSON collection.  JSON payload data is within "BLOB"
@@ -228,7 +235,7 @@ If data has not populated within this Bucket after a minute or two, please revie
 	```
 	\
 	Highlight the PL/SQL statement, then click on the round green `Run Statement` icon at the top of the editor to execute this statement.
-20. Copy and paste the following PL/SQL query into the editor. This query returns the data in STREAMDATA_VIEW. This data has been converted to table format by the Stored Procedure we configured earlier in this lab. Converting to table format allows the data to be easily queried for things like data visualization. STREAMDATA_LAST10_VIEW and STREAMDATA_LAST3_VIEW return the same table format as STREAMDATA_VIEW, but they only return the most recent 10 minutes or 3 minutes of data respectively.
+20. Copy and paste the following PL/SQL query into the editor. This query returns the data in `STREAMDATA_VIEW`. This data has been converted to table format by the Stored Procedure we configured earlier in this lab. Converting to table format allows the data to be easily queried for things like data visualization. `STREAMDATA_LAST10_VIEW` and `STREAMDATA_LAST3_VIEW` return the same table format as `STREAMDATA_VIEW`, but they only return the most recent 10 minutes or 3 minutes of data respectively.
 
 	```
 	-- Select all data in STREAMDATA_VIEW
@@ -269,7 +276,7 @@ In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to v
 17. Convert `KEY`, `PARTITION`, `OFFSET`, and `EQUIPMENT_ID` to attributes. To do this, click on the pound sign next to each column's name and select `Attribute`.
 18. Click the `Save` icon in the top-right corner of the page, which appears as an image of a hard-drive. Provide a name for the dataset. For this lab, use `streaming_dataset`, as this name is referred to later in this lab. The `Description` field is optional. Click `OK`.
 19. Click the `Back` arrow in the top-left corner of the page to return to the OAC home page.
-20. In another browser tab, navigate back to the SQL Editor in `Autonomous Data Warehouse` `Database actions`.  In the provided [STREAM_PIPELINE.sql](./modules/sql/STREAM_PIPELINE.sql), highlight and run all three lines of PL/SQL for STREAMDATA_LAST10_VIEW and STREAMDATA_LAST3_VIEW, including the WHERE clauses. Return to the browser tab with `Analytics Cloud` after executing this code.
+20. In another browser tab, navigate back to the SQL Editor in `Autonomous Data Warehouse` `Database actions`.  In the provided [STREAM_PIPELINE.sql](./modules/sql/STREAM_PIPELINE.sql), highlight and run all three lines of PL/SQL for `STREAMDATA_LAST10_VIEW` and `STREAMDATA_LAST3_VIEW`, including the `WHERE` clauses. Return to the browser tab with `Analytics Cloud` after executing this code.
 21. On the OAC home page, click `Create` in the top-right corner of the page, then click `Workbook`. In the popup titled `Add Data`, Select the dataset you just created, named `streaming_dataset`, then click `Add to Workbook`. For now, close the `Auto Insights` window on the right-hand side of the page by clicking on the light-bulb icon.
 22. In the data pane on the left side of the screen, click the arrow next to `TIMESTAMP` to expand that data field. Hold `command` if using a Mac or `control` if using a PC, then select `Second` and `VIBRATION_AMPLITUDE` from the data pane. Drag and drop these data elements onto the canvas. This will create a line chart.
 23. Select `VIBRATION_FREQUENCY`, `TEMPERATURE`, and `HUMIDITY` from the data pane, and drag and drop these data elements in the `Values (Y-Axis)` section of the visualization pane just to the right of the data pane. Be sure not to drop the data elements on top of `VIBRATION_AMPLITUDE`, as that will add the new elements in place of the existing data, rather than in addition to the existing data.
@@ -287,7 +294,7 @@ In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to v
 <sub>[Back to top](#oci-streaming-pipeline)</sub>
 ### Stop the Data Stream
 
-To stop the data stream, navigate to the page with the Cloud Shell running `stream.py`, click within the Cloud Shell window, and press `ctrl` + `c` to stop the script. 
+To stop the data stream, navigate to the page with the Cloud Shell where you are logged into your compute instance, running `stream.py`. Click within the Cloud Shell window, and press `ctrl` + `c` to stop the script. 
 \
 \
 <b>Thank you, and congratulations on completing this workshop!</b>
@@ -351,20 +358,12 @@ Deprovisioning the Application will deprovision the associated Function as well.
 These steps will walk through the process of removing the folders, files, and persisting environment variables set up on Cloud Shell for this project.
 
 1. Navigate to Cloud Shell: Click on the `Developer tools` icon on the upper right-hand side of the page, and then click `Cloud Shell`.
-2. Remove `stream.py` and your `streaming_fnc_UNIQUESTRING` folder, replacing `UNIQUESTRING` when running the following command in Cloud Shell.
+2. Remove your SSH key files.
 
 	```
-	rm -rf stream.py streaming_fnc_UNIQUESTRING
+	rm ~/.ssh/id_rsa ~/.ssh/id_rsa.pub
 	```
-3. Open the copy of `~/.bashrc`, and remove any export commands that have been appended to the file in this lab using the `vi` text editor and associated `vi`-related commands.
-
-	```
-	vi ~/.bashrc
-	```
-	1. Navigate to the bottom of the file by typing `G`.
-	2. For each line that starts with `export STREAMING_`, remove the line by typing `dd`.
-	3. Save your edits and exit the `vi` editor by typing `:wq`, then pressing `Enter`.
-4. Exit out of Cloud Shell using the `X` icon.
+3. Exit out of Cloud Shell using the `X` icon.
 
 #### Deprovision Infrastructure Deployed via Resource Manager Stack
 These steps will walk through the process of performing the `Destroy` operation in the Resource Manager Stack instance to deprovision the resources that were deployed from running the `Apply` action from the same Resource Manager Stack instance.
