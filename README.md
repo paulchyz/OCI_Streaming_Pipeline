@@ -62,9 +62,9 @@ Oracle Cloud Infrastructure (OCI) provides fast, flexible, and affordable comput
 Oracle Cloud Infrastructure (OCI) Functions is a serverless compute service that lets developers create, run, and scale applications without managing any infrastructure. Functions have native integrations with other Oracle Cloud Infrastructure services and SaaS applications. Because Functions is based on the open source Fn Project, developers can create applications that can be easily ported to other cloud and on-premises environments. Code based on Functions typically runs for short durations, stateless and run for a single purpose of logic. Customers pay only for the resources they use.
 </details>
 <details>
-<summary>Object Storage Bucket</summary>
+<summary>Object Storage</summary>
 <p></p>
-Securely store any type of data in its native format, with built-in redundancy.
+Oracle Cloud Infrastructure (OCI) Object Storage enables customers to securely store any type of data in its native format. With built-in redundancy, OCI Object Storage is ideal for building modern applications that require scale and flexibility, as it can be used to consolidate multiple data sources for analytics, backup, or archive purposes.
 </details>
 <details>
 <summary>Oracle Analytics Cloud (OAC)</summary>
