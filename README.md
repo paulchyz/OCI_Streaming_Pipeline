@@ -127,7 +127,7 @@ The infrastructure resources that comprise this customized arrangement are presc
 	3. **SSH Public Key Pair**: You will generate an SSH key pair, which you will later use to access your compute instance.
 		1. On the new browser tab, click Developer Tools, marked with `<>`, and open Cloud Shell.
 		2. Feel free to skip or follow the Cloud Shell tutorial. Note your ability to minimize, maximize, and restore the Cloud Shell window as is convenient for intermittent interaction with the OCI Console UI.
-		3. On the Cloud Shell command-line interface (CLI), run the following command to generate an SSH key pair. Then, press `Enter` to proceed with default settings for the key pair. The default settings result in save locations of **~/.ssh/id_rsa** and **~/.ssh/id_rsa.pub** for the private and public SSH keys, respectively, and no password required to use the SSH key pair.
+		3. On the Cloud Shell command-line interface (CLI), run the following command to generate an SSH key pair. Then, press `Enter` to proceed with default settings for the key pair. The default settings result in save locations of `~/.ssh/id_rsa` and `~/.ssh/id_rsa.pub` for the private and public SSH keys, respectively, and no password required to use the SSH key pair.
 			
 			```
 			ssh-keygen -t rsa
