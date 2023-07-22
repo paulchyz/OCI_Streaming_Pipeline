@@ -49,12 +49,17 @@ To follow this lab, you must have the following in place:
 <details>
 <summary>Autonomous JSON Database (AJD)</summary>
 <p></p>
-Managed JSON database service that automates provisioning, configuring, securing, tuning, scaling, and backing up of the database. It includes tools for self-service data loading, data transformations, business models, automatic insights, and built-in converged database capabilities that enable simpler queries across multiple data types and machine learning analysis.
+Oracle Autonomous JSON Database is a cloud document database service that makes it simple to develop JSON-centric applications. It features NoSQL-style document APIs (Oracle SODA and Oracle Database API for MongoDB), serverless scaling, high performance ACID transactions, comprehensive security, and low pay-per-use pricing. Autonomous JSON Database automates provisioning, configuring, tuning, scaling, patching, encrypting, and repairing of databases, eliminating database management and delivering 99.95% availability.
+</details>
+<details>
+<summary>Compute</summary>
+<p></p>
+Oracle Cloud Infrastructure (OCI) provides fast, flexible, and affordable compute capacity to fit any workload need, from high performance bare metal instances and flexible VMs to lightweight containers and serverless computing.
 </details>
 <details>
 <summary>Functions</summary>
 <p></p>
-Serverless, event-driven service that lets developers build, run, and scale applications without provisioning or managing any infrastructure. You only pay for the resources used when the function is running. Functions integrate with other OCI services and Oracle SaaS applications.
+Oracle Cloud Infrastructure (OCI) Functions is a serverless compute service that lets developers create, run, and scale applications without managing any infrastructure. Functions have native integrations with other Oracle Cloud Infrastructure services and SaaS applications. Because Functions is based on the open source Fn Project, developers can create applications that can be easily ported to other cloud and on-premises environments. Code based on Functions typically runs for short durations, stateless and run for a single purpose of logic. Customers pay only for the resources they use.
 </details>
 <details>
 <summary>Object Storage Bucket</summary>
@@ -64,22 +69,22 @@ Securely store any type of data in its native format, with built-in redundancy.
 <details>
 <summary>Oracle Analytics Cloud (OAC)</summary>
 <p></p>
-Service that provides the capabilities required to address the entire analytics process including data ingestion and modeling, data preparation and enrichment, and visualization and collaboration, without compromising security and governance.
+The Oracle Analytics platform is a cloud native service that provides the capabilities required to address the entire analytics process including data ingestion and modeling, data preparation and enrichment, and visualization and collaboration, without compromising security and governance. Embedded machine learning and natural language processing technologies help increase productivity and build an analytics-driven culture in organizations. Start on-premises or in the cloud—Oracle Analytics supports a hybrid deployment strategy, providing flexible paths to the cloud.
 </details>
 <details>
-<summary>Service Connector</summary>
+<summary>Service Connector Hub</summary>
 <p></p>
-Cloud message bus platform that offers a single pane of glass for describing, executing, and monitoring interactions when moving data between Oracle Cloud Infrastructure services.
+Service Connector Hub helps cloud engineers manage and move data between Oracle Cloud Infrastructure (OCI) services and from OCI to third-party services. Unlike competing cloud offerings, Service Connector Hub provides a central place for describing, executing and monitoring data movements between services, such as Logging, Object Storage, Streaming, Logging Analytics, and Monitoring. It can also trigger Functions for lightweight data processing and Notifications to set up alerts.
 </details>
 <details>
 <summary>Streaming</summary>
 <p></p>
-Real-time, serverless, Apache Kafka-compatible event streaming platform for developers and data scientists.
+Oracle Cloud Infrastructure (OCI) Streaming service is a real-time, serverless, Apache Kafka-compatible event streaming platform for developers and data scientists. Streaming is tightly integrated with OCI, Database, GoldenGate, and Integration Cloud. The service also provides out-of-the-box integrations for hundreds of third-party products across categories such as DevOps, databases, big data, and SaaS applications.
 </details>
 <details>
 <summary>Virtual Cloud Network (VCN)</summary>
 <p></p>
-Customizable and private cloud network.
+Oracle Cloud Infrastructure (OCI) Virtual Cloud Networks (VCNs) provide customizable and private cloud networks in Oracle Cloud Infrastructure (OCI). Just like a traditional data center network, the VCN provides customers with complete control over their cloud networking environment. This includes assigning private IP address spaces, creating subnets and route tables, and configuring stateful firewalls.
 </details>
 
 <sub>[Back to top](#oci-streaming-pipeline)</sub>
