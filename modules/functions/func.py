@@ -5,9 +5,13 @@ import json
 import logging
 import base64
 import datetime
+from pyexpat import model
 import pandas as pd
 import oci.object_storage
 import requests
+import oci
+from oci.signer import Signer
+from oci.data_science import DataScienceClient
 
 # Configure parameters, load stream data, call ETL function
 def handler(ctx, data: io.BytesIO=None):
@@ -19,9 +23,12 @@ def handler(ctx, data: io.BytesIO=None):
         schema = cfg['db-schema']
         dbuser = cfg['db-user']
         dbpwd = cfg['dbpwd-cipher']
+        modelendpoint = cfg['model-endpoint']
         client, namespace = config_object_store()
+        auth = oci.auth.signers.get_resource_principals_signer()
+        dsc = DataScienceClient(config={}, signer=auth)
         src_objects = json.loads(data.getvalue().decode('utf-8'))
-        output = execute_etl(client, namespace, processed_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name)
+        output = execute_etl(client, namespace, processed_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, modelendpoint, auth)
         return output
 
     except (Exception, ValueError) as ex:
@@ -36,12 +43,20 @@ def config_object_store():
     return client, namespace
 
 # Call required functions for ETL
-def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name):
+def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, modelendpoint, auth):
     decoded_objects = decode_objects(src_objects)
-    csv_data = to_csv(decoded_objects)
+    csv_data = to_csv(decoded_objects, modelendpoint, auth)
     obj_name = 'csv_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.csv'
     resp = put_object(client, namespace, dst_bucket, obj_name, csv_data)
-    load_resp = load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name)
+
+    #ML
+    mlresults_df = invoke_model(decoded_objects['value'], modelendpoint, auth)
+    prediction = mlresults_df.to_dict()
+    predicted_payload = {"stream": decoded_objects['stream'], "partition": decoded_objects['partition'], "key": decoded_objects['key'], "value": prediction}
+    insert_status = load_data(ordsbaseurl, schema, dbuser, dbpwd, predicted_payload, json_collection_name)
+    #
+
+    #load_resp = load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name, modelendpoint, auth)
     return decoded_objects
 
 # Decode stream data
@@ -52,9 +67,11 @@ def decode_objects(src_objects):
     return src_objects
 
 # Convert decoded data into JSON format
-def to_csv(decoded_objects):
-    df = pd.json_normalize(decoded_objects, record_path=['value'], meta=['stream', 'partition', 'key', 'offset', 'timestamp'], meta_prefix='batch_')
-    csv_data = df.to_csv(index=False)
+def to_csv(decoded_objects, modelendpoint, auth):
+    modelresults_df = invoke_model(decoded_objects, modelendpoint, auth)
+    #df = pd.json_normalize(decoded_objects, record_path=['value'], meta=['stream', 'partition', 'key', 'offset', 'timestamp'], meta_prefix='batch_')
+    
+    csv_data = modelresults_df.to_csv(index=False)
     return csv_data
 
 # Load CSV data into object storage
@@ -69,6 +86,7 @@ def put_object(client, namespace, dst_bucket, obj_name, data):
 # Load JSON data into ADW JSON collection
 def load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name):
     insert_status = soda_insert(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name)
+    
     if "id" in insert_status["items"][0]:
         print("INFO - Successfully inserted document ID " + insert_status["items"][0]["id"], flush=True)
     else:
@@ -89,3 +107,20 @@ def soda_insert(ordsbaseurl, schema, dbuser, dbpwd, obj, json_collection_name):
         print('SODA Insert Error: ' + str(e), flush=True)
         raise
     return r_json
+
+def invoke_model(decoded_objects, modelendpoint, auth):
+    #Resource Principal 
+    data = pd.json_normalize(decoded_objects, record_path=['value'])
+    #clean data (only select columns we need, add const column (needed for ML))
+    df = data[['vibration_amplitude', 'vibration_frequency','temperature','humidity']]
+    df.insert(loc=0, column='const', value=1)
+    #finalize payload df
+    payload_list = df.values.tolist()
+    #infer the model
+    body = payload_list
+    headers = {} # header goes here
+    output = requests.post(modelendpoint, json=body, auth=auth, headers=headers).json()
+    predictions = [ '%.1f' % elem for elem in output['INFERENCE'] ]
+    #add result list to the original dataset
+    data['INFERENCE'] = predictions
+    return data
