@@ -45,18 +45,20 @@ def config_object_store():
 # Call required functions for ETL
 def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, modelendpoint, auth):
     decoded_objects = decode_objects(src_objects)
+    #logging.getLogger().info("INFO - decoded_objects " + decoded_objects, flush=True)
+    #logging.getLogger().info("INFO - decoded_objects TYPE" + type(decoded_objects), flush=True)
+    #logging.getLogger().info("INFO - decoded_objects ['KEY']" + decoded_objects['key'], flush=True)
     csv_data = to_csv(decoded_objects, modelendpoint, auth)
     obj_name = 'csv_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.csv'
     resp = put_object(client, namespace, dst_bucket, obj_name, csv_data)
 
     #ML
     mlresults_df = invoke_model(decoded_objects['value'], modelendpoint, auth)
-    prediction = mlresults_df.to_dict()
+    prediction = mlresults_df.to_json()
     predicted_payload = {"stream": decoded_objects['stream'], "partition": decoded_objects['partition'], "key": decoded_objects['key'], "value": prediction}
+    #logging.getLogger().info("INFO - predicted_payload" + predicted_payload, flush=True)
+    #logging.getLogger().info("INFO - predicted_payload" + TYPE(predicted_payload), flush=True)
     insert_status = load_data(ordsbaseurl, schema, dbuser, dbpwd, predicted_payload, json_collection_name)
-    #
-
-    #load_resp = load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name, modelendpoint, auth)
     return decoded_objects
 
 # Decode stream data
@@ -69,8 +71,6 @@ def decode_objects(src_objects):
 # Convert decoded data into JSON format
 def to_csv(decoded_objects, modelendpoint, auth):
     modelresults_df = invoke_model(decoded_objects, modelendpoint, auth)
-    #df = pd.json_normalize(decoded_objects, record_path=['value'], meta=['stream', 'partition', 'key', 'offset', 'timestamp'], meta_prefix='batch_')
-    
     csv_data = modelresults_df.to_csv(index=False)
     return csv_data
 
@@ -80,13 +80,12 @@ def put_object(client, namespace, dst_bucket, obj_name, data):
         output = client.put_object(namespace_name=namespace, bucket_name=dst_bucket, object_name=obj_name, put_object_body=data, content_type="text/csv")
     except (Exception, ValueError) as ex:
         logging.getLogger().error(str(ex))
-        return {"Put Object Error Response": str(ex)}
     return output
 
 # Load JSON data into ADW JSON collection
 def load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name):
     insert_status = soda_insert(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name)
-    
+
     if "id" in insert_status["items"][0]:
         print("INFO - Successfully inserted document ID " + insert_status["items"][0]["id"], flush=True)
     else:
@@ -120,7 +119,8 @@ def invoke_model(decoded_objects, modelendpoint, auth):
     body = payload_list
     headers = {} # header goes here
     output = requests.post(modelendpoint, json=body, auth=auth, headers=headers).json()
-    predictions = [ '%.1f' % elem for elem in output['INFERENCE'] ]
+    predictions = [ '%.1f' % elem for elem in output['prediction'] ]
     #add result list to the original dataset
-    data['INFERENCE'] = predictions
+    data['Prediction'] = predictions
     return data
+
