@@ -76,7 +76,8 @@ def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema,
 
 
     predicted_payload = {"stream": decoded_objects['stream'], "partition": decoded_objects['partition'], "key": decoded_objects['key'], "value": prediction}
-
+    predicted_payload = json.dumps(predicted_payload)
+    
     #See predicted Payload
     #Print
     #print("INFO - predicted_payload" + str(predicted_payload), flush=True)
