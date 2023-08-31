@@ -64,6 +64,7 @@ def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema,
     #ML
     mlresults_df = invoke_model(decoded_objects['value'], modelendpoint, auth)
     prediction = mlresults_df.to_json(orient='records')
+    prediction = prediction.replace("'", '"')  
     
     #See prediction
     #Print
