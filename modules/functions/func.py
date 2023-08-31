@@ -48,9 +48,9 @@ def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema,
 
     #See Decoded Objects
     #Print logs
-    print("INFO - decoded_objects " + decoded_objects, flush=True)
+    print("INFO - decoded_objects " + str(decoded_objects), flush=True)
     print("INFO - decoded_objects TYPE" + type(decoded_objects), flush=True)
-    print("INFO - decoded_objects ['KEY']" + decoded_objects['key'], flush=True)
+    print("INFO - decoded_objects ['KEY']" + str(decoded_objects['key']), flush=True)
     #Get Logs
     #logging.getLogger().info("INFO - decoded_objects " + decoded_objects)
     #logging.getLogger().info("INFO - decoded_objects TYPE" + type(decoded_objects))
@@ -68,8 +68,8 @@ def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema,
 
     #See predicted Payload
     #Print
-    print("INFO - predicted_payload" + predicted_payload, flush=True)
-    print("INFO - predicted_payload" + type(predicted_payload) + decoded_objects, flush=True)
+    print("INFO - predicted_payload" + str(predicted_payload), flush=True)
+    print("INFO - predicted_payload type" + type(predicted_payload), flush=True)
     #Get Logs
     #logging.getLogger().info("INFO - predicted_payload" + predicted_payload)
     #logging.getLogger().info("INFO - predicted_payload" + type(predicted_payload))
