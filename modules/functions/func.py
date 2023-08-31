@@ -64,12 +64,22 @@ def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema,
     #ML
     mlresults_df = invoke_model(decoded_objects['value'], modelendpoint, auth)
     prediction = mlresults_df.to_json()
+    
+    #See prediction
+    #Print
+    #print("INFO - predicted_payload" + str(prediction), flush=True)
+    #print("INFO - predicted_payload type" + str(type(prediction)), flush=True)
+    #Get Logs
+    logging.getLogger().info("INFO - predicted_payload" + str(prediction))
+    logging.getLogger().info("INFO - predicted_payload" + str(prediction))
+
+
     predicted_payload = {"stream": decoded_objects['stream'], "partition": decoded_objects['partition'], "key": decoded_objects['key'], "value": prediction}
 
     #See predicted Payload
     #Print
-    print("INFO - predicted_payload" + str(predicted_payload), flush=True)
-    print("INFO - predicted_payload type" + str(type(predicted_payload)), flush=True)
+    #print("INFO - predicted_payload" + str(predicted_payload), flush=True)
+    #print("INFO - predicted_payload type" + str(type(predicted_payload)), flush=True)
     #Get Logs
     #logging.getLogger().info("INFO - predicted_payload" + predicted_payload)
     #logging.getLogger().info("INFO - predicted_payload" + type(predicted_payload))
