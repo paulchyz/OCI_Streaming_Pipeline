@@ -45,9 +45,9 @@ def config_object_store():
 # Call required functions for ETL
 def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, modelendpoint, auth):
     decoded_objects = decode_objects(src_objects)
-    #logging.getLogger().info("INFO - decoded_objects " + decoded_objects, flush=True)
-    #logging.getLogger().info("INFO - decoded_objects TYPE" + type(decoded_objects), flush=True)
-    #logging.getLogger().info("INFO - decoded_objects ['KEY']" + decoded_objects['key'], flush=True)
+    logging.getLogger().info("INFO - decoded_objects " + decoded_objects)
+    logging.getLogger().info("INFO - decoded_objects TYPE" + type(decoded_objects))
+    logging.getLogger().info("INFO - decoded_objects ['KEY']" + decoded_objects['key'])
     csv_data = to_csv(decoded_objects, modelendpoint, auth)
     obj_name = 'csv_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.csv'
     resp = put_object(client, namespace, dst_bucket, obj_name, csv_data)
@@ -56,8 +56,8 @@ def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema,
     mlresults_df = invoke_model(decoded_objects['value'], modelendpoint, auth)
     prediction = mlresults_df.to_json()
     predicted_payload = {"stream": decoded_objects['stream'], "partition": decoded_objects['partition'], "key": decoded_objects['key'], "value": prediction}
-    #logging.getLogger().info("INFO - predicted_payload" + predicted_payload, flush=True)
-    #logging.getLogger().info("INFO - predicted_payload" + TYPE(predicted_payload), flush=True)
+    logging.getLogger().info("INFO - predicted_payload" + predicted_payload)
+    logging.getLogger().info("INFO - predicted_payload" + TYPE(predicted_payload))
     insert_status = load_data(ordsbaseurl, schema, dbuser, dbpwd, predicted_payload, json_collection_name)
     return decoded_objects
 
