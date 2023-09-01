@@ -62,9 +62,8 @@ def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema,
     resp = put_object(client, namespace, dst_bucket, obj_name, csv_data)
 
     #ML
-    mlresults_df = invoke_model(decoded_objects['value'], modelendpoint, auth)
-    prediction = mlresults_df.to_json(orient='records')
-    prediction = prediction.replace("'", '"')  
+    #mlresults_df = invoke_model(decoded_objects['value'], modelendpoint, auth)
+    #prediction = mlresults_df.to_json(orient='records') 
     
     #See prediction
     #Print
@@ -73,10 +72,8 @@ def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema,
     #Get Logs
     #logging.getLogger().info("INFO - predicted_payload" + str(prediction))
     #logging.getLogger().info("INFO - predicted_payload" + str(prediction))
-
-
-    predicted_payload = {"stream": decoded_objects['stream'], "partition": decoded_objects['partition'], "key": decoded_objects['key'], "value": prediction}
-    predicted_payload = json.dumps(predicted_payload)
+    #predicted_payload = {"stream": decoded_objects['stream'], "partition": decoded_objects['partition'], "key": decoded_objects['key'], "value": prediction}
+    #predicted_payload = json.dumps(predicted_payload)
     
     #See predicted Payload
     #Print
@@ -94,6 +91,9 @@ def decode_objects(src_objects):
     for obj in src_objects:
         obj['key'] = base64.b64decode(obj['key']).decode('utf-8')
         obj['value'] = json.loads(base64.b64decode(obj['value']).decode('utf-8'))
+        mlresults_df = invoke_model(obj['value'], modelendpoint, auth)
+        prediction = mlresults_df.to_json(orient='records')
+        obj['value'] = json.loads(prediction)
     return src_objects
 
 # Convert decoded data into JSON format
