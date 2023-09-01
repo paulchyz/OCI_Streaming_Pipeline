@@ -137,7 +137,7 @@ def soda_insert(ordsbaseurl, schema, dbuser, dbpwd, obj, json_collection_name):
 
 def invoke_model(decoded_objects, modelendpoint, auth):
     #Resource Principal 
-    data = pd.json_normalize(decoded_objects, record_path=['value'])
+    data = pd.json_normalize(decoded_objects) #record_path=['value'])
     #clean data (only select columns we need, add const column (needed for ML))
     df = data[['vibration_amplitude', 'vibration_frequency','temperature','humidity']]
     df.insert(loc=0, column='const', value=1)
