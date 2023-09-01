@@ -44,56 +44,21 @@ def config_object_store():
 
 # Call required functions for ETL
 def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, modelendpoint, auth):
-    decoded_objects = decode_objects(src_objects, modelendpoint, auth)
-
-    #See Decoded Objects
-    #Print logs
-    #print("INFO - decoded_objects " + str(decoded_objects), flush=True)
-    #print("INFO - decoded_objects TYPE" + str(type(decoded_objects)), flush=True)
-    #print("INFO - decoded_objects ['KEY']" + str(decoded_objects['key']), flush=True)
-    #Get Logs
-    #logging.getLogger().info("INFO - decoded_objects " + decoded_objects)
-    #logging.getLogger().info("INFO - decoded_objects TYPE" + type(decoded_objects))
-    #logging.getLogger().info("INFO - decoded_objects ['KEY']" + decoded_objects['key'])
-
-
+    decoded_objects = decode_objects(src_objects)
     csv_data = to_csv(decoded_objects, modelendpoint, auth)
     obj_name = 'csv_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.csv'
     resp = put_object(client, namespace, dst_bucket, obj_name, csv_data)
-
     #ML
-    #mlresults_df = invoke_model(decoded_objects['value'], modelendpoint, auth)
-    #prediction = mlresults_df.to_json(orient='records') 
-    
-    #See prediction
-    #Print
-    #print("INFO - predicted_payload" + str(prediction), flush=True)
-    #print("INFO - predicted_payload type" + str(type(prediction)), flush=True)
-    #Get Logs
-    #logging.getLogger().info("INFO - predicted_payload" + str(prediction))
-    #logging.getLogger().info("INFO - predicted_payload" + str(prediction))
-    #predicted_payload = {"stream": decoded_objects['stream'], "partition": decoded_objects['partition'], "key": decoded_objects['key'], "value": prediction}
-    #predicted_payload = json.dumps(predicted_payload)
-    
-    #See predicted Payload
-    #Print
-    #print("INFO - predicted_payload" + str(predicted_payload), flush=True)
-    #print("INFO - predicted_payload type" + str(type(predicted_payload)), flush=True)
-    #Get Logs
-    #logging.getLogger().info("INFO - predicted_payload" + predicted_payload)
-    #logging.getLogger().info("INFO - predicted_payload" + type(predicted_payload))
-
+    mlresults_df = invoke_model(decoded_objects, modelendpoint, auth)
+    decoded_objects[0]['value'] = json.loads(mlresults_df.to_json(orient='records'))
     insert_status = load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name)
     return decoded_objects
 
 # Decode stream data
-def decode_objects(src_objects, modelendpoint, auth):
+def decode_objects(src_objects):
     for obj in src_objects:
         obj['key'] = base64.b64decode(obj['key']).decode('utf-8')
         obj['value'] = json.loads(base64.b64decode(obj['value']).decode('utf-8'))
-        mlresults_df = invoke_model(obj['value'], modelendpoint, auth)
-        prediction = mlresults_df.to_json(orient='records')
-        obj['value'] = json.loads(prediction)
     return src_objects
 
 # Convert decoded data into JSON format
@@ -137,7 +102,7 @@ def soda_insert(ordsbaseurl, schema, dbuser, dbpwd, obj, json_collection_name):
 
 def invoke_model(decoded_objects, modelendpoint, auth):
     #Resource Principal 
-    data = pd.json_normalize(decoded_objects) #record_path=['value'])
+    data = pd.json_normalize(decoded_objects, record_path=['value'])
     #clean data (only select columns we need, add const column (needed for ML))
     df = data[['vibration_amplitude', 'vibration_frequency','temperature','humidity']]
     df.insert(loc=0, column='const', value=1)
