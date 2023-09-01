@@ -49,7 +49,7 @@ def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema,
     #See Decoded Objects
     #Print logs
     #print("INFO - decoded_objects " + str(decoded_objects), flush=True)
-    print("INFO - decoded_objects TYPE" + str(type(decoded_objects)), flush=True)
+    #print("INFO - decoded_objects TYPE" + str(type(decoded_objects)), flush=True)
     #print("INFO - decoded_objects ['KEY']" + str(decoded_objects['key']), flush=True)
     #Get Logs
     #logging.getLogger().info("INFO - decoded_objects " + decoded_objects)
@@ -83,7 +83,7 @@ def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema,
     #logging.getLogger().info("INFO - predicted_payload" + predicted_payload)
     #logging.getLogger().info("INFO - predicted_payload" + type(predicted_payload))
 
-    insert_status = load_data(ordsbaseurl, schema, dbuser, dbpwd, predicted_payload, json_collection_name)
+    insert_status = load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name)
     return decoded_objects
 
 # Decode stream data
