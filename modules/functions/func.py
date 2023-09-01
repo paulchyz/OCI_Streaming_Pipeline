@@ -48,7 +48,7 @@ def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema,
     csv_data = to_csv(decoded_objects, modelendpoint, auth)
     obj_name = 'csv_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.csv'
     resp = put_object(client, namespace, dst_bucket, obj_name, csv_data)
-    #ML
+    #ML#
     mlresults_df = invoke_model(decoded_objects, modelendpoint, auth)
     decoded_objects[0]['value'] = json.loads(mlresults_df.to_json(orient='records'))
     insert_status = load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name)
