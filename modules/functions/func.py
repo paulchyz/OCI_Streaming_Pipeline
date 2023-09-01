@@ -44,7 +44,7 @@ def config_object_store():
 
 # Call required functions for ETL
 def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, modelendpoint, auth):
-    decoded_objects = decode_objects(src_objects)
+    decoded_objects = decode_objects(src_objects, modelendpoint, auth)
 
     #See Decoded Objects
     #Print logs
@@ -87,7 +87,7 @@ def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema,
     return decoded_objects
 
 # Decode stream data
-def decode_objects(src_objects):
+def decode_objects(src_objects, modelendpoint, auth):
     for obj in src_objects:
         obj['key'] = base64.b64decode(obj['key']).decode('utf-8')
         obj['value'] = json.loads(base64.b64decode(obj['value']).decode('utf-8'))
