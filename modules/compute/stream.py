@@ -6,7 +6,7 @@ import random
 from base64 import b64encode
 import os
 
-config = oci.config.from_file(file_location=os.environ['STREAMING_OCI_CONFIG_FILE_LOCATION'])
+#config = oci.config.from_file(file_location=os.environ['STREAMING_OCI_CONFIG_FILE_LOCATION'])
 sid = os.environ['STREAMING_STREAM_OCID']
 message_endpoint = os.environ['STREAMING_MESSAGES_ENDPOINT']
 
@@ -29,8 +29,9 @@ for id in equipment_ids:
 
 message_count = 0
 
-# Initialize service client with default config file
-streaming_client = oci.streaming.StreamClient(config, message_endpoint)
+# Initialize service client with instance principal signer
+signer = oci.auth.signers.InstancePrincipalSecurityTokenSigner()
+streaming_client = oci.streaming.StreamClient(config={}, signer=signer, message_endpoint)
 
 start_time = datetime.datetime.now()
 
