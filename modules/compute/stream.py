@@ -74,25 +74,25 @@ while True:
         for i in range(1000):
             # AMPLITUDE
             if (flags[x][0] >= 1):
-                vibration_amplitude = round(base_amp * round(random.uniform(1.5, 1.8), 3), 2)
+                vibration_amplitude = round(base_amp * round(random.uniform(1.1, 1.2), 3), 2)
             else:
                 vibration_amplitude = round(base_amp * round(random.uniform(0.9, 1.1), 3), 2)
 
             # FREQUENCY
             if (flags[x][1] >= 1):
-                vibration_frequency = round(base_freq * round(random.uniform(1.5, 1.8), 3), 2)
+                vibration_frequency = round(base_freq * round(random.uniform(1.1, 1.2), 3), 2)
             else:
                 vibration_frequency = round(base_freq * round(random.uniform(0.9, 1.1), 3), 2)
 
             # TEMPURATURE
             if (flags[x][2] >= 1):
-                tempurature = round(base_temp * round(random.uniform(1.5, 1.8), 3), 2)
+                tempurature = round(base_temp * round(random.uniform(1.1, 1.2), 3), 2)
             else:
                 tempurature = round(base_temp * round(random.uniform(0.9, 1.1), 3), 2)
 
             # HUMIDITY
             if (flags[x][3] >= 1):
-                humidity = round(base_hum * round(random.uniform(1.5, 1.8), 3), 2)
+                humidity = round(base_hum * round(random.uniform(1.1, 1.2), 3), 2)
             else:
                 humidity = round(base_hum * round(random.uniform(0.9, 1.1), 3), 2)
 
