@@ -22,7 +22,7 @@ CREATE MATERIALIZED VIEW STREAMDATA_MV
                     )
                 )
             )
-        ) ORDER BY KEY DESC;
+        );
 
 -- STREAMDATA_MV_IDX
 -- Create timestamp index on materialized view
@@ -32,7 +32,7 @@ CREATE INDEX STREAMDATA_MV_IDX ON STREAMDATA_MV (TIMESTAMP);
 -- Create database view to return the most recent 3 minutes of relational data from JSON collection
 CREATE OR REPLACE VIEW STREAMDATA_LAST3_VIEW AS
 SELECT * FROM STREAMDATA_MV
--- WHERE TIMESTAMP > (SELECT MAX(TIMESTAMP) FROM STREAMDATA_MV) - INTERVAL '3' MINUTE;
+WHERE TIMESTAMP > (SELECT MAX(TIMESTAMP) FROM STREAMDATA_MV) - INTERVAL '3' MINUTE;
 
 
 -- FOR REFERENCE
