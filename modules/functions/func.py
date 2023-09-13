@@ -23,12 +23,12 @@ def handler(ctx, data: io.BytesIO=None):
         schema = cfg['db-schema']
         dbuser = cfg['db-user']
         dbpwd = cfg['dbpwd-cipher']
-        model_endpoint_id = cfg['model-endpoint-id']
+        model_endpoint_url = cfg['model-endpoint-url']
         client, namespace = config_object_store()
         auth = oci.auth.signers.get_resource_principals_signer()
         dsc = DataScienceClient(config={}, signer=auth)
         src_objects = json.loads(data.getvalue().decode('utf-8'))
-        output = execute_etl(client, namespace, processed_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, model_endpoint_id, auth)
+        output = execute_etl(client, namespace, processed_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, model_endpoint_url, auth)
         return output
 
     except (Exception, ValueError) as ex:
@@ -43,13 +43,13 @@ def config_object_store():
     return client, namespace
 
 # Call required functions for ETL
-def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, model_endpoint_id, auth):
+def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, model_endpoint_url, auth):
     decoded_objects = decode_objects(src_objects)
-    csv_data = to_csv(decoded_objects, model_endpoint_id, auth)
+    csv_data = to_csv(decoded_objects, model_endpoint_url, auth)
     obj_name = 'csv_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.csv'
     resp = put_object(client, namespace, dst_bucket, obj_name, csv_data)
     #ML#
-    mlresults_df = invoke_model(decoded_objects, model_endpoint_id, auth)
+    mlresults_df = invoke_model(decoded_objects, model_endpoint_url, auth)
     decoded_objects[0]['value'] = json.loads(mlresults_df.to_json(orient='records'))
     insert_status = load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name)
     return decoded_objects
@@ -62,8 +62,8 @@ def decode_objects(src_objects):
     return src_objects
 
 # Convert decoded data into JSON format
-def to_csv(decoded_objects, model_endpoint_id, auth):
-    modelresults_df = invoke_model(decoded_objects, model_endpoint_id, auth)
+def to_csv(decoded_objects, model_endpoint_url, auth):
+    modelresults_df = invoke_model(decoded_objects, model_endpoint_url, auth)
     csv_data = modelresults_df.to_csv(index=False)
     return csv_data
 
@@ -99,7 +99,7 @@ def soda_insert(ordsbaseurl, schema, dbuser, dbpwd, obj, json_collection_name):
         raise
     return r_json
 
-def invoke_model(decoded_objects, model_endpoint_id, auth):
+def invoke_model(decoded_objects, model_endpoint_url, auth):
     #Resource Principal 
     data = pd.json_normalize(decoded_objects, record_path=['value'])
     #clean data (only select columns we need, add const column (needed for ML))
@@ -110,7 +110,7 @@ def invoke_model(decoded_objects, model_endpoint_id, auth):
     #infer the model
     body = payload_list
     headers = {} # header goes here
-    output = requests.post(model_endpoint_id, json=body, auth=auth, headers=headers).json()
+    output = requests.post(model_endpoint_url, json=body, auth=auth, headers=headers).json()
     predictions = [ '%.1f' % elem for elem in output['prediction'] ]
     #add result list to the original dataset
     data['Prediction'] = predictions

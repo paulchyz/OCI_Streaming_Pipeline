@@ -30,8 +30,8 @@ for id in equipment_ids:
 message_count = 0
 
 # Initialize service client with instance principal signer
-signer = oci.auth.signers.InstancePrincipalSecurityTokenSigner()
-streaming_client = oci.streaming.StreamClient(config={}, signer=signer, message_endpoint)
+signer = oci.auth.signers.InstancePrincipalsSecurityTokenSigner()
+streaming_client = oci.streaming.StreamClient(config={}, service_endpoint=message_endpoint, signer=signer)
 
 start_time = datetime.datetime.now()
 
