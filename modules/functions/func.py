@@ -50,8 +50,9 @@ def execute_etl(client, namespace, dst_bucket, src_objects, ordsbaseurl, schema,
     resp = put_object(client, namespace, dst_bucket, obj_name, csv_data)
     #ML#
     mlresults_df = invoke_model(decoded_objects, model_endpoint_url, auth)
-    decoded_objects[0]['value'] = json.loads(mlresults_df.to_json(orient='records'))
-    insert_status = load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name)
+    predicted_objects = decoded_objects
+    predicted_objects[0]['value'] = json.loads(mlresults_df.to_json(orient='records'))
+    insert_status = load_data(ordsbaseurl, schema, dbuser, dbpwd, predicted_objects, json_collection_name)
     return decoded_objects
 
 # Decode stream data
