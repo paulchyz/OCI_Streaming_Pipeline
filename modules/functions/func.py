@@ -28,6 +28,7 @@ def handler(ctx, data: io.BytesIO=None):
         client, namespace = config_object_store()
         auth = oci.auth.signers.get_resource_principals_signer()
         dsc = DataScienceClient(config={}, signer=auth)
+        logging.getLogger().info('patch-3')
         src_objects = json.loads(data.getvalue().decode('utf-8'))
         output = execute_etl(client, namespace, raw_bucket, processed_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, model_endpoint_url, auth)
         return None
@@ -46,9 +47,9 @@ def config_object_store():
 # Call required functions for ETL
 def execute_etl(client, namespace, raw_bucket, processed_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, model_endpoint_url, auth):
     decoded_objects = decode_objects(src_objects)
+    csv_data = to_csv(decoded_objects, model_endpoint_url, auth)
     raw_obj_name = 'raw_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.json'
     resp = put_object(client, namespace, raw_bucket, raw_obj_name, csv_data)
-    csv_data = to_csv(decoded_objects, model_endpoint_url, auth)
     csv_obj_name = 'csv_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.csv'
     resp = put_object(client, namespace, processed_bucket, csv_obj_name, csv_data)
     #ML#
