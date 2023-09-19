@@ -6,7 +6,7 @@ import random
 from base64 import b64encode
 import os
 
-#v2.1.6
+#v2.1.7
 
 #config = oci.config.from_file(file_location=os.environ['STREAMING_OCI_CONFIG_FILE_LOCATION'])
 sid = os.environ['STREAMING_STREAM_OCID']
@@ -24,12 +24,10 @@ base_freq = float(1000)
 base_temp = float(60)
 base_hum = float(30)
 
-AnomalyUpperBound = 2.1
-AnomalyLowerBound = 1.5
+AnomalyUpperBound = 1.3
+AnomalyLowerBound = 1.1
 NormalUpperBound = 0.9
 NormalLowerBound = 0.1
-
-
 
 equipment_ids = [101, 102, 103]
 flags = []
