@@ -12,7 +12,7 @@ import os
 sid = os.environ['STREAMING_STREAM_OCID']
 message_endpoint = os.environ['STREAMING_MESSAGES_ENDPOINT']
 
-amp_odds = 0.008
+amp_odds = 0.009
 freq_odds = .0055
 temp_odds = .0055
 hum_odds = .0055
