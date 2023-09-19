@@ -6,13 +6,13 @@ import random
 from base64 import b64encode
 import os
 
-#v2.1.1
+#v2.1.2
 
 #config = oci.config.from_file(file_location=os.environ['STREAMING_OCI_CONFIG_FILE_LOCATION'])
 sid = os.environ['STREAMING_STREAM_OCID']
 message_endpoint = os.environ['STREAMING_MESSAGES_ENDPOINT']
 
-amp_odds = .01
+amp_odds = 2
 freq_odds = .0055
 temp_odds = .0055
 hum_odds = .0055
@@ -27,7 +27,7 @@ base_hum = float(30)
 AnomalyUpperBound = 2.1
 AnomalyLowerBound = 1.5
 NormalUpperBound = 0.9
-NormalLowerBound = 0.3
+NormalLowerBound = 0.1
 
 
 
