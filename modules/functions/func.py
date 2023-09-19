@@ -58,6 +58,7 @@ def execute_etl(client, namespace, raw_bucket, processed_bucket, src_objects, or
     insert_status = load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name)
     return 'successful etl'
 
+
 # Decode stream data
 def decode_objects(src_objects):
     for obj in src_objects:

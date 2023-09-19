@@ -101,7 +101,7 @@ The infrastructure resources that comprise this customized arrangement are presc
 	In Chrome, Firefox and Safari, you can do this with `CTRL`+`Click` > Select `Open Link in New Tab`.
 	\
 	\
-	[![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/paulchyz/OCI_Streaming_Pipeline/raw/master/modules/terraform/oci-lakehouse-streaming.zip)
+	[![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/paulchyz/OCI_Streaming_Pipeline/raw/phase-2-ml/modules/terraform/oci-lakehouse-streaming.zip)
 
 2. Log into your Oracle Cloud Infrastructure (OCI) tenancy with your user credentials. You will then be redirected to the `Stack information` section of Resource Manager.
 3. In the `Stack information` section, select the checkbox to confirm that you accept the [Oracle Terms of Use](https://cloudmarketplace.oracle.com/marketplace/content?contentId=50511634&render=inline). Leave the `Working Directory` and `Custom Providers` options unchanged. You can update the `Name` and `Description` according to your preference.
@@ -195,7 +195,7 @@ In this section, you will run the data stream from Cloud Shell to simulate strea
 5. Initiate the data stream by running the following command:
 
 	```
-	python /home/opc/OCI_Streaming_Pipeline-master/modules/compute/stream.py
+	python /home/opc/OCI_Streaming_Pipeline-phase-2-ml/modules/compute/stream.py
 	```
 6. You should see output in the Cloud Shell displaying data points that are being sent into the stream. For example:
 
@@ -299,7 +299,7 @@ In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to v
 24. Right click on the Canvas tab on the bottom of the page labeled `Canvas 1` and select `Canvas Properties`.
 25. Click on `Disabled` next to `Auto Refresh Data` to switch it to `Enabled`. Change the value from `30` to `10`, and click `OK`. This will refresh the canvas every 10 seconds. <i>You may need to scroll down in the properties menu to view the `OK` button</i>
 26. Click the `Refresh Data` button in the top-right toolbar. It looks like a white play button with an arrow circling around it. This will start the auto refresh process.
-27. Click the `Save` icon in the top-right corner of the page. Provide a name for the workbook and click `Save`.
+27. Click the `Save` icon in the top-right corner of the page. Provide a name for the workbook, such as `streaming_workbook`, and click `Save`.
 28. Click the `Preview` button in the top-right toolbar to view the dashboard as an end user. It looks like an outline of a play button. Click the `Refresh Data` button in the toolbar to start the auto refresh process in this view.
 \
 \
