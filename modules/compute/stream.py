@@ -10,10 +10,10 @@ import os
 sid = os.environ['STREAMING_STREAM_OCID']
 message_endpoint = os.environ['STREAMING_MESSAGES_ENDPOINT']
 
-amp_odds = .005
-freq_odds = .005
-temp_odds = .005
-hum_odds = .005
+amp_odds = .0055
+freq_odds = .0055
+temp_odds = .0055
+hum_odds = .0055
 
 outlier_count = 5
 
@@ -21,6 +21,13 @@ base_amp = float(250)
 base_freq = float(1000)
 base_temp = float(60)
 base_hum = float(30)
+
+AnomalyUpperBound = 1.5
+AnomalyLowerBound = 1.1
+NormalUpperBound = 1.0
+NormalLowerBound = 0.8
+
+
 
 equipment_ids = [101, 102, 103]
 flags = []
@@ -75,27 +82,27 @@ while True:
         for i in range(1000):
             # AMPLITUDE
             if (flags[x][0] >= 1):
-                vibration_amplitude = round(base_amp * round(random.uniform(1.1, 1.2), 3), 2)
+                vibration_amplitude = round(base_amp * round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3), 2)
             else:
-                vibration_amplitude = round(base_amp * round(random.uniform(0.9, 1.1), 3), 2)
+                vibration_amplitude = round(base_amp * round(random.uniform(NormalLowerBound, NormalUpperBound), 3), 2)
 
             # FREQUENCY
             if (flags[x][1] >= 1):
-                vibration_frequency = round(base_freq * round(random.uniform(1.1, 1.2), 3), 2)
+                vibration_frequency = round(base_freq * round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3), 2)
             else:
-                vibration_frequency = round(base_freq * round(random.uniform(0.9, 1.1), 3), 2)
+                vibration_frequency = round(base_freq * round(random.uniform(NormalLowerBound, NormalUpperBound), 3), 2)
 
             # TEMPURATURE
             if (flags[x][2] >= 1):
-                tempurature = round(base_temp * round(random.uniform(1.1, 1.2), 3), 2)
+                tempurature = round(base_temp * round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3), 2)
             else:
-                tempurature = round(base_temp * round(random.uniform(0.9, 1.1), 3), 2)
+                tempurature = round(base_temp * round(random.uniform(NormalLowerBound, NormalUpperBound), 3), 2)
 
             # HUMIDITY
             if (flags[x][3] >= 1):
-                humidity = round(base_hum * round(random.uniform(1.1, 1.2), 3), 2)
+                humidity = round(base_hum * round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3), 2)
             else:
-                humidity = round(base_hum * round(random.uniform(0.9, 1.1), 3), 2)
+                humidity = round(base_hum * round(random.uniform(NormalLowerBound, NormalUpperBound), 3), 2)
 
             data = {"timestamp": str(datetime.datetime.now()), "equipment_id": id, "vibration_amplitude": vibration_amplitude, "vibration_frequency": vibration_frequency, "temperature": tempurature, "humidity": humidity}
             payload_list.append(data)
