@@ -49,7 +49,7 @@ def execute_etl(client, namespace, raw_bucket, processed_bucket, src_objects, or
     decoded_objects = decode_objects(src_objects)
     csv_data = to_csv(decoded_objects, model_endpoint_url, auth)
     raw_obj_name = 'raw_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.json'
-    resp = put_object(client, namespace, raw_bucket, raw_obj_name, csv_data)
+    resp = put_object(client, namespace, raw_bucket, raw_obj_name, decoded_objects)
     csv_obj_name = 'csv_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.csv'
     resp = put_object(client, namespace, processed_bucket, csv_obj_name, csv_data)
     #ML#
