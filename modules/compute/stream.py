@@ -6,16 +6,16 @@ import random
 from base64 import b64encode
 import os
 
-#v2.2.2
+#v2.2.3
 
 #config = oci.config.from_file(file_location=os.environ['STREAMING_OCI_CONFIG_FILE_LOCATION'])
 sid = os.environ['STREAMING_STREAM_OCID']
 message_endpoint = os.environ['STREAMING_MESSAGES_ENDPOINT']
 
 amp_odds = 0.009
-freq_odds = .0055
-temp_odds = .0055
-hum_odds = .0055
+freq_odds = .009
+temp_odds = .009
+hum_odds = .009
 
 outlier_count = 10
 
@@ -100,19 +100,19 @@ while True:
             if (flags[x][1] >= 1):
                 vibration_frequency = round(base_freq * (round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3) + offset), 2)
             else:
-                vibration_frequency = round(base_amp * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset), 2)
+                vibration_frequency = round(base_freq * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset), 2)
 
             # TEMPURATURE
             if (flags[x][2] >= 1):
                 tempurature = round(base_temp * (round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3) + offset), 2)
             else:
-                tempurature = round(base_amp * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset), 2)
+                tempurature = round(base_temp * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset), 2)
 
             # HUMIDITY
             if (flags[x][3] >= 1):
                 humidity = round(base_hum * (round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3) + offset), 2)
             else:
-                humidity = round(base_amp * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset), 2)
+                humidity = round(base_hum * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset), 2)
 
             data = {"timestamp": str(datetime.datetime.now()), "equipment_id": id, "vibration_amplitude": vibration_amplitude, "vibration_frequency": vibration_frequency, "temperature": tempurature, "humidity": humidity}
             payload_list.append(data)
