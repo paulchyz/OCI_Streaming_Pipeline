@@ -6,7 +6,7 @@ import random
 from base64 import b64encode
 import os
 
-#v2.2.3
+#v2.2.4
 
 #config = oci.config.from_file(file_location=os.environ['STREAMING_OCI_CONFIG_FILE_LOCATION'])
 sid = os.environ['STREAMING_STREAM_OCID']
@@ -49,8 +49,9 @@ start_time = datetime.datetime.now()
 while True:
     x = 0
     #x iterates through equip id
-    offset = (NormalUpperBound - NormalLowerBound) * random.uniform(-0.5, 0.5) 
-    #offset = offset * (-1)
+    offset = []
+    for i in range(4):
+        offset.append((NormalUpperBound - NormalLowerBound) * random.uniform(-0.5, 0.5))
     for id in equipment_ids:
         payload_list = []
 
@@ -92,27 +93,27 @@ while True:
         #range(burst) - batch/burst
             # AMPLITUDE
             if (flags[x][0] >= 1):
-                vibration_amplitude = round(base_amp * (round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3) + offset), 2)
+                vibration_amplitude = round(base_amp * (round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3) + offset[0]), 2)
             else:
-                vibration_amplitude = round(base_amp * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset), 2)
+                vibration_amplitude = round(base_amp * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset[0]), 2)
 
             # FREQUENCY
             if (flags[x][1] >= 1):
-                vibration_frequency = round(base_freq * (round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3) + offset), 2)
+                vibration_frequency = round(base_freq * (round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3) + offset[1]), 2)
             else:
-                vibration_frequency = round(base_freq * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset), 2)
+                vibration_frequency = round(base_freq * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset[1]), 2)
 
             # TEMPURATURE
             if (flags[x][2] >= 1):
-                tempurature = round(base_temp * (round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3) + offset), 2)
+                tempurature = round(base_temp * (round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3) + offset[2]), 2)
             else:
-                tempurature = round(base_temp * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset), 2)
+                tempurature = round(base_temp * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset[2]), 2)
 
             # HUMIDITY
             if (flags[x][3] >= 1):
-                humidity = round(base_hum * (round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3) + offset), 2)
+                humidity = round(base_hum * (round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3) + offset[3]), 2)
             else:
-                humidity = round(base_hum * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset), 2)
+                humidity = round(base_hum * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset[3]), 2)
 
             data = {"timestamp": str(datetime.datetime.now()), "equipment_id": id, "vibration_amplitude": vibration_amplitude, "vibration_frequency": vibration_frequency, "temperature": tempurature, "humidity": humidity}
             payload_list.append(data)
