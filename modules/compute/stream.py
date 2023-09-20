@@ -6,7 +6,7 @@ import random
 from base64 import b64encode
 import os
 
-#v2.2
+#v2.2.1
 
 #config = oci.config.from_file(file_location=os.environ['STREAMING_OCI_CONFIG_FILE_LOCATION'])
 sid = os.environ['STREAMING_STREAM_OCID']
@@ -25,11 +25,13 @@ base_freq = float(1000)
 base_temp = float(60)
 base_hum = float(30)
 
-AnomalyUpperBound = 1.04
-AnomalyLowerBound = 1.02
-NormalUpperBound = 1.1
-NormalLowerBound = 0.9
-offset = (NormalUpperBound - NormalLowerBound) * 0.25
+noiserange = 0.2
+NormalUpperBound = 1 + (noiserange*0.5)
+NormalLowerBound = 1 - (noiserange*0.5)
+AnomalyLowerBound = NormalUpperBound + 0.01 
+AnomalyUpperBound = NormalUpperBound + noiserange
+
+offset = (NormalUpperBound - NormalLowerBound) * random.uniform(-0.5, 0.5)
 
 equipment_ids = [101, 102, 103]
 flags = []
@@ -47,7 +49,7 @@ start_time = datetime.datetime.now()
 while True:
     x = 0
     #x iterates through equip id
-    offset = offset * (-1)
+    #offset = offset * (-1)
     for id in equipment_ids:
         payload_list = []
 
