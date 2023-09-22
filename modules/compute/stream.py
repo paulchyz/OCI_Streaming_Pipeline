@@ -6,32 +6,29 @@ import random
 from base64 import b64encode
 import os
 
-#v2.2.6
-
 #config = oci.config.from_file(file_location=os.environ['STREAMING_OCI_CONFIG_FILE_LOCATION'])
 sid = os.environ['STREAMING_STREAM_OCID']
 message_endpoint = os.environ['STREAMING_MESSAGES_ENDPOINT']
 
-amp_odds = 0.009
-freq_odds = .015
-temp_odds = .015
-hum_odds = .009
+amp_odds = 0.006
+freq_odds = 0.015
+temp_odds = 0.009
+temp_odds_high = temp_odds*3
+hum_odds = 0.006
 
-outlier_count = 10
-
+# Length of anomalies (number of 1000 data point bursts)
+anomaly_length = 10
 
 base_amp = float(250)
 base_freq = float(1000)
 base_temp = float(60)
 base_hum = float(30)
 
-noiserange = 0.2
-NormalUpperBound = 1 + (noiserange*0.5)
-NormalLowerBound = 1 - (noiserange*0.5)
-AnomalyLowerBound = NormalUpperBound + 0.01 
-AnomalyUpperBound = NormalUpperBound + noiserange
-
-
+noise_range = 0.2
+normal_upper_bound = 1 + (noise_range*0.5)
+normal_lower_bound = 1 - (noise_range*0.5)
+anomaly_lower_bound = normal_upper_bound + 0.01 
+anomaly_upper_bound = normal_upper_bound + noise_range
 
 equipment_ids = [101, 102, 103]
 flags = []
@@ -48,72 +45,83 @@ start_time = datetime.datetime.now()
 
 while True:
     x = 0
-    #x iterates through equip id
     offset = []
+
+    # Create 4 data value offsets
     for i in range(4):
-        offset.append((NormalUpperBound - NormalLowerBound) * random.uniform(-0.5, 0.5))
+        offset.append((normal_upper_bound - normal_lower_bound) * random.uniform(-0.5, 0.5))
+
+    # Loop through equipment IDs   
     for id in equipment_ids:
         payload_list = []
 
+        # Determine anomaly states
+        # AMPLITUDE
         if (flags[x][0] == 0):
-            #normals state
             if (random.random() < amp_odds):
                 flags[x][0] = 1
-        elif (flags[x][0] >= outlier_count):
+        elif (flags[x][0] >= anomaly_length):
              flags[x][0] = 0
         else:
              flags[x][0] = flags[x][0] + 1
 
+        # FREQUENCY
         if (flags[x][1] == 0):
             if (random.random() < freq_odds):
                 flags[x][1] = 1
-        elif (flags[x][1] >= outlier_count):
+        elif (flags[x][1] >= anomaly_length):
              flags[x][1] = 0
         else:
              flags[x][1] = flags[x][1] + 1
 
+        # TEMPERATURE
         if (flags[x][2] == 0):
-            if (random.random() < temp_odds):
-                flags[x][2] = 1
-        elif (flags[x][2] >= outlier_count):
+            # Increase anomaly probability if vibration amplitude is anomalous
+            if (flags[x][1] > 0):
+                if (random.random() < (temp_odds_high)):
+                    flags[x][2] = 1
+            else:
+                if (random.random() < temp_odds):
+                    flags[x][2] = 1
+        elif (flags[x][2] >= anomaly_length):
              flags[x][2] = 0
         else:
              flags[x][2] = flags[x][2] + 1
 
+        # HUMIDITY
         if (flags[x][3] == 0):
             if (random.random() < hum_odds):
                 flags[x][3] = 1
-        elif (flags[x][3] >= outlier_count):
+        elif (flags[x][3] >= anomaly_length):
              flags[x][3] = 0
         else:
              flags[x][3] = flags[x][3] + 1
 
-        
+        # Generate 1000 data points for an equipment ID
         for i in range(1000):
-        #range(burst) - batch/burst
             # AMPLITUDE
             if (flags[x][0] >= 1):
-                vibration_amplitude = round(base_amp * (round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3) + offset[0]), 2)
+                vibration_amplitude = round(base_amp * (round(random.uniform(anomaly_lower_bound, anomaly_upper_bound), 3) + offset[0]), 2)
             else:
-                vibration_amplitude = round(base_amp * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset[0]), 2)
+                vibration_amplitude = round(base_amp * (round(random.uniform(normal_lower_bound, normal_upper_bound), 3) + offset[0]), 2)
 
             # FREQUENCY
             if (flags[x][1] >= 1):
-                vibration_frequency = round(base_freq * (round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3) + offset[1]), 2)
+                vibration_frequency = round(base_freq * (round(random.uniform(anomaly_lower_bound, anomaly_upper_bound), 3) + offset[1]), 2)
             else:
-                vibration_frequency = round(base_freq * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset[1]), 2)
+                vibration_frequency = round(base_freq * (round(random.uniform(normal_lower_bound, normal_upper_bound), 3) + offset[1]), 2)
 
             # TEMPURATURE
             if (flags[x][2] >= 1):
-                tempurature = round(base_temp * (round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3) + offset[2]), 2)
+                tempurature = round(base_temp * (round(random.uniform(anomaly_lower_bound, anomaly_upper_bound), 3) + offset[2]), 2)
             else:
-                tempurature = round(base_temp * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset[2]), 2)
+                tempurature = round(base_temp * (round(random.uniform(normal_lower_bound, normal_upper_bound), 3) + offset[2]), 2)
 
             # HUMIDITY
             if (flags[x][3] >= 1):
-                humidity = round(base_hum * (round(random.uniform(AnomalyLowerBound, AnomalyUpperBound), 3) + offset[3]), 2)
+                humidity = round(base_hum * (round(random.uniform(anomaly_lower_bound, anomaly_upper_bound), 3) + offset[3]), 2)
             else:
-                humidity = round(base_hum * (round(random.uniform(NormalLowerBound, NormalUpperBound), 3) + offset[3]), 2)
+                humidity = round(base_hum * (round(random.uniform(normal_lower_bound, normal_upper_bound), 3) + offset[3]), 2)
 
             data = {"timestamp": str(datetime.datetime.now()), "equipment_id": id, "vibration_amplitude": vibration_amplitude, "vibration_frequency": vibration_frequency, "temperature": tempurature, "humidity": humidity}
             payload_list.append(data)
