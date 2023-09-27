@@ -25,12 +25,18 @@ def handler(ctx, data: io.BytesIO=None):
         dbuser = cfg['db-user']
         dbpwd = cfg['dbpwd-cipher']
         model_endpoint_url = cfg['model-endpoint-url']
+        noise_range = cfg['noise-range']
+        frequency_base = cfg['frequency-base']
+        amplitude_base = cfg['amplitude-base']
+        temperature_base = cfg['temperature-base']
+        humidity_base = cfg['humidity-base']
+        base = [noise_range, float(frequency_base), float(amplitude_base), float(temperature_base), float(humidity_base)]
         client, namespace = config_object_store()
         auth = oci.auth.signers.get_resource_principals_signer()
         dsc = DataScienceClient(config={}, signer=auth)
         logging.getLogger().info('patch-3.1')
         src_objects = json.loads(data.getvalue().decode('utf-8'))
-        output = execute_etl(client, namespace, raw_bucket, processed_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, model_endpoint_url, auth)
+        output = execute_etl(client, namespace, raw_bucket, processed_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, model_endpoint_url, auth, base)
         return None
 
     except (Exception, ValueError) as ex:
@@ -45,15 +51,15 @@ def config_object_store():
     return client, namespace
 
 # Call required functions for ETL
-def execute_etl(client, namespace, raw_bucket, processed_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, model_endpoint_url, auth):
+def execute_etl(client, namespace, raw_bucket, processed_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, model_endpoint_url, auth, base):
     decoded_objects = decode_objects(src_objects)
-    csv_data = to_csv(decoded_objects, model_endpoint_url, auth)
+    csv_data = to_csv(decoded_objects, model_endpoint_url, auth, base)
     raw_obj_name = 'raw_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.json'
     resp = put_object(client, namespace, raw_bucket, raw_obj_name, decoded_objects)
     csv_obj_name = 'csv_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.csv'
     resp = put_object(client, namespace, processed_bucket, csv_obj_name, csv_data)
     #ML#
-    mlresults_df = invoke_model(decoded_objects, model_endpoint_url, auth)
+    mlresults_df = invoke_model(decoded_objects, model_endpoint_url, auth, base)
     decoded_objects[0]['value'] = json.loads(mlresults_df.to_json(orient='records'))
     insert_status = load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name)
     return 'successful etl'
@@ -68,7 +74,7 @@ def decode_objects(src_objects):
 
 # Convert decoded data into JSON format
 def to_csv(decoded_objects, model_endpoint_url, auth):
-    modelresults_df = invoke_model(decoded_objects, model_endpoint_url, auth)
+    modelresults_df = invoke_model(decoded_objects, model_endpoint_url, auth, base)
     csv_data = modelresults_df.to_csv(index=False)
     return csv_data
 
@@ -104,11 +110,12 @@ def soda_insert(ordsbaseurl, schema, dbuser, dbpwd, obj, json_collection_name):
         raise
     return r_json
 
-def invoke_model(decoded_objects, model_endpoint_url, auth):
+def invoke_model(decoded_objects, model_endpoint_url, auth, base):
     #Resource Principal 
     data = pd.json_normalize(decoded_objects, record_path=['value'])
     #clean data (only select columns we need, add const column (needed for ML))
     df = data[['vibration_amplitude', 'vibration_frequency','temperature','humidity']]
+    
     df.insert(loc=0, column='const', value=1)
     #finalize payload df
     payload_list = df.values.tolist()
@@ -120,3 +127,30 @@ def invoke_model(decoded_objects, model_endpoint_url, auth):
     #add result list to the original dataset
     data['Prediction'] = predictions
     return data
+
+
+def normalize_df(df, base):
+    #base = [noise_range, float(frequency_base), float(amplitude_base), float(temperature_base), float(humidity_base)]
+    noise_range = base[0]
+    for column in df.columns:
+        if column == 'vibration_frequency':
+            base = base[1]
+        elif column == 'vibration_amplitude':
+            base = base[2]
+        elif column == 'temperature':
+            base = base[3]
+        elif column == 'humidity':
+            base = base[4] 
+        else:
+            base = 0
+
+    upperbound = base*(1+1.5*noise_range)+0.5*noise_range
+    lowerbound = base*(1-0.5*noise_range)-0.5*noise_range
+
+        for value in column:
+            
+            
+
+
+    normalized_df=0
+    return normalized_df
