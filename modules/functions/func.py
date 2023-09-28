@@ -49,9 +49,9 @@ def execute_etl(client, namespace, raw_bucket, processed_bucket, src_objects, or
     decoded_objects = decode_objects(src_objects)
     csv_data = to_csv(decoded_objects, model_endpoint_url, auth)
     raw_obj_name = 'raw_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.json'
-    resp = put_object(client, namespace, raw_bucket, raw_obj_name, decoded_objects)
+    resp = put_object(client, namespace, raw_bucket, raw_obj_name, decoded_objects, "application/json")
     csv_obj_name = 'csv_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.csv'
-    resp = put_object(client, namespace, processed_bucket, csv_obj_name, csv_data)
+    resp = put_object(client, namespace, processed_bucket, csv_obj_name, csv_data, "text/csv")
     #ML#
     mlresults_df = invoke_model(decoded_objects, model_endpoint_url, auth)
     decoded_objects[0]['value'] = json.loads(mlresults_df.to_json(orient='records'))
@@ -73,9 +73,9 @@ def to_csv(decoded_objects, model_endpoint_url, auth):
     return csv_data
 
 # Load CSV data into object storage
-def put_object(client, namespace, dst_bucket, obj_name, data):
+def put_object(client, namespace, dst_bucket, obj_name, data, c_type):
     try:
-        output = client.put_object(namespace_name=namespace, bucket_name=dst_bucket, object_name=obj_name, put_object_body=data, content_type="text/csv")
+        output = client.put_object(namespace_name=namespace, bucket_name=dst_bucket, object_name=obj_name, put_object_body=data, content_type=c_type)
     except (Exception, ValueError) as ex:
         logging.getLogger().error(str(ex))
     return output
