@@ -124,12 +124,12 @@ def invoke_model(decoded_objects, model_endpoint_url, auth):
 def normalize_df(df):
     for column in df.columns:
         if column == 'vibration_amplitude':
-            base_val = 250
+            base = 250
         elif column == 'vibration_frequency':
-            base_val = 1000
+            base = 1000
         elif column == 'temperature':
-            base_val = 60
+            base = 60
         elif column == 'humidity':
-            base_val = 30
+            base = 30
         df[column] = df[column].apply(lambda x : (x/(base)))
     return df
