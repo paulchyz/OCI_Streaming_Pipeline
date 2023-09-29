@@ -28,7 +28,6 @@ def handler(ctx, data: io.BytesIO=None):
         client, namespace = config_object_store()
         auth = oci.auth.signers.get_resource_principals_signer()
         dsc = DataScienceClient(config={}, signer=auth)
-        logging.getLogger().info('patch-3.1')
         src_objects = json.loads(data.getvalue().decode('utf-8'))
         output = execute_etl(client, namespace, raw_bucket, processed_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, model_endpoint_url, auth)
         return None
@@ -49,9 +48,11 @@ def execute_etl(client, namespace, raw_bucket, processed_bucket, src_objects, or
     decoded_objects = decode_objects(src_objects)
     csv_data = to_csv(decoded_objects, model_endpoint_url, auth)
     raw_obj_name = 'raw_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.json'
-    resp = put_object(client, namespace, raw_bucket, raw_obj_name, decoded_objects, "application/json")
+
+    resp = put_object(client, namespace, raw_bucket, raw_obj_name, json.dumps(decoded_objects), "application/json")
     csv_obj_name = 'csv_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.csv'
     resp = put_object(client, namespace, processed_bucket, csv_obj_name, csv_data, "text/csv")
+
     #ML#
     mlresults_df = invoke_model(decoded_objects, model_endpoint_url, auth)
     decoded_objects[0]['value'] = json.loads(mlresults_df.to_json(orient='records'))
@@ -107,8 +108,8 @@ def soda_insert(ordsbaseurl, schema, dbuser, dbpwd, obj, json_collection_name):
 def invoke_model(decoded_objects, model_endpoint_url, auth):
     #Resource Principal 
     data = pd.json_normalize(decoded_objects, record_path=['value'])
-    #clean data (only select columns we need, add const column (needed for ML))
-    df = data[['vibration_amplitude', 'vibration_frequency','temperature','humidity']]
+    #normalize and clean data (only select columns we need, add const column (needed for ML))
+    df = normalize_df(data[['vibration_amplitude', 'vibration_frequency','temperature','humidity']])
     df.insert(loc=0, column='const', value=1)
     #finalize payload df
     payload_list = df.values.tolist()
@@ -120,3 +121,16 @@ def invoke_model(decoded_objects, model_endpoint_url, auth):
     #add result list to the original dataset
     data['Prediction'] = predictions
     return data
+
+def normalize_df(df):
+    for column in df.columns:
+        if column == 'vibration_amplitude':
+            base = 250
+        elif column == 'vibration_frequency':
+            base = 1000
+        elif column == 'temperature':
+            base = 60
+        elif column == 'humidity':
+            base = 30
+        df[column] = df[column].apply(lambda x : (x/(base)))
+    return df
