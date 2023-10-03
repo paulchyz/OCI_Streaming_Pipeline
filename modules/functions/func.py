@@ -46,17 +46,19 @@ def config_object_store():
 # Call required functions for ETL
 def execute_etl(client, namespace, raw_bucket, processed_bucket, src_objects, ordsbaseurl, schema, dbuser, dbpwd, json_collection_name, model_endpoint_url, auth):
     decoded_objects = decode_objects(src_objects)
-    csv_data = to_csv(decoded_objects, model_endpoint_url, auth)
+    decoded_obj_normalized = pd.json_normalize(decoded_objects, record_path=['value'], meta=['stream', 'partition', 'key', 'offset', 'timestamp'], meta_prefix='batch_')
+    # Raw bucket
     raw_obj_name = 'raw_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.json'
-
     resp = put_object(client, namespace, raw_bucket, raw_obj_name, json.dumps(decoded_objects), "application/json")
+    # ML
+    mlresults_df = invoke_model(decoded_obj_normalized, model_endpoint_url, auth)
+    predicted_objects = json.loads(mlresults_df.to_json(orient='records'))
+    # AJD
+    insert_status = load_data(ordsbaseurl, schema, dbuser, dbpwd, predicted_objects, json_collection_name)
+    # Processed bucket
+    csv_data = to_csv(mlresults_df)
     csv_obj_name = 'csv_data/' + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f') + '.csv'
     resp = put_object(client, namespace, processed_bucket, csv_obj_name, csv_data, "text/csv")
-
-    #ML#
-    mlresults_df = invoke_model(decoded_objects, model_endpoint_url, auth)
-    decoded_objects[0]['value'] = json.loads(mlresults_df.to_json(orient='records'))
-    insert_status = load_data(ordsbaseurl, schema, dbuser, dbpwd, decoded_objects, json_collection_name)
     return 'successful etl'
 
 
@@ -68,9 +70,8 @@ def decode_objects(src_objects):
     return src_objects
 
 # Convert decoded data into JSON format
-def to_csv(decoded_objects, model_endpoint_url, auth):
-    modelresults_df = invoke_model(decoded_objects, model_endpoint_url, auth)
-    csv_data = modelresults_df.to_csv(index=False)
+def to_csv(df):
+    csv_data = df.to_csv(index=False)
     return csv_data
 
 # Load CSV data into object storage
@@ -105,9 +106,7 @@ def soda_insert(ordsbaseurl, schema, dbuser, dbpwd, obj, json_collection_name):
         raise
     return r_json
 
-def invoke_model(decoded_objects, model_endpoint_url, auth):
-    #Resource Principal 
-    data = pd.json_normalize(decoded_objects, record_path=['value'])
+def invoke_model(data, model_endpoint_url, auth):
     #normalize and clean data (only select columns we need, add const column (needed for ML))
     df = normalize_df(data[['vibration_amplitude', 'vibration_frequency','temperature','humidity']])
     df.insert(loc=0, column='const', value=1)
@@ -117,9 +116,9 @@ def invoke_model(decoded_objects, model_endpoint_url, auth):
     body = payload_list
     headers = {} # header goes here
     output = requests.post(model_endpoint_url, json=body, auth=auth, headers=headers).json()
-    predictions = [ '%.1f' % elem for elem in output['prediction'] ]
+    predictions = [ round(elem,1) for elem in output['prediction'] ]
     #add result list to the original dataset
-    data['Prediction'] = predictions
+    data['prediction'] = predictions
     return data
 
 def normalize_df(df):
@@ -132,5 +131,5 @@ def normalize_df(df):
             base = 60
         elif column == 'humidity':
             base = 30
-        df[column] = df[column].apply(lambda x : (x/(base)))
+        df[column] = df[column].div(base)
     return df
