@@ -7,20 +7,18 @@ CREATE MATERIALIZED VIEW STREAMDATA_MV
         JSON_TABLE (
             STREAMDATA.JSON_DOCUMENT COLUMNS (
                 NESTED PATH '$[*]' COLUMNS (
-                    STREAM VARCHAR2(40) PATH '$.stream',
-                    KEY NUMBER PATH '$.key',
-                    PARTITION NUMBER PATH '$.partition',
-                    OFFSET NUMBER PATH '$.offset',
-                    BATCH_TIMESTAMP NUMBER PATH '$.timestamp',
-                    NESTED PATH '$.value[*]' COLUMNS (
-                        TIMESTAMP VARCHAR2(100) PATH '$.timestamp',
-                        EQUIPMENT_ID NUMBER PATH '$.equipment_id',
-                        VIBRATION_AMPLITUDE NUMBER PATH '$.vibration_amplitude',
-                        VIBRATION_FREQUENCY NUMBER PATH '$.vibration_frequency',
-                        TEMPERATURE NUMBER PATH '$.temperature',
-                        HUMIDITY NUMBER PATH '$.humidity',
-                        INFERENCE NUMBER PATH '$.Prediction'
-                    )
+                    STREAM VARCHAR2(40) PATH '$.batch_stream',
+                    KEY NUMBER PATH '$.batch_key',
+                    PARTITION NUMBER PATH '$.batch_partition',
+                    OFFSET NUMBER PATH '$.batch_offset',
+                    BATCH_TIMESTAMP NUMBER PATH '$.batch_timestamp',
+                    TIMESTAMP VARCHAR2(100) PATH '$.timestamp',
+                    EQUIPMENT_ID NUMBER PATH '$.equipment_id',
+                    VIBRATION_AMPLITUDE NUMBER PATH '$.vibration_amplitude',
+                    VIBRATION_FREQUENCY NUMBER PATH '$.vibration_frequency',
+                    TEMPERATURE NUMBER PATH '$.temperature',
+                    HUMIDITY NUMBER PATH '$.humidity',
+                    INFERENCE NUMBER PATH '$.prediction'
                 )
             )
         );
