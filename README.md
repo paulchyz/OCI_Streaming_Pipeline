@@ -1,5 +1,5 @@
 # Streaming Pipeline
-#### Select a workshop to discover end-to-end implementation examples that feature streaming, machine learning, and analytics using a synthetic manufacturing data.
+#### Select a workshop to discover end-to-end implementation examples that feature streaming, machine learning, and analytics using synthetic manufacturing data.
 
 [Level 100: Streaming to Analytics](./level-100-streaming-to-analytics/README.md)
 > Deploy an end-to-end streaming pipeline covering the flow of manufacturing data from stream ingestion to analytical visualization on Oracle Cloud Infrastructure (OCI).
