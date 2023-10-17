@@ -195,7 +195,7 @@ In this section, you will run the data stream from Cloud Shell to simulate strea
 5. Initiate the data stream by running the following command:
 
 	```
-	python /home/opc/OCI_Streaming_Pipeline-master/modules/compute/stream.py
+	python /home/opc/OCI_Streaming_Pipeline-master/level-100-streaming-to-analytics/modules/compute/stream.py
 	```
 6. You should see output in the Cloud Shell displaying data points that are being sent into the stream. For example:
 
