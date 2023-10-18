@@ -3,32 +3,28 @@ Deploy a version of the streaming pipeline that includes a machine learning laye
 
 ## Table of Contents
 
-1. [Introduction](#introduction)
-2. [Objective](#objective)
-3. [System Architecture](#system-architecture)
-4. [Prerequisites](#prerequisites)
-5. [Which OCI resources will you provision?](#which-oci-resources-will-you-provision)
-6. [Lab Steps](#lab-steps)
+1. [Objective](#objective)
+2. [System Architecture](#system-architecture)
+3. [Prerequisites](#prerequisites)
+4. [Which OCI resources will you provision?](#which-oci-resources-will-you-provision)
+5. [Lab Steps](#lab-steps)
 	1. [Deploy Infrastructure using Resource Manager](#deploy-infrastructure-using-resource-manager)
 	2. [Configure AJD for Stream Processing](#configure-ajd-for-stream-processing)
 	3. [Run The Stream Pipeline](#run-the-stream-pipeline)
 	4. [Configure Oracle Analytics Cloud](#configure-oracle-analytics-cloud)
 	5. [Stop the Data Stream](#stop-the-data-stream)
-7. [Additional Steps](#additional-steps)
+6. [Additional Steps](#additional-steps)
 	1. [Data Cleanup](#data-cleanup)
 	2. [Resource Cleanup](#resource-cleanup)
 	3. [Troubleshooting and Logging when Running the Streaming Pipeline](#troubleshooting-and-logging-when-running-the-streaming-pipeline)
 	4. [Troubleshooting Resource Manager Cleanup](#troubleshooting-resource-manager-cleanup)
-
-### Introduction
-Data streaming is a powerful tool capable of accelerating business processes and facilitating real-time decision-making across a wide variety of industries and use cases. There are many ways to implement streaming technology, and each solution offers different benefits and drawbacks. The approach documented below is a cloud-native, low-code approach to streaming, covering the complete data lifecycle from ingestion to analysis. This will enable organizations to implement a complete streaming pipeline quickly, without the need to spend valuable time and effort procuring, configuring and managing IT infrastructure.
 
 ### Objective
 This repository leverages Oracle Cloud's array of infrastructure services to deploy a low-code, end-to-end streaming pipeline. The included Terraform Stack handles resource deployment, and additional configuration steps are documented below. The resulting architecture is a cloud-native streaming pipeline, capable of data ingestion, processing, storage, and analysis.
 
 ### System Architecture
 
-![System Architecture](images/system_architecture.png)
+![System Architecture](images/system_architecture_200.png)
 \
 <sub>[Back to top](#level-200-anomaly-detection-ml)</sub>
 
@@ -300,17 +296,29 @@ In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to v
 20. Click the `Back` arrow in the top-left corner of the page to return to the OAC home page.
 21. On the OAC home page, click `Create` in the top-right corner of the page, then click `Workbook`. In the popup titled `Add Data`, Select the dataset you just created, named `streaming_dataset`, then click `Add to Workbook`. For now, close the `Auto Insights` window on the right-hand side of the page by clicking on the light-bulb icon.
 22. In the data pane on the left side of the screen, click the arrow next to `TIMESTAMP` to expand that data field. Hold `command` if using a Mac or `control` if using a PC, then select `Second` and `VIBRATION_AMPLITUDE` from the data pane. Drag and drop these data elements onto the canvas. This will create a line chart.
-23. Select `VIBRATION_FREQUENCY`, `TEMPERATURE`, and `HUMIDITY` from the data pane, and drag and drop these data elements in the `Values (Y-Axis)` section of the visualization pane just to the right of the data pane. Be sure not to drop the data elements on top of `VIBRATION_AMPLITUDE`, as that will add the new elements in place of the existing data, rather than in addition to the existing data. This data may take a moment to load. When the database icon on the top right corner of the canvas has a spinning circle around it, the data is still loading.
-24. Right click on the Canvas tab on the bottom of the page labeled `Canvas 1` and select `Canvas Properties`.
-25. Click on `Disabled` next to `Auto Refresh Data` to switch it to `Enabled`. Change the value from `30` to `10`, and click `OK`. This will refresh the canvas every 10 seconds. <i>You may need to scroll down in the properties menu to view the `OK` button</i>
-26. Click the `Refresh Data` button in the top-right toolbar. It looks like a white play button with an arrow circling around it. This will start the auto refresh process.
-27. Click the `Save` icon in the top-right corner of the page. Provide a name for the workbook, such as `streaming_workbook`, and click `Save`.
-28. Click the `Preview` button in the top-right toolbar to view the dashboard as an end user. It looks like an outline of a play button. Click the `Refresh Data` button in the toolbar to start the auto refresh process in this view.
+23. Select `Second` and `TEMPERATURE` from the data pane. Drag these elements over the bottom edge of the canvas, moving them around until the bottom edge of the canvas displays a green indicator bar. Once the indicator is on the bottom edge of the screen, drop the elements onto the canvas. This data may take a moment to load. When the database icon on the top right corner of the canvas has a spinning circle around it, the data is still loading.
+24. Repeat the previous step with `Second` and `VIBRATION_FREQUENCY`, and `Second` and `HUMIDITY`. This creates 4 stacked line charts.
+25. Right click on `My Calculations` in the data pane, then select `Create Calculation`. Name the calculation `ANOMALY`, then paste the following formula into the formla editor:
+```
+CASE WHEN INF>0.51 THEN 1 ELSE 0 END
+```
+26. Type an `E` at the end of `INF`, then wait for a dropdown menu to pop up displaying the `INFERENCE` column. Click this column to map `INFERENCE` to this formula. If done correctly, the word `INFERENCE` should show up in the equation, and it should be blue. Click `Save`.
+27. Make sure the top visualization is selected. Then, in the data pane, drag the new `ANOMALY` calculation into the `Values (Y-Axis)` section of the visualization pane just to the right of the data pane. Be sure not to drop the data elements on top of `VIBRATION_AMPLITUDE`, as that will add the new elements in place of the existing data, rather than in addition to the existing data.
+28. Right click on the `ANOMALY` element you just dropped into the `Values (Y-Axis)` section, and select `Area`. Now right click on the same element again, and select `Y2 Axis`.
+29. In the top right corner of the visualization pane, click the `Properties` icon that looks like three sliders. Next, click on the `Axis` icon in the menu bar that shows up just below the `Properties` icon. Scroll down to the `Secondary Values Axis` section and locate the `End` parameter. Click on `Max Data` under the `End` parameter and change it to `Custom`. Enter `0.1` in the text box that appears. This will make the anomalies look like bars across the graph.
+30. Repeat steps 27-29 for each of the remaining 3 graphs.
+31. If desired, right click on any data point in any graph, hover over `Color`, and select `Manage Assignments`. You can use this menu to set the colors of any of your data elements. The example at the end of this section uses #ffbebe as the color for `ANOMALY`.
+32. In the data pane, select EQUIPMENT_ID and drag it up to the white section above the graphs that has a `+` icon and says `Click here or drag data to add a filter`. After dropping the element in the filter bar, the filter will automatically open and allow you to select a value. Select one of the equipment IDs to view one machine's data at a time.
+33. Right click on the Canvas tab on the bottom of the page labeled `Canvas 1` and select `Canvas Properties`.
+34. Click on `Disabled` next to `Auto Refresh Data` to switch it to `Enabled`. Change the value from `30` to `10`, and click `OK`. This will refresh the canvas every 10 seconds. <i>You may need to scroll down in the properties menu to view the `OK` button</i>
+35. Click the `Refresh Data` button in the top-right toolbar. It looks like a white play button with an arrow circling around it. This will start the auto refresh process.
+36. Click the `Save` icon in the top-right corner of the page. Provide a name for the workbook, such as `streaming_workbook`, and click `Save`.
+37. Click the `Preview` button in the top-right toolbar to view the dashboard as an end user. It looks like an outline of a play button. Click the `Refresh Data` button in the toolbar to start the auto refresh process in this view.
 \
 \
 <b>Congratulations! You are now visualizing the output of your completed streaming pipeline!</b>
 
-![OAC Workbook](images/oac_workbook.png)
+![OAC Workbook](images/oac_workbook_200.png)
 \
 <sub>[Back to top](#level-200-anomaly-detection-ml)</sub>
 ### Stop the Data Stream

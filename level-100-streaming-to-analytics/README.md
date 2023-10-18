@@ -3,32 +3,28 @@ Deploy an end-to-end streaming pipeline covering the flow of manufacturing data 
 
 ## Table of Contents
 
-1. [Introduction](#introduction)
-2. [Objective](#objective)
-3. [System Architecture](#system-architecture)
-4. [Prerequisites](#prerequisites)
-5. [Which OCI resources will you provision?](#which-oci-resources-will-you-provision)
-6. [Lab Steps](#lab-steps)
+1. [Objective](#objective)
+2. [System Architecture](#system-architecture)
+3. [Prerequisites](#prerequisites)
+4. [Which OCI resources will you provision?](#which-oci-resources-will-you-provision)
+5. [Lab Steps](#lab-steps)
 	1. [Deploy Infrastructure using Resource Manager](#deploy-infrastructure-using-resource-manager)
 	2. [Configure AJD for Stream Processing](#configure-ajd-for-stream-processing)
 	3. [Run The Stream Pipeline](#run-the-stream-pipeline)
 	4. [Configure Oracle Analytics Cloud](#configure-oracle-analytics-cloud)
 	5. [Stop the Data Stream](#stop-the-data-stream)
-7. [Additional Steps](#additional-steps)
+6. [Additional Steps](#additional-steps)
 	1. [Data Cleanup](#data-cleanup)
 	2. [Resource Cleanup](#resource-cleanup)
 	3. [Troubleshooting and Logging when Running the Streaming Pipeline](#troubleshooting-and-logging-when-running-the-streaming-pipeline)
 	4. [Troubleshooting Resource Manager Cleanup](#troubleshooting-resource-manager-cleanup)
-
-### Introduction
-Data streaming is a powerful tool capable of accelerating business processes and facilitating real-time decision-making across a wide variety of industries and use cases. There are many ways to implement streaming technology, and each solution offers different benefits and drawbacks. The approach documented below is a cloud-native, low-code approach to streaming, covering the complete data lifecycle from ingestion to analysis. This will enable organizations to implement a complete streaming pipeline quickly, without the need to spend valuable time and effort procuring, configuring and managing IT infrastructure.
 
 ### Objective
 This repository leverages Oracle Cloud's array of infrastructure services to deploy a low-code, end-to-end streaming pipeline. The included Terraform Stack handles resource deployment, and additional configuration steps are documented below. The resulting architecture is a cloud-native streaming pipeline, capable of data ingestion, processing, storage, and analysis.
 
 ### System Architecture
 
-![System Architecture](images/system_architecture.png)
+![System Architecture](images/system_architecture_100.png)
 \
 <sub>[Back to top](#level-100-streaming-to-analytics)</sub>
 
@@ -296,16 +292,17 @@ In this section, you will deploy and configure Oracle Analytics Cloud (OAC) to v
 21. On the OAC home page, click `Create` in the top-right corner of the page, then click `Workbook`. In the popup titled `Add Data`, Select the dataset you just created, named `streaming_dataset`, then click `Add to Workbook`. For now, close the `Auto Insights` window on the right-hand side of the page by clicking on the light-bulb icon.
 22. In the data pane on the left side of the screen, click the arrow next to `TIMESTAMP` to expand that data field. Hold `command` if using a Mac or `control` if using a PC, then select `Second` and `VIBRATION_AMPLITUDE` from the data pane. Drag and drop these data elements onto the canvas. This will create a line chart.
 23. Select `VIBRATION_FREQUENCY`, `TEMPERATURE`, and `HUMIDITY` from the data pane, and drag and drop these data elements in the `Values (Y-Axis)` section of the visualization pane just to the right of the data pane. Be sure not to drop the data elements on top of `VIBRATION_AMPLITUDE`, as that will add the new elements in place of the existing data, rather than in addition to the existing data. This data may take a moment to load. When the database icon on the top right corner of the canvas has a spinning circle around it, the data is still loading.
-24. Right click on the Canvas tab on the bottom of the page labeled `Canvas 1` and select `Canvas Properties`.
-25. Click on `Disabled` next to `Auto Refresh Data` to switch it to `Enabled`. Change the value from `30` to `10`, and click `OK`. This will refresh the canvas every 10 seconds. <i>You may need to scroll down in the properties menu to view the `OK` button</i>
-26. Click the `Refresh Data` button in the top-right toolbar. It looks like a white play button with an arrow circling around it. This will start the auto refresh process.
-27. Click the `Save` icon in the top-right corner of the page. Provide a name for the workbook and click `Save`.
-28. Click the `Preview` button in the top-right toolbar to view the dashboard as an end user. It looks like an outline of a play button. Click the `Refresh Data` button in the toolbar to start the auto refresh process in this view.
+24. In the data pane, select EQUIPMENT_ID and drag it up to the white section above the graphs that has a `+` icon and says `Click here or drag data to add a filter`. After dropping the element in the filter bar, the filter will automatically open and allow you to select a value. Select one of the equipment IDs to view one machine's data at a time.
+25. Right click on the Canvas tab on the bottom of the page labeled `Canvas 1` and select `Canvas Properties`.
+26. Click on `Disabled` next to `Auto Refresh Data` to switch it to `Enabled`. Change the value from `30` to `10`, and click `OK`. This will refresh the canvas every 10 seconds. <i>You may need to scroll down in the properties menu to view the `OK` button</i>
+27. Click the `Refresh Data` button in the top-right toolbar. It looks like a white play button with an arrow circling around it. This will start the auto refresh process.
+28. Click the `Save` icon in the top-right corner of the page. Provide a name for the workbook and click `Save`.
+29. Click the `Preview` button in the top-right toolbar to view the dashboard as an end user. It looks like an outline of a play button. Click the `Refresh Data` button in the toolbar to start the auto refresh process in this view.
 \
 \
 <b>Congratulations! You are now visualizing the output of your completed streaming pipeline!</b>
 
-![OAC Workbook](images/oac_workbook.png)
+![OAC Workbook](images/oac_workbook_100.png)
 \
 <sub>[Back to top](#level-100-streaming-to-analytics)</sub>
 ### Stop the Data Stream
